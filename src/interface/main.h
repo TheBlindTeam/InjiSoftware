@@ -1,1 +1,1 @@
-void Initialize(int argc, char *argv[]);
+void Gtk_Initialize(int argc, char *argv[]);

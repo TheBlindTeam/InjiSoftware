@@ -4,7 +4,7 @@
 
 #include "main.h"
 
-void Gtk_Initialize (int argc, char *argv[])
+void Gtk_Initialize(int argc, char *argv[])
 {
 	GtkWidget *window;
 

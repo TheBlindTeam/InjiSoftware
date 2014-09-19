@@ -1,21 +1,30 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <gtk/gtk.h>
-
 #include "main.h"
 
-void Gtk_Initialize(int argc, char *argv[])
+void print_hello ()
 {
-	GtkWidget *window;
-
-	gtk_init(&argc, &argv);
-
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), "window");
-
-	g_signal_connect(window, "destroy", gtk_main_quit, NULL);
-
-	gtk_widget_show(window);
-
-	gtk_main();
+        g_print ("Hello World\n");
 }
+
+
+void Gtk_Initialize()
+{
+	GtkBuilder *builder;
+	GObject *window;
+	GObject *button;
+
+	builder = gtk_builder_new ();
+	gtk_builder_add_from_file (builder, "Interface/builder.ui", NULL);
+
+	window = gtk_builder_get_object (builder, "window");
+	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
+
+	button = gtk_builder_get_object (builder, "button1");
+	g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+
+	button = gtk_builder_get_object (builder, "button2");
+	g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+
+	button = gtk_builder_get_object (builder, "quit");
+	g_signal_connect (button, "clicked", G_CALLBACK (gtk_main_quit), NULL);
+}
+

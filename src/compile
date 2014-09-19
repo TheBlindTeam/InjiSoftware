@@ -1,1 +1,1 @@
-gcc -Wall -Werror -Wextra `pkg-config gtk+-3.0 --cflags` *.c interface/*.c `pkg-config gtk+-3.0 --libs`
+gcc -Wall -Werror -Wextra `pkg-config gtk+-3.0 --cflags` *.c Interface/*.c `pkg-config gtk+-3.0 --libs`

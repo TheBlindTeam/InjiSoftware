@@ -1,7 +1,16 @@
 #include "image.h"
 
-image load(char *str)
+Image ULoadImage(char *str)
 {
-	image r;
-	r.gtkimage
+	Image tmp;
+	GError *error = NULL;
+
+	tmp.pixbuf = gdk_pixbuf_new_from_file(str, &error);
+
+	if (!tmp.pixbuf)
+	{
+		tmp.load_error = error;
+	}
+
+	return tmp;
 }

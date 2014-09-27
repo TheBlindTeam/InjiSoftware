@@ -1,12 +1,11 @@
 #include <gtk/gtk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
-typedef image
+typedef struct gdk_image
 {
-	unsigned int width;
-	unsigned int height;
-	guchar ***rgb;
-	GtkImage *gtkImage;
-}image;
+	GdkPixbuf *pixbuf;
+	GError *load_error;
+} Image;
 
-image load(char* str);
+Image ULoadImage(char* str);
 

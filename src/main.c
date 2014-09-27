@@ -21,9 +21,7 @@ int main(int argc, char *argv[])
 	else
 		g_printf("%s", (*img.load_error).message);
 
-
-	gtk_init(&argc, &argv);
-	Gtk_Initialize();
+	Gtk_Initialize(argc, argv);
 	gtk_main();
 	return 0;
 }

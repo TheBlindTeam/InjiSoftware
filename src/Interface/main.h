@@ -3,4 +3,6 @@
 #include <gtk/gtk.h>
 
 void print_hello();
-void Gtk_Initialize();
+
+void Gtk_Initialize(int argc, char *argv[]);
+//Shelby : Initialize all the environment for the GUI

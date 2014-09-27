@@ -1,7 +1,8 @@
 #include "main.h"
 
-void Gtk_Initialize()
+void Gtk_Initialize(int argc, char *argv[])
 {
+	gtk_init(&argc, &argv);
 	GtkWidget *mainWindow = NULL;
 	GtkBuilder *builder = NULL;
 	GError *error = NULL;

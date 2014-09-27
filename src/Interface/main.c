@@ -1,30 +1,30 @@
 #include "main.h"
 
-void print_hello ()
-{
-        g_print ("Hello World\n");
-}
-
-
 void Gtk_Initialize()
 {
-	GtkBuilder *builder;
-	GObject *window;
-	GObject *button;
+	GtkWidget *mainWindow = NULL;
+	GtkBuilder *builder = NULL;
+	GError *error = NULL;
 
-	builder = gtk_builder_new ();
-	gtk_builder_add_from_file (builder, "Interface/builder.ui", NULL);
+	builder = gtk_builder_new();
 
-	window = gtk_builder_get_object (builder, "window");
-	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
+	gtk_builder_add_from_file (
+		builder,
+		g_build_filename("Interface/OCR.glade", NULL),
+		&error);
 
-	button = gtk_builder_get_object (builder, "button1");
-	g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+	if (error)
+	{
+		g_printerr("%s (Error Code: %d)\n", error->message, error->code);
+		g_error_free (error); 
+		exit(0);
+	}
 
-	button = gtk_builder_get_object (builder, "button2");
-	g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+	mainWindow = GTK_WIDGET(gtk_builder_get_object (builder, "MainWindow"));
 
-	button = gtk_builder_get_object (builder, "quit");
-	g_signal_connect (button, "clicked", G_CALLBACK (gtk_main_quit), NULL);
+	g_signal_connect (G_OBJECT (mainWindow), "destroy",
+		(GCallback)gtk_main_quit, NULL);
+
+	gtk_widget_show_all (mainWindow);
 }
 

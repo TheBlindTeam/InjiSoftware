@@ -10,11 +10,11 @@
 int main(int argc, char *argv[])
 {
 	Image img;
-	img = ULoadImage("/test.jpg");
+	img = ULoadImage("test.jpg");
 
 	if (img.pixbuf)
 	{
-		g_printf("Img Size: %dx%d",
+		g_printf("Img Size: %dx%d\n",
 			gdk_pixbuf_get_width(img.pixbuf),
 			gdk_pixbuf_get_height(img.pixbuf));
 	}

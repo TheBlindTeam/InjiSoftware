@@ -10,7 +10,7 @@
 int main(int argc, char *argv[])
 {
 	Image img;
-	img = ULoadImage("./test.jpg");
+	img = ULoadImage("/test.jpg");
 
 	if (img.pixbuf)
 	{

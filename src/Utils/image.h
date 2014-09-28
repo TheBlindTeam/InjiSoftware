@@ -1,12 +1,16 @@
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+/*
+	Image Utils
+*/
+
+// Adrien: Base structure of the image to be manipulated
 typedef struct gdk_image
 {
 	GdkPixbuf *pixbuf;
 	GError *load_error;
 } Image;
-//Shelby : The structure used for manupulating the images
 
+// Adrien: Creates an Image structure from the path str
 Image ULoadImage(char* str);
-//Shelby : It loads the image at the path str and it returns this image

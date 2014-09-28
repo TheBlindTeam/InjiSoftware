@@ -1,5 +1,8 @@
 #include "main.h"
 
+#include <libgen.h>
+#include <string.h>
+
 void Gtk_Initialize(int argc, char *argv[])
 {
 	gtk_init(&argc, &argv);
@@ -11,7 +14,9 @@ void Gtk_Initialize(int argc, char *argv[])
 
 	gtk_builder_add_from_file (
 		builder,
-		g_build_filename("Interface/OCR.glade", NULL),
+		g_build_filename(
+			strcat((argc > 0) ? dirname(argv[0]) : "", "/Interface/OCR.glade"),
+			NULL),
 		&error);
 
 	if (error)

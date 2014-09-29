@@ -5,19 +5,19 @@
 	Image Utils
 */
 
-// Adrien: Base structure of the image to be manipulated
-typedef struct gdk_image
-{
-	GdkPixbuf *pixbuf;
-	GError *load_error;
-} Image;
-
 // David : Structure representing a Pixel
 typedef struct gdk_pixel
 {
-	int r, g, b, a;
-	int x, y;
+	guchar r, g, b, a;
 } Pixel;
+
+// Adrien: Base structure of the image to be manipulated
+typedef struct gdk_image
+{
+	int width, height;
+	Pixel **pixList;
+} Image;
+
 
 // Adrien: Creates an Image structure from the path str
 Image ULoadImage(char* str);

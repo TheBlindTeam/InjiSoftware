@@ -22,5 +22,8 @@ typedef struct gdk_image
 // Adrien: Creates an Image structure from the path str
 Image ULoadImage(char* str);
 
+// Laurent : Free the Pixels buffer of an Image
+void UFreeImage(Image img);
+
 // David: Get Pixel at Coordinate
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);

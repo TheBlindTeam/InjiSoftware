@@ -12,14 +12,14 @@ int main(int argc, char *argv[])
 	Image img;
 	img = ULoadImage("test.jpg");
 
-	if (img.pixbuf)
+	if (img.pixList)
 	{
 		g_printf("Img Size: %dx%d\n",
-			gdk_pixbuf_get_width(img.pixbuf),
-			gdk_pixbuf_get_height(img.pixbuf));
+			img.width,
+			img.height);
 	}
 	else
-		g_printf("%s", (*img.load_error).message);
+		g_printf("ERRRRROOOOR");
 
 
 	Gtk_Initialize(argc, argv);

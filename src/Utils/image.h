@@ -23,4 +23,4 @@ typedef struct gdk_image
 Image ULoadImage(char* str);
 
 // David: Get Pixel at Coordinate
-gboolean UGetPixel(GdkPixbuf *pixbuf, Pixel *pixel, int x, int y);
+Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);

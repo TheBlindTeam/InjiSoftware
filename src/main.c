@@ -10,7 +10,10 @@
 int main(int argc, char *argv[])
 {
 	Image img;
-	img = ULoadImage("test.jpg");
+	if(argc > 1)
+		img = ULoadImage(argv[1]);
+	else
+		img = ULoadImage("test.jpg");
 
 	if (img.pixList)
 	{

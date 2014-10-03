@@ -1,12 +1,14 @@
+#ifndef NEURONSUTILS
+#define NEURONSUTILS
+
 const double RAND_UP = 1;
 const double RAND_DOWN = -1;
-
 typedef struct
 {
 	int layer;
 	int index;
 	double weight;
-}Connection;
+} Connection;
 
 typedef struct
 {
@@ -14,14 +16,14 @@ typedef struct
 	double shock;
 	int nbConnections;
 	Connection *connectList;
-}Neuron;
+} Neuron;
 
 typedef struct
 {
 	int nbLayers;
 	int *layersSize;
 	Neuron **neurons;
-}Network;
+} Network;
 
 typedef struct
 {
@@ -39,4 +41,15 @@ typedef struct
 
 Network NInitializeCompleteNetwork(ExempleSet exSet);
 
-void NPrint(Network nWork);
+void NInitializeSumNetwork(Network nWork);
+
+double *NRun(Network nWork, double *input);
+
+double NComputeError(Network nWork, ExempleSet exSet, int needPrint);
+
+void NPrintNetwork(Network nWork);
+
+Network NGetTrainedNetwork(ExempleSet exSet, double maxError);
+
+void NChangeLostNetwork(Network won, double wError, Network lost, double lError);
+#endif

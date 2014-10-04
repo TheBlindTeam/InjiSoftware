@@ -50,7 +50,6 @@ void Gtk_Initialize(int argc, char *argv[])
 	mainWindow = GTK_WIDGET(gtk_builder_get_object(data.builder,
 		"MainWindow"));
 
-
 	gtk_widget_show_all(mainWindow);
 }
 

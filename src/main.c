@@ -4,7 +4,7 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
 
-#include "Interface/main.h"
+#include "Interface/interface.h"
 #include "Utils/image.h"
 
 int main(int argc, char *argv[])

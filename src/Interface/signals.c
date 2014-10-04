@@ -36,8 +36,16 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 	{
 		char *filename = gtk_file_chooser_get_filename(
 			GTK_FILE_CHOOSER(user_data));
-		gtk_widget_hide(GTK_WIDGET(user_data));
-		printf("Load image file %s\n", filename);
+		if (access(filename, F_OK|R_OK) != -1)
+		{
+			struct stat statbuf;
+			if (stat(filename, &statbuf) == 0 &&
+				S_ISREG(statbuf.st_mode))
+			{
+				gtk_widget_hide(GTK_WIDGET(user_data));
+				printf("Load image file %s\n", filename);
+			}
+		}
 		g_free(filename);
 	}
 }
@@ -47,5 +55,13 @@ void file_chooser_select_file(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		file_chooser_select_file_from_button(widget, widget);
+	}
+}
+
+void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		gtk_widget_hide(GTK_WIDGET(user_data));
 	}
 }

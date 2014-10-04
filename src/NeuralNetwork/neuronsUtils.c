@@ -126,9 +126,8 @@ void NPrintNetwork(Network nWork)
 		printf("Layer : %d Size : %d\n", i, nWork.layersSize[i]);
 		for (int j = 0; j < nWork.layersSize[i]; j ++)
 		{
-			printf("number : %d size : %d sum : %f shock %f\n",
-				j, nWork.neurons[i][j].nbConnections,
-				nWork.neurons[i][j].sum, nWork.neurons[i][j].shock);
+			printf("number : %d size : %d\n",
+				j, nWork.neurons[i][j].nbConnections);
 			for (int k = 0; k < nWork.neurons[i][j].nbConnections; k++)
 				printf("\tlayer : %d index : %d weight : %f\n", 
 					nWork.neurons[i][j].connectList[k].layer,
@@ -166,7 +165,8 @@ int main()
 	exSet.exempleList[3].input[1] = 1;
 	exSet.exempleList[3].target[0] = 0;
 
-	nWork = NGetTrainedNetwork(exSet, 0.01);
+	nWork = NGetTrainedNetwork(exSet, 0.00001);
+	NComputeError(nWork, exSet, 1);
 	NPrintNetwork(nWork);
 	return 0;
 }
@@ -180,7 +180,7 @@ Network NGetTrainedNetwork(ExempleSet exSet, double maxError)
 	for (int i = 0; i < 2; i ++)
 	{
 		nWorks[i] = NInitializeCompleteNetwork(exSet);
-		errors[i] = NComputeError(nWorks[i], exSet, 1);
+		errors[i] = NComputeError(nWorks[i], exSet, 0);
 	}do
 	{
 		if (errors[0] > errors[1])
@@ -191,7 +191,7 @@ Network NGetTrainedNetwork(ExempleSet exSet, double maxError)
 			errors[i] = NComputeError(nWorks[i], exSet, 0);
 		round ++;
 	}while(errors[0] > maxError && errors[1] > maxError);
-	printf("round : %d", round);
+	printf("round : %d\n", round);
 	if (errors[0] < maxError)
 		return nWorks[0];
 	return nWorks[1];

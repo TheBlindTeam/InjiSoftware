@@ -5,27 +5,14 @@
 #include <glib/gstdio.h>
 
 #include "Interface/interface.h"
-#include "Utils/image.h"
 
 int main(int argc, char *argv[])
 {
 	Image img;
 	if(argc > 1)
 		img = ULoadImage(argv[1]);
-	else
-		img = ULoadImage("test.jpg");
 
-	if (img.pixList)
-	{
-		g_printf("Img Size: %dx%d\n",
-			img.width,
-			img.height);
-	}
-	else
-		g_printf("ERRRRROOOOR");
-
-
-	Gtk_Initialize(argc, argv);
+	Gtk_Initialize(argc, argv, &img);
 	gtk_main();
 	return 0;
 }

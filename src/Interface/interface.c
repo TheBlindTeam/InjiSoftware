@@ -3,23 +3,8 @@
 #include <libgen.h>
 #include <string.h>
 
-/*void button_load_clicked(GtkWidget *widget, gpointer user_data)
-{
-	SGlobalData *data = (SGlobalData*)user_data;
-//	gpointer imageChooser = NULL;
 
-	GtkWidget *widget2 = widget;
-	widget = widget2;
-
-	imageChooser = gtk_builder_get_object(data->builder,
-		"ImageChooser");
-	gtk_dialog_run(GTK_DIALOG(imageChooser));
-	//gtk_widget_show(imageChooser);
-//	gtk_widget_hide(imageChooser);
-	gtk_main_quit();
-}*/
-
-void Gtk_Initialize(int argc, char *argv[])
+void Gtk_Initialize(int argc, char *argv[], Image *img)
 {
 	GtkWidget *mainWindow = NULL;
 	SGlobalData data;
@@ -32,6 +17,7 @@ void Gtk_Initialize(int argc, char *argv[])
 		strcat((argc > 0) ? dirname(argv[0]) : "",
 		"/Interface/OCR.glade"), NULL);
 
+	data.img_rgb = img;
 	data.builder = gtk_builder_new();
 
 	gtk_builder_add_from_file(data.builder, uiFilename, &error);

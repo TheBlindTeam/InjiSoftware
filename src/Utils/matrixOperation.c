@@ -4,9 +4,9 @@ Pixel** UMultiply(**Pixel matrix, **double convolution, int matrixSize)
 {
 	Pixel tmp[matrixSize][matrixSize];
 
-	for(int y = 0; y < matrixSize; y++)
+	for (int y = 0; y < matrixSize; y++)
 	{
-		for(int x = 0; x < matrix.Size; x++)
+		for (int x = 0; x < matrix.Size; x++)
 		{
 			tmp[x][y] += matrix[x][y].r *
 				(guchar)convolution[y][x];
@@ -30,11 +30,11 @@ Pixel** UExtract(**Pixel matrix, int matrixSize, int size, int pos_x,
 	defaultPix.b = 255;
 	defaultPix.a = 255;
 	
-	for(int y = pos_y; y < pos_y + size; y++)
+	for (int y = pos_y; y < pos_y + size; y++)
 	{
-		for(int x = pos_x; x < pos_x + size; x++)
+		for (int x = pos_x; x < pos_x + size; x++)
 		{
-			if(x >= 0 && x < matrixSize &&
+			if (x >= 0 && x < matrixSize &&
 					y >= 0 && y < matrixSize)
 				tmp[x][y] = matrix[x][y];
 			else
@@ -51,9 +51,9 @@ Pixel** UConvolution(**Pixel matrix, **double convolution, int size,
 	Pixel result[size][size];
 	Pixel subMatrix[matrixSize][matrixSize];
 	
-	for(int y = 0; y < matrixSize; y++)
+	for (int y = 0; y < matrixSize; y++)
 	{
-		for(int x = 0; x < matrixSize; x++)
+		for (int x = 0; x < matrixSize; x++)
 		{
 			subMatrix = UExtract(matrix, size, matrixSize, x, y);
 			subMatrix = UMultiply(subMatrix, convolution,

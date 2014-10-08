@@ -10,3 +10,5 @@ Pixel** UExtract(**Pixel matrix, int matrixSize, int extractSize, int pos_x,
 // David: Apply A Convulution Matrix On Every Pixel
 Pixel** UConvolution(**Pixel matrix, **double convolution, int size,
 	int matrixSize);
+
+

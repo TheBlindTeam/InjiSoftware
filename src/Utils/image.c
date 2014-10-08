@@ -56,3 +56,27 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
 	return pixel;
 }
 
+GSImage URgbToGrayscale(Image rgbImage)
+{
+	ImageGS result;
+	result.width = rgbImage.width;
+	result.height = rgbImage.height;
+	result.intensity = malloc(result.width*sizeof(guchar*));
+
+	for(int x = 0; x < result.width; x++)
+	{
+		result.intensity[x] = malloc(result.height*sizeof(guchar));
+	}
+
+	for (int y = 0; y < result.height; y++)
+	{
+		for (int x = 0; x < result.width; x++)
+		{
+			result.intensity[x][y] = ((0.3 * rgbImage[x][y].r) +
+				(0.59 * rgbImage[x][y].g) + (0.11 * rgbImage.b));
+		}
+	}
+	
+	return result;
+}
+

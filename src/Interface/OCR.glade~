@@ -18,12 +18,13 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="FCButtonCancel">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
+                <signal name="clicked" handler="file_chooser_cancel" object="ImageChooser" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -32,13 +33,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="ButtonOK">
+              <object class="GtkButton" id="FCButtonOK">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="file_chooser_select_file_from_button" object="ImageChooser" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -255,7 +255,6 @@
                 <property name="label" translatable="yes">LoadFile</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-new</property>
-                <signal name="clicked" handler="on_load_button_clicked" object="ImageChooser" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -329,22 +328,6 @@
                 <property name="can_focus">False</property>
                 <property name="margin_top">2</property>
                 <child>
-                  <object class="GtkButton" id="TestBut1">
-                    <property name="label">gtk-open</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
-                    <signal name="clicked" handler="on_load_button_clicked" object="ImageChooser" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButton" id="TestBut2">
                     <property name="label" translatable="yes">button</property>
                     <property name="visible">True</property>
@@ -367,6 +350,21 @@
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
+                    <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="TestBut1">
+                    <property name="label">gtk-open</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
                     <property name="width">1</property>
                     <property name="height">1</property>

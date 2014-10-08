@@ -7,7 +7,7 @@
 void Gtk_Initialize(int argc, char *argv[], Image *img)
 {
 	GtkWidget *mainWindow = NULL;
-	SGlobalData data;
+	SGlobalData *data = malloc(sizeof(SGlobalData));
 	gchar *uiFilename = NULL;
 	GError *error = NULL;
 
@@ -17,10 +17,10 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 		strcat((argc > 0) ? dirname(argv[0]) : "",
 		"/Interface/OCR.glade"), NULL);
 
-	data.img_rgb = img;
-	data.builder = gtk_builder_new();
+	data->img_rgb = img;
+	data->builder = gtk_builder_new();
 
-	gtk_builder_add_from_file(data.builder, uiFilename, &error);
+	gtk_builder_add_from_file(data->builder, uiFilename, &error);
 	g_free(uiFilename);
 
 	if (error)
@@ -31,9 +31,9 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 		exit(0);
 	}
 
-	gtk_builder_connect_signals(data.builder, &data);
+	connectSignals(data);
 
-	mainWindow = GTK_WIDGET(gtk_builder_get_object(data.builder,
+	mainWindow = GTK_WIDGET(gtk_builder_get_object(data->builder,
 		"MainWindow"));
 
 	gtk_widget_show_all(mainWindow);

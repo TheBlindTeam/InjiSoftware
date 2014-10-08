@@ -1,5 +1,47 @@
 #include "signals.h"
 
+void connectSignals(SGlobalData *data)
+{
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "MainWindow")),
+		"destroy",
+		G_CALLBACK(on_window_destroy), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
+		"clicked",
+		G_CALLBACK(on_load_button_clicked), data);
+
+	/* Menu */
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "File.New")),
+		"activate",
+		G_CALLBACK(on_load_button_clicked), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "File.Quit")),
+		"activate",
+		G_CALLBACK(on_window_destroy), data);
+
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LoadFileButton")),
+		"clicked",
+		G_CALLBACK(on_load_button_clicked), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOK")),
+		"clicked",
+		G_CALLBACK(file_chooser_select_file_from_button), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"FCButtonCancel")),
+		"clicked",
+		G_CALLBACK(file_chooser_cancel), data);
+}
+
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
@@ -10,9 +52,11 @@ void on_load_button_clicked(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-		GtkFileChooserDialog *dialog = user_data;
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "ImageChooser"));
 		gtk_dialog_run(GTK_DIALOG(dialog));
-		gtk_widget_hide(GTK_WIDGET(dialog));
+		gtk_widget_hide(dialog);
 	}
 }
 
@@ -34,8 +78,10 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 {
 	if (widget && user_data)
 	{
+		SGlobalData *data = (SGlobalData*) user_data;
 		char *filename = gtk_file_chooser_get_filename(
-			GTK_FILE_CHOOSER(user_data));
+			GTK_FILE_CHOOSER(gtk_builder_get_object(data->builder,
+				"ImageChooser")));
 		if (access(filename, F_OK|R_OK) != -1)
 		{
 			struct stat statbuf;
@@ -43,20 +89,14 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 			if (stat(filename, &statbuf) == 0 &&
 				S_ISREG(statbuf.st_mode))
 			{
-				gtk_widget_hide(GTK_WIDGET(user_data));
+				gtk_widget_hide(GTK_WIDGET(
+					gtk_builder_get_object(data->builder,
+						"ImageChooser")));
 
-				//Image img = ULoadImage(filename);
+				*data->img_rgb = ULoadImage(filename);
 			}
 		}
 		g_free(filename);
-	}
-}
-
-void file_chooser_select_file(GtkWidget *widget, gpointer user_data)
-{
-	if (widget && user_data)
-	{
-		file_chooser_select_file_from_button(widget, widget);
 	}
 }
 
@@ -64,6 +104,8 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-		gtk_widget_hide(GTK_WIDGET(user_data));
+		SGlobalData *data = (SGlobalData*) user_data;
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "ImageChooser")));
 	}
 }

@@ -94,6 +94,10 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 						"ImageChooser")));
 
 				*data->img_rgb = ULoadImage(filename);
+				gtk_image_set_from_pixbuf(GTK_IMAGE(
+					gtk_builder_get_object(data->builder,
+						"PreviewImage")),
+					UGetPixbufFromImage(*data->img_rgb));
 			}
 		}
 		g_free(filename);

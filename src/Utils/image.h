@@ -14,7 +14,8 @@ typedef struct gdk_pixel
 // Adrien : Base structure of the image to be manipulated
 typedef struct gdk_image
 {
-	int width, height;
+	int width, height, bits_per_sample, rowstride;
+	gboolean has_alpha;
 	Pixel **pixList;
 } Image;
 
@@ -37,3 +38,10 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);
 
 // David : Translate RGB Image to GrayScale Image
 ImageGS URgbToGrayscale(Image rgbImage);
+
+// Adrien: Get packed pixels data from Pixels structure
+guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
+	int height, int channel);
+
+// Adrien: Create pixbuf from Pixel struct
+GdkPixbuf *UGetPixbufFromImage(Image image);

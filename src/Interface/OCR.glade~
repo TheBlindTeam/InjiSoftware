@@ -24,7 +24,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="file_chooser_cancel" object="ImageChooser" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -68,11 +67,22 @@
       </object>
     </child>
   </object>
+  <object class="GtkImage" id="ImageZoomIn">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-zoom-in</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="ImageZoomOut">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-zoom-out</property>
+  </object>
   <object class="GtkWindow" id="MainWindow">
     <property name="can_focus">False</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Inji Software</property>
-    <property name="window_position">center-always</property>
+    <property name="window_position">center</property>
     <property name="default_width">520</property>
     <property name="default_height">563</property>
     <property name="gravity">center</property>
@@ -221,24 +231,6 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkStatusbar" id="StatusBar">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">10</property>
-            <property name="margin_right">10</property>
-            <property name="margin_top">6</property>
-            <property name="margin_bottom">6</property>
-            <property name="orientation">vertical</property>
-            <property name="spacing">2</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -397,18 +389,71 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkImage" id="PreviewImage">
+                      <object class="GtkScrolledWindow" id="PreviewScrollWindow">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="stock">gtk-add</property>
-                        <property name="icon_size">3</property>
+                        <property name="can_focus">True</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkViewport" id="viewport1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkImage" id="PreviewImage">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="stock">gtk-add</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
+                        <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkPaned" id="PreviewToolBar">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="position">1</property>
+                        <child>
+                          <object class="GtkButton" id="ZoomInButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="image">ImageZoomIn</property>
+                            <property name="relief">none</property>
+                          </object>
+                          <packing>
+                            <property name="resize">True</property>
+                            <property name="shrink">True</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="ZoomOutButton">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="image">ImageZoomOut</property>
+                            <property name="relief">none</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="resize">True</property>
+                            <property name="shrink">True</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                   </object>

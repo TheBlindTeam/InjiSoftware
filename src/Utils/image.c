@@ -13,6 +13,9 @@ Image ULoadImage(char *str)
 	{
 		tmp.width = 0;
 		tmp.height = 0;
+		tmp.bits_per_sample = 0;
+		tmp.rowstride = 0;
+		tmp.has_alpha = FALSE;
 		tmp.pixList = NULL;
 		printf("%d : %s\n", error->code, error->message);
 	}
@@ -20,6 +23,9 @@ Image ULoadImage(char *str)
 	{
 		tmp.width = gdk_pixbuf_get_width(pixbuf);
 		tmp.height = gdk_pixbuf_get_height(pixbuf);
+		tmp.bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
+		tmp.rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+		tmp.has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
 		tmp.pixList = (Pixel**)malloc(sizeof(Pixel*) * tmp.width);
 		for (int i = 0 ; i < tmp.width; i ++)
 		{
@@ -83,3 +89,35 @@ ImageGS URgbToGrayscale(Image rgbImage)
 	return result;
 }
 
+guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
+	int channel)
+{
+	guchar *tmp = malloc(sizeof(guchar) * width * height  * channel);
+
+	for (int y = 0; y < height; y++)
+		for (int x = 0; x < width; x++)
+		{
+			tmp[x*channel + y*width*channel] = pixList[x][y].r;
+			tmp[x*channel + y*width*channel + 1] = pixList[x][y].g;
+			tmp[x*channel + y*width*channel + 2] = pixList[x][y].b;
+			
+			if (channel == 4)
+				tmp[x*channel + y*width*channel + 3] =
+					pixList[x][y].a;
+		}
+
+	return tmp;
+}
+
+GdkPixbuf *UGetPixbufFromImage(Image img)
+{
+	return gdk_pixbuf_new_from_data(
+		UGetPixelDataFromPixelsStruct(img.pixList, img.width,
+			img.height, img.has_alpha ? 4 : 3),
+		GDK_COLORSPACE_RGB,
+		img.has_alpha,
+		img.bits_per_sample,
+		img.width, img.height,
+		img.rowstride,
+		NULL, NULL);
+}

@@ -44,4 +44,7 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);
 
 // Adrien: Create pixbuf from Pixel struct
-GdkPixbuf *UGetPixbufFromImage(Image image);
+GdkPixbuf *UGetPixbufFromImage(Image img);
+
+// Adrien: Rotate an image matrix left/right
+void URotateImage(Image *img);

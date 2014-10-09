@@ -13,6 +13,8 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_load_button_clicked), data);
 
 	/* Menu */
+
+	// File
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "File.New")),
 		"activate",
@@ -22,7 +24,12 @@ void connectSignals(SGlobalData *data)
 		G_OBJECT(gtk_builder_get_object(data->builder, "File.Quit")),
 		"activate",
 		G_CALLBACK(on_window_destroy), data);
-
+	// Edit
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.RotateImgLeft")),
+		"activate",
+		G_CALLBACK(on_rotate_img_left), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -111,5 +118,20 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "ImageChooser")));
+	}
+}
+
+void on_rotate_img_left(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		
+		URotateImage(data->img_rgb);
+
+		gtk_image_set_from_pixbuf(GTK_IMAGE(
+			gtk_builder_get_object(data->builder,
+				"PreviewImage")),
+			UGetPixbufFromImage(*data->img_rgb));
 	}
 }

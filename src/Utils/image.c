@@ -26,15 +26,16 @@ Image ULoadImage(char *str)
 		tmp.bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
 		tmp.rowstride = gdk_pixbuf_get_rowstride(pixbuf);
 		tmp.has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
-		tmp.pixList = (Pixel**)malloc(sizeof(Pixel*) * tmp.width);
+		tmp.pixList = malloc(sizeof(Pixel*) * tmp.width);
 		for (int i = 0 ; i < tmp.width; i ++)
 		{
-			tmp.pixList[i] = (Pixel*)malloc(sizeof(Pixel) *
+			tmp.pixList[i] = malloc(sizeof(Pixel) *
 					tmp.height);
 			for (int j = 0; j < tmp.height; j ++)
 				tmp.pixList[i][j] = UGetPixel(pixbuf, i, j);
 		}
 	}
+
 	return tmp;
 }
 
@@ -120,4 +121,25 @@ GdkPixbuf *UGetPixbufFromImage(Image img)
 		img.width, img.height,
 		img.rowstride,
 		NULL, NULL);
+}
+
+void URotateImage(Image *img)
+{
+	Pixel **tmp = malloc(sizeof(Pixel*) * img->height);
+
+	for(int i = 0; i < img->height; i ++)
+	{
+		tmp[i] = malloc(sizeof(Pixel) * img->width);
+		for (int j = 0; j < img->width; j ++)
+			tmp[i][j] = img->pixList[img->width - j - 1][i];
+
+	}
+
+	img->pixList = tmp;
+	
+	int c = img->width;
+	img->width = img->height;
+	img->height = c;
+
+	img->rowstride = img->rowstride / img->height * img->width;
 }

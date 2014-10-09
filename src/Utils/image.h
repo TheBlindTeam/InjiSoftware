@@ -36,4 +36,4 @@ void UFreeImage(Image img);
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);
 
 // David : Translate RGB Image to GrayScale Image
-GSImage URgbToGrayscale(Image rgbImage);
+ImageGS URgbToGrayscale(Image rgbImage);

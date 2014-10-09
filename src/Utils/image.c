@@ -23,7 +23,8 @@ Image ULoadImage(char *str)
 		tmp.pixList = (Pixel**)malloc(sizeof(Pixel*) * tmp.width);
 		for (int i = 0 ; i < tmp.width; i ++)
 		{
-			tmp.pixList[i] = (Pixel*)malloc(sizeof(Pixel) * tmp.height);
+			tmp.pixList[i] = (Pixel*)malloc(sizeof(Pixel) *
+					tmp.height);
 			for (int j = 0; j < tmp.height; j ++)
 				tmp.pixList[i][j] = UGetPixel(pixbuf, i, j);
 		}
@@ -56,7 +57,7 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
 	return pixel;
 }
 
-GSImage URgbToGrayscale(Image rgbImage)
+ImageGS URgbToGrayscale(Image rgbImage)
 {
 	ImageGS result;
 	result.width = rgbImage.width;
@@ -72,8 +73,10 @@ GSImage URgbToGrayscale(Image rgbImage)
 	{
 		for (int x = 0; x < result.width; x++)
 		{
-			result.intensity[x][y] = ((0.3 * rgbImage[x][y].r) +
-				(0.59 * rgbImage[x][y].g) + (0.11 * rgbImage.b));
+			result.intensity[x][y] = (
+				(0.3 * rgbImage.pixList[x][y].r) +
+				(0.59 * rgbImage.pixList[x][y].g) +
+				(0.11 * rgbImage.pixList[x][y].b));
 		}
 	}
 	

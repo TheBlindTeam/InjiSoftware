@@ -8,6 +8,8 @@
 
 #include "globalData.h"
 
+#define M_PI 3.14159265358979323846
+
 void connectSignals(SGlobalData* data);
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data);
@@ -18,3 +20,8 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
 
 void on_rotate_img_left(GtkWidget *widget, gpointer user_data);
+
+void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data);
+void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);
+void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
+	gpointer user_data);

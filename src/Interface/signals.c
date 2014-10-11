@@ -10,7 +10,17 @@ void connectSignals(SGlobalData *data)
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
 		"clicked",
-		G_CALLBACK(on_load_button_clicked), data);
+		G_CALLBACK(on_load_neuron_network_visualizer), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkDrawArea")),
+		"draw",
+		G_CALLBACK(on_draw_network), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkVisualizer")),
+		"button-press-event",
+		G_CALLBACK(on_click_on_network), data);
 
 	/* Menu */
 
@@ -118,6 +128,54 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "ImageChooser")));
+	}
+}
+
+void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *window = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "NetworkVisualizer"));
+
+		gtk_widget_show_all(window);
+	}
+}
+
+void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+	if (widget && cr && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		if (data->neuronData->has_clicked)
+		{
+			cairo_set_line_width(cr, 5);
+			cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1.0);
+
+			cairo_translate(cr, data->neuronData->click_x,
+				data->neuronData->click_y);
+			cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
+			cairo_stroke_preserve(cr);
+
+			cairo_fill(cr);
+		}
+	}
+}
+
+void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
+	gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		data->neuronData->has_clicked = TRUE;
+		data->neuronData->click_x = event->x;
+		data->neuronData->click_y = event->y;
+		printf("Clicked: %lf,%lf\n", event->x, event->y);
+		gtk_widget_queue_draw(widget);
 	}
 }
 

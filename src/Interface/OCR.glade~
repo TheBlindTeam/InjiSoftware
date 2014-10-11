@@ -151,7 +151,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="RotateImgRight">
+                      <object class="GtkMenuItem" id="Edit.RotateImgRight">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Rotate the image to the right</property>
@@ -160,7 +160,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="RotateImgLeft">
+                      <object class="GtkMenuItem" id="Edit.RotateImgLeft">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Rotate the image to the left</property>
@@ -302,40 +302,11 @@
                 <property name="can_focus">False</property>
                 <property name="margin_top">2</property>
                 <child>
-                  <object class="GtkButton" id="TestBut2">
-                    <property name="label" translatable="yes">button</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="TestBut3">
-                    <property name="label" translatable="yes">button</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">2</property>
-                    <property name="top_attach">0</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButton" id="TestBut1">
-                    <property name="label">gtk-open</property>
+                    <property name="label" translatable="yes">Neuron Network Visualizer</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
-                    <property name="use_stock">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -343,6 +314,15 @@
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -459,6 +439,17 @@
           </packing>
         </child>
       </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="NetworkVisualizer">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Neuron Network Visualizer</property>
+    <property name="window_position">mouse</property>
+    <property name="default_width">500</property>
+    <property name="default_height">300</property>
+    <property name="type_hint">utility</property>
+    <child>
+      <placeholder/>
     </child>
   </object>
 </interface>

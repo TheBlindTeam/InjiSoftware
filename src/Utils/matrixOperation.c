@@ -89,3 +89,42 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 
 	return result;
 }
+
+Pixel** URotate(Pixel **matrix, double angle, int width, int height)
+{
+	int newWidth = (int)(cos(angle) * width + sin(angle) * height);
+	int newHeight = (cos(angle) * height + sin(angle) * width);
+
+	Pixel **image;
+	image = malloc(newWidth * sizeof(Pixel *));
+
+	for (int i = 0; i < width; i++)
+	{
+		image[i] = malloc(newHeight * sizeof(Pixel));
+	}
+
+	for (int y = 0; y < newHeight; y++)
+	{
+		for (int x = 0; x < newWidth; x++)
+		{
+			int newX = (int)(cos(angle) * x + sin(angle) * y);
+			int newY = (int)(cos(angle) * y + sin(angle) * x);
+
+			if ((newX >= 0 && newX < width) && (newY >= 0 && newY <height))
+			{
+				image[x][y] = matrix[newX][newY];
+			}
+			else
+			{
+				image[x][y].r = 255;
+				image[x][y].g = 255;
+				image[x][y].b = 255;
+				image[x][y].a = 0;
+			}
+
+		}
+	}
+
+	return image;
+
+}

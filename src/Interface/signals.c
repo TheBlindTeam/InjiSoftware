@@ -13,12 +13,14 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkDrawArea")),
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NetworkDrawArea")),
 		"draw",
 		G_CALLBACK(on_draw_network), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkVisualizer")),
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NetworkVisualizer")),
 		"button-press-event",
 		G_CALLBACK(on_click_on_network), data);
 
@@ -136,8 +138,8 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		GtkWidget *window = GTK_WIDGET(
-			gtk_builder_get_object(data->builder, "NetworkVisualizer"));
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkVisualizer"));
 
 		gtk_widget_show_all(window);
 	}
@@ -150,17 +152,23 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 
 		if (data->neuronData->has_clicked)
-		{
-			cairo_set_line_width(cr, 5);
-			cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1.0);
+		{}
+		//int columnsCount = 2;
 
-			cairo_translate(cr, data->neuronData->click_x,
-				data->neuronData->click_y);
-			cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
-			cairo_stroke_preserve(cr);
+		cairo_set_line_width(cr, 1);
+		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
 
-			cairo_fill(cr);
-		}
+		cairo_translate(cr, data->neuronData->click_x,
+			data->neuronData->click_y);
+		cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
+		cairo_stroke(cr);
+
+		cairo_fill(cr);
+
+		cairo_move_to(cr, data->neuronData->click_x,
+			data->neuronData->click_y);
+		cairo_line_to(cr, 10, 10);
+		//cairo_stroke(cr);
 	}
 }
 
@@ -185,6 +193,8 @@ void on_rotate_img_left(GtkWidget *widget, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 		
+		data->img_rgb->pixList = URotate(data->img_rgb->pixList,
+			50, data->img_rgb->width, data->img_rgb->height);
 		URotateImage(data->img_rgb);
 
 		gtk_image_set_from_pixbuf(GTK_IMAGE(

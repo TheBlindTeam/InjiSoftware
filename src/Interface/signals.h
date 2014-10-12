@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "unistd.h"
 
+#include "../Utils/matrixOperation.h"
 #include "globalData.h"
 
 #define M_PI 3.14159265358979323846

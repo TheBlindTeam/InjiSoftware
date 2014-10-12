@@ -39,9 +39,9 @@ void connectSignals(SGlobalData *data)
 	// Edit
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"Edit.RotateImgLeft")),
+			"Edit.RotateImg")),
 		"activate",
-		G_CALLBACK(on_rotate_img_left), data);
+		G_CALLBACK(on_rotate_img_open), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -59,6 +59,12 @@ void connectSignals(SGlobalData *data)
 			"FCButtonCancel")),
 		"clicked",
 		G_CALLBACK(file_chooser_cancel), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"RotateButton")),
+		"clicked",
+		G_CALLBACK(on_apply_rotation), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -83,7 +89,9 @@ void file_chooser_selection_changed(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-		GtkEntry *entry = user_data;
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "ImagePath"));
 		char *filename = gtk_file_chooser_get_filename(
 			GTK_FILE_CHOOSER(widget));
 		if (filename != NULL)
@@ -187,19 +195,46 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 	}
 }
 
-void on_rotate_img_left(GtkWidget *widget, gpointer user_data)
+void on_rotate_img_open(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		
-		data->img_rgb->pixList = URotate(data->img_rgb->pixList,
-			50, data->img_rgb->width, data->img_rgb->height);
-		URotateImage(data->img_rgb);
 
-		gtk_image_set_from_pixbuf(GTK_IMAGE(
-			gtk_builder_get_object(data->builder,
-				"PreviewImage")),
-			UGetPixbufFromImage(*data->img_rgb));
+		GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RotationSelect"));
+
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void on_apply_rotation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RotationAmount"));
+		int amount = atoi(gtk_entry_get_text(GTK_ENTRY(entry)));
+
+		if (amount != 0)
+		{
+			data->img_rgb->pixList = URotate(
+				data->img_rgb->pixList, 10,
+				data->img_rgb->width,
+				data->img_rgb->height);
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
+			
+			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "RotationSelect"));
+
+			gtk_widget_hide(dialog);
+		}
+		
 	}
 }

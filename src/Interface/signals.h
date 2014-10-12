@@ -20,7 +20,8 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 	gpointer user_data);
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
 
-void on_rotate_img_left(GtkWidget *widget, gpointer user_data);
+void on_rotate_img_open(GtkWidget *widget, gpointer user_data);
+void on_apply_rotation(GtkWidget *widget, gpointer user_data);
 
 void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data);
 void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);

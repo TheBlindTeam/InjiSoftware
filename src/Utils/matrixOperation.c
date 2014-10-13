@@ -92,8 +92,9 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 
 Pixel** URotate(Pixel **matrix, double angle, int width, int height)
 {
-	int newWidth = (int)(cos(angle) * width + sin(angle) * height);
-	int newHeight = (cos(angle) * height + sin(angle) * width);
+	double radian = (angle * 3.1415) / 180;
+	int newWidth = (int)(cos(radian) * width + sin(radian) * height + 1);
+	int newHeight = (int)(-cos(radian) * height - sin(radian) * width + 1);
 
 	Pixel **image;
 	image = malloc(newWidth * sizeof(Pixel *));
@@ -103,28 +104,37 @@ Pixel** URotate(Pixel **matrix, double angle, int width, int height)
 		image[i] = malloc(newHeight * sizeof(Pixel));
 	}
 
-	for (int y = 0; y < newHeight; y++)
-	{
-		for (int x = 0; x < newWidth; x++)
-		{
-			int newX = (int)(cos(angle) * x + sin(angle) * y);
-			int newY = (int)(cos(angle) * y + sin(angle) * x);
+	printf("1\n");
 
-			if ((newX >= 0 && newX < width) && (newY >= 0 && newY <height))
-			{
-				image[x][y] = matrix[newX][newY];
-			}
-			else
-			{
+	for (int y = 0; y <newHeight; y++)
+		for (int x = 0; x < newWidth; x++)
+		{	
 				image[x][y].r = 255;
 				image[x][y].g = 255;
 				image[x][y].b = 255;
-				image[x][y].a = 0;
+				image[x][y].a = 255;
+		}
+
+
+	printf("2\n");
+
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			int newX = (int)(cos(radian) * x + sin(radian) * y);
+			int newY = (int)(cos(radian) * y - sin(radian) * x);
+
+			if ((newX >= 0 && newX < newWidth) && 
+				(newY >= 0 && newY < newHeight))
+			{
+				image[newX][newY] = matrix[x][y];
 			}
 
 		}
 	}
 
+	printf("3\n");
 	return image;
 
 }

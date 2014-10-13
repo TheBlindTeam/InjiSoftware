@@ -90,6 +90,34 @@ ImageGS URgbToGrayscale(Image rgbImage)
 	return result;
 }
 
+Image UGrayscaleToRgb(ImageGS reference)
+{
+	Image result;
+	result.width = reference.width;	
+	result.height = reference.height;
+
+	result.pixList = malloc(result.width * sizeof(Pixel*));
+
+	for (int i = 0; i < result.width; i++)
+	{
+		result.pixList[i] = malloc(result.height * sizeof(Pixel));
+	}
+
+	for(int y = 0; y < result.height; y++)
+	{
+		for(int x = 0; x < result.width; x++)
+		{
+			result.pixList[x][y].r = reference.intensity[x][y];
+			result.pixList[x][y].g = reference.intensity[x][y];
+			result.pixList[x][y].b = reference.intensity[x][y];
+			result.pixList[x][y].a = 255;
+		}
+	
+	}
+
+	return result;
+}
+
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 	int channel)
 {

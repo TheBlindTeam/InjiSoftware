@@ -39,6 +39,9 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);
 // David : Translate RGB Image to GrayScale Image
 ImageGS URgbToGrayscale(Image rgbImage);
 
+// David : Translate GrayScale Image to RGB Image
+Image UGrayscaleToRgb(ImageGS reference);
+
 // Adrien: Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);

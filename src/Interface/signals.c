@@ -220,6 +220,7 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
+			
 			data->img_rgb->pixList = URotate(
 				data->img_rgb->pixList, 10,
 				data->img_rgb->width,

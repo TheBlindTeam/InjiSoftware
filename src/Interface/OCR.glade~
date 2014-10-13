@@ -151,20 +151,11 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="Edit.RotateImgRight">
+                      <object class="GtkMenuItem" id="Edit.RotateImg">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Rotate the image to the right</property>
-                        <property name="label" translatable="yes">Right Rotation</property>
-                        <property name="use_underline">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="Edit.RotateImgLeft">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Rotate the image to the left</property>
-                        <property name="label" translatable="yes">Left Rotation</property>
+                        <property name="tooltip_text" translatable="yes">Rotate the image</property>
+                        <property name="label" translatable="yes">Rotation</property>
                         <property name="use_underline">True</property>
                       </object>
                     </child>
@@ -311,6 +302,20 @@
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="TestBut2">
+                    <property name="label" translatable="yes">Detect Characters</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>

@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "unistd.h"
 
+//#include "../NeuralNetwork/neuronsUtils.h"
 #include "../Utils/matrixOperation.h"
 #include "globalData.h"
 
@@ -27,3 +28,5 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data);
 void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 	gpointer user_data);
+
+void on_detect_chars(GtkWidget *widget, gpointer user_data);

@@ -13,6 +13,11 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
 
 	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut2")),
+		"clicked",
+		G_CALLBACK(on_detect_chars), data);
+	
+	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"NetworkDrawArea")),
 		"draw",
@@ -121,6 +126,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 						"ImageChooser")));
 
 				*data->img_rgb = ULoadImage(filename);
+
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
@@ -159,9 +165,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 
+		//Network network = NULL;
+
 		if (data->neuronData->has_clicked)
 		{}
-		//int columnsCount = 2;
 
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
@@ -190,7 +197,6 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 		data->neuronData->has_clicked = TRUE;
 		data->neuronData->click_x = event->x;
 		data->neuronData->click_y = event->y;
-		printf("Clicked: %lf,%lf\n", event->x, event->y);
 		gtk_widget_queue_draw(widget);
 	}
 }
@@ -220,7 +226,6 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			
 			data->img_rgb->pixList = URotate(
 				data->img_rgb->pixList, 10,
 				data->img_rgb->width,
@@ -237,5 +242,14 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 			gtk_widget_hide(dialog);
 		}
 		
+	}
+}
+
+void on_detect_chars(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+	//	SGlobalData *data = (SGlobalData*) user_data;
+
 	}
 }

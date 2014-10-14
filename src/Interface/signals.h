@@ -6,7 +6,11 @@
 #include <sys/stat.h>
 #include "unistd.h"
 
+//#include "../NeuralNetwork/neuronsUtils.h"
+#include "../Utils/matrixOperation.h"
 #include "globalData.h"
+
+#define M_PI 3.14159265358979323846
 
 void connectSignals(SGlobalData* data);
 
@@ -17,4 +21,12 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 	gpointer user_data);
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
 
-void on_rotate_img_left(GtkWidget *widget, gpointer user_data);
+void on_rotate_img_open(GtkWidget *widget, gpointer user_data);
+void on_apply_rotation(GtkWidget *widget, gpointer user_data);
+
+void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data);
+void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);
+void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
+	gpointer user_data);
+
+void on_detect_chars(GtkWidget *widget, gpointer user_data);

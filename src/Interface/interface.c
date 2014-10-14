@@ -8,6 +8,7 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 {
 	GtkWidget *mainWindow = NULL;
 	SGlobalData *data = malloc(sizeof(SGlobalData));
+	data->neuronData = malloc(sizeof(CairoNeuronData));
 	gchar *uiFilename = NULL;
 	GError *error = NULL;
 

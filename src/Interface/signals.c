@@ -10,7 +10,24 @@ void connectSignals(SGlobalData *data)
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
 		"clicked",
-		G_CALLBACK(on_load_button_clicked), data);
+		G_CALLBACK(on_load_neuron_network_visualizer), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut2")),
+		"clicked",
+		G_CALLBACK(on_detect_chars), data);
+	
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NetworkDrawArea")),
+		"draw",
+		G_CALLBACK(on_draw_network), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NetworkVisualizer")),
+		"button-press-event",
+		G_CALLBACK(on_click_on_network), data);
 
 	/* Menu */
 
@@ -27,9 +44,9 @@ void connectSignals(SGlobalData *data)
 	// Edit
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"Edit.RotateImgLeft")),
+			"Edit.RotateImg")),
 		"activate",
-		G_CALLBACK(on_rotate_img_left), data);
+		G_CALLBACK(on_rotate_img_open), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -47,6 +64,12 @@ void connectSignals(SGlobalData *data)
 			"FCButtonCancel")),
 		"clicked",
 		G_CALLBACK(file_chooser_cancel), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"RotateButton")),
+		"clicked",
+		G_CALLBACK(on_apply_rotation), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -71,7 +94,9 @@ void file_chooser_selection_changed(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-		GtkEntry *entry = user_data;
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "ImagePath"));
 		char *filename = gtk_file_chooser_get_filename(
 			GTK_FILE_CHOOSER(widget));
 		if (filename != NULL)
@@ -101,6 +126,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 						"ImageChooser")));
 
 				*data->img_rgb = ULoadImage(filename);
+
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
@@ -121,17 +147,109 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 	}
 }
 
-void on_rotate_img_left(GtkWidget *widget, gpointer user_data)
+void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		
-		URotateImage(data->img_rgb);
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkVisualizer"));
 
-		gtk_image_set_from_pixbuf(GTK_IMAGE(
-			gtk_builder_get_object(data->builder,
-				"PreviewImage")),
-			UGetPixbufFromImage(*data->img_rgb));
+		gtk_widget_show_all(window);
+	}
+}
+
+void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
+{
+	if (widget && cr && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		//Network network = NULL;
+
+		if (data->neuronData->has_clicked)
+		{}
+
+		cairo_set_line_width(cr, 1);
+		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
+
+		cairo_translate(cr, data->neuronData->click_x,
+			data->neuronData->click_y);
+		cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
+		cairo_stroke(cr);
+
+		cairo_fill(cr);
+
+		cairo_move_to(cr, data->neuronData->click_x,
+			data->neuronData->click_y);
+		cairo_line_to(cr, 10, 10);
+		//cairo_stroke(cr);
+	}
+}
+
+void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
+	gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		data->neuronData->has_clicked = TRUE;
+		data->neuronData->click_x = event->x;
+		data->neuronData->click_y = event->y;
+		gtk_widget_queue_draw(widget);
+	}
+}
+
+void on_rotate_img_open(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RotationSelect"));
+
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void on_apply_rotation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RotationAmount"));
+		int amount = atoi(gtk_entry_get_text(GTK_ENTRY(entry)));
+
+		if (amount != 0)
+		{
+			data->img_rgb->pixList = URotate(
+				data->img_rgb->pixList, 10,
+				data->img_rgb->width,
+				data->img_rgb->height);
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
+			
+			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "RotationSelect"));
+
+			gtk_widget_hide(dialog);
+		}
+		
+	}
+}
+
+void on_detect_chars(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+	//	SGlobalData *data = (SGlobalData*) user_data;
+
 	}
 }

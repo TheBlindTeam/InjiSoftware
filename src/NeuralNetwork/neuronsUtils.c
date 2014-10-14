@@ -2,7 +2,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "../Utils/math.h"
+
 const double RAND_UP = 10;
 const double RAND_DOWN = -10;
 

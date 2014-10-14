@@ -1,5 +1,8 @@
 #include "math.h"
-#include <math.h>
+
+const FAndDifF SIGMOID = {&USigmoid, &UDSigmoid};
+const FAndDifF TAN_SIGMOID = {&UTanSigmoid, &UDTanSigmoid};
+const FAndDifF LINEAR = {&ULinear, &UDLinear};
 
 int UPow(int a, int b)
 {
@@ -9,7 +12,7 @@ int UPow(int a, int b)
 	return tmp;
 }
 
-double UComputeError(double *target, double *output, int size)
+double USquarredError(double *target, double *output, int size)
 {
 	double r = 0;
 	for (int i = 0; i < size; i ++)
@@ -17,7 +20,33 @@ double UComputeError(double *target, double *output, int size)
 	return r / size;
 }
 
-double UComputeShock(double sum)
+double USigmoid(double sum)
 {
 	return 1 / (1 + exp(-sum));
+}
+
+double UDSigmoid(double sum)
+{
+	return USigmoid(sum) * (1 - USigmoid(sum));
+}
+
+double ULinear(double sum)
+{
+	return sum;
+}
+
+double UDLinear(double sum)
+{
+	sum ++;
+	return 1;
+}
+
+double UTanSigmoid(double sum)
+{
+	return tanh(sum);
+}
+
+double UDTanSigmoid(double sum)
+{
+	return 1 - UTanSigmoid(sum) * UTanSigmoid(sum);
 }

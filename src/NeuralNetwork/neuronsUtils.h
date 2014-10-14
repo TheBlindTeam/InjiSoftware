@@ -1,20 +1,23 @@
-#ifndef NEURONSUTILS
-#define NEURONSUTILS
+#include "../Utils/math.h"
 
-const double RAND_UP = 1;
-const double RAND_DOWN = -1;
+extern const double RAND_UP;
+extern const double RAND_DOWN;
+
 typedef struct
 {
 	int layer;
 	int index;
 	double weight;
+	double prevChange;
 } Connection;
 
 typedef struct
 {
 	double sum;
 	double shock;
+	FAndDifF shockFoo;
 	int nbConnections;
+	double error;
 	Connection *connectList;
 } Neuron;
 
@@ -22,6 +25,7 @@ typedef struct
 {
 	int nbLayers;
 	int *layersSize;
+	int bias;
 	Neuron **neurons;
 } Network;
 
@@ -39,17 +43,21 @@ typedef struct
 	Exemple *exempleList;
 } ExempleSet;
 
-Network NInitializeCompleteNetwork(ExempleSet exSet);
+Network NInitializeCompleteNetwork(ExempleSet exSet, FAndDifF shockFoo);
 
 void NInitializeSumNetwork(Network nWork);
 
 double *NRun(Network nWork, double *input);
 
-double NComputeError(Network nWork, ExempleSet exSet, int needPrint);
+double NComputeSquarredError(Network nWork, ExempleSet exSet, int needPrint);
 
 void NPrintNetwork(Network nWork);
 
-Network NGetTrainedNetwork(ExempleSet exSet, double maxError);
+Network NGetDichotomicTrainingNetwork(ExempleSet exSet, double maxError);
 
 void NChangeLostNetwork(Network won, double wError, Network lost, double lError);
-#endif
+
+void NInitEdge(Network nWork, int startL, int startI, int endL, int endI, int k);
+
+
+Network NGetBackPropTrainingNetwork(ExempleSet exSet, double maxError, double momentum, double lRate);

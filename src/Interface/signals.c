@@ -226,7 +226,7 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			Image tmpImg = URotate(*data->img_rgb, 10);
+			Image tmpImg = URotate(*data->img_rgb, amount);
 
 			UFreeImage(*data->img_rgb);
 

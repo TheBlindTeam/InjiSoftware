@@ -13,8 +13,6 @@ Image ULoadImage(char *str)
 	{
 		tmp.width = 0;
 		tmp.height = 0;
-		tmp.bits_per_sample = 0;
-		tmp.rowstride = 0;
 		tmp.has_alpha = FALSE;
 		tmp.pixList = NULL;
 		printf("%d : %s\n", error->code, error->message);
@@ -23,9 +21,8 @@ Image ULoadImage(char *str)
 	{
 		tmp.width = gdk_pixbuf_get_width(pixbuf);
 		tmp.height = gdk_pixbuf_get_height(pixbuf);
-		tmp.bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
-		tmp.rowstride = gdk_pixbuf_get_rowstride(pixbuf);
 		tmp.has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
+		tmp.bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
 		tmp.pixList = malloc(sizeof(Pixel*) * tmp.width);
 		for (int i = 0 ; i < tmp.width; i ++)
 		{
@@ -147,7 +144,7 @@ GdkPixbuf *UGetPixbufFromImage(Image img)
 		img.has_alpha,
 		img.bits_per_sample,
 		img.width, img.height,
-		img.rowstride,
+		(img.has_alpha ? 4 : 3) * img.width,
 		NULL, NULL);
 }
 
@@ -169,5 +166,5 @@ void URotateImage(Image *img)
 	img->width = img->height;
 	img->height = c;
 
-	img->rowstride = img->rowstride / img->height * img->width;
+	//img->rowstride = img->rowstride / img->height * img->width;
 }

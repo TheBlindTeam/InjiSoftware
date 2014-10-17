@@ -14,7 +14,7 @@ typedef struct gdk_pixel
 // Adrien : Base structure of the image to be manipulated
 typedef struct gdk_image
 {
-	int width, height, bits_per_sample, rowstride;
+	int width, height, bits_per_sample;
 	gboolean has_alpha;
 	Pixel **pixList;
 } Image;

@@ -15,4 +15,4 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 	int matrixSize);
 
 // David : Rotate A Given Matrix
-Image** URotate(Pixel **matrix, double angle, int width, int height);
+Image URotate(Image ref, double angle);

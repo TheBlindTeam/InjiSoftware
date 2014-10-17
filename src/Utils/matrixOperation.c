@@ -101,8 +101,8 @@ Image URotate(Image ref, double angle)
 	Image image;
 	image.width = newWidth;
 	image.height = newHeight;
-	image.bit_per_sample = ref.bit_per_sample;
-	image.hasAlpha = ref.hasAlpha;
+	image.bits_per_sample = ref.bits_per_sample;
+	image.has_alpha = ref.has_alpha;
 
 	Pixel **pix;
 	pix = malloc(newWidth * sizeof(Pixel *));
@@ -112,13 +112,13 @@ Image URotate(Image ref, double angle)
 		pix[i] = malloc(newHeight * sizeof(Pixel));
 	}
 
-	for (int y = 0; y <newHeight; y++)
+	for (int y = 0; y < newHeight; y++)
 		for (int x = 0; x < newWidth; x++)
 		{	
-				pix[x][y].r = 255;
-				pix[x][y].g = 255;
-				pix[x][y].b = 255;
-				pix[x][y].a = 255;
+			pix[x][y].r = 255;
+			pix[x][y].g = 255;
+			pix[x][y].b = 255;
+			pix[x][y].a = 255;
 		}
 
 

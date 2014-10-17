@@ -119,7 +119,6 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 	int channel)
 {
 	guchar *tmp = malloc(sizeof(guchar) * width * height  * channel);
-
 	for (int y = 0; y < height; y++)
 		for (int x = 0; x < width; x++)
 		{
@@ -138,8 +137,8 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 GdkPixbuf *UGetPixbufFromImage(Image img)
 {
 	return gdk_pixbuf_new_from_data(
-		UGetPixelDataFromPixelsStruct(img.pixList, img.width,
-			img.height, img.has_alpha ? 4 : 3),
+		UGetPixelDataFromPixelsStruct(img.pixList,
+			img.width, img.height, img.has_alpha ? 4 : 3),
 		GDK_COLORSPACE_RGB,
 		img.has_alpha,
 		img.bits_per_sample,

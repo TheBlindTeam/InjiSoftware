@@ -10,8 +10,6 @@
 #include "../Utils/matrixOperation.h"
 #include "globalData.h"
 
-#define M_PI 3.14159265358979323846
-
 void connectSignals(SGlobalData* data);
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data);

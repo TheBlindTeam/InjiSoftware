@@ -226,10 +226,11 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			data->img_rgb->pixList = URotate(
-				data->img_rgb->pixList, 10,
-				data->img_rgb->width,
-				data->img_rgb->height);
+			Image tmpImg = URotate(*data->img_rgb, 10);
+
+			UFreeImage(*data->img_rgb);
+
+			data->img_rgb = &tmpImg;
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,

@@ -92,7 +92,7 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 
 Image URotate(Image ref, double angle)
 {
-	double radian = (angle * ) / 180;
+	double radian = (angle * M_PI) / 180;
 	int newWidth =
 		(int)(cos(radian) * ref.width + sin(radian) * ref.height + 1);
 	int newHeight =

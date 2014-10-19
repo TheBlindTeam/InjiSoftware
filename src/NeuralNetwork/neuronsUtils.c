@@ -1,274 +1,282 @@
 #include "neuronsUtils.h"
+#include "learning.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 
-const double RAND_UP = 10;
-const double RAND_DOWN = -10;
+const double RAND_UP = 5;
+const double RAND_DOWN = -5;
 
-Network NInitializeCompleteNetwork(ExempleSet exSet, FAndDifF shockFoo)
+Network *NInitializeSimpleMLP(int input, int output, int middle, int bias)
 {
-	Network r;
-	r.nbLayers = 3;
-	r.bias = 1;
-	r.layersSize = malloc(sizeof(int) * 3);
-	r.layersSize[0] = exSet.inputSize + 1;
-	r.layersSize[1] = UPow(2, exSet.inputSize) + 1;
-	r.layersSize[2] = exSet.targetSize + 1;
-	r.neurons = malloc(sizeof(Neuron*) * r.nbLayers);
-	for (int i = 0; i < r.nbLayers; i ++)
-		r.neurons[i] = malloc(sizeof(Neuron) * r.layersSize[i]);
-	for (int i = 0; i < r.nbLayers; i ++)
-		for (int j = 0; j < r.layersSize[i]; j ++)
-		{
-			if (i == 0 || j == r.layersSize[i] - 1)
-				r.neurons[i][j].shockFoo = LINEAR;
-			else
-				r.neurons[i][j].shockFoo = shockFoo;
-			if (i < r.nbLayers - 1)
+	Network *r = malloc(sizeof(struct Network));
+	r->nbLayers = 3;
+	r->bias = bias ? 1 : 0;
+	r->layersSize = malloc(sizeof(int) * 3);
+	r->layersSize[0] = input + r->bias;
+	r->layersSize[1] = middle + r->bias;
+	r->layersSize[2] = output;
+	r->neurons = malloc(sizeof(Neuron*) * r->nbLayers);
+	for (int i = 0; i < r->nbLayers; i ++)
+		r->neurons[i] = malloc(sizeof(Neuron) * r->layersSize[i]);
+	for (int i = 0; i < r->nbLayers; i ++)
+		for (int j = 0; j < r->layersSize[i]; j ++)
+			if (i < r->nbLayers - 1)
 			{
-				r.neurons[i][j].nbConnections = r.layersSize[i + 1] - 1;
-				r.neurons[i][j].connectList =
-					malloc(sizeof(Connection) * r.neurons[i][j].nbConnections);
-				for (int k = 0; k < r.neurons[i][j].nbConnections; k ++)
+				r->neurons[i][j].nbConnections = r->layersSize[i + 1]
+					- ((r->bias && i != r->nbLayers - 2) ? 1 : 0);
+				r->neurons[i][j].connectList =
+					malloc(sizeof(Connection) * r->neurons[i][j].nbConnections);
+				for (int k = 0; k < r->neurons[i][j].nbConnections; k ++)
 					NInitEdge(r, i, j, i + 1, k, k);
 			}
 			else
 			{
-				r.neurons[i][j].nbConnections = 0;
-				r.neurons[i][j].connectList = NULL;
+				r->neurons[i][j].nbConnections = 0;
+				r->neurons[i][j].connectList = NULL;
 			}
-		}
 	return r;
 }
 
-void NInitEdge(Network nWork, int startL, int startI, int endL, int endI, int k)
+Network *NInitializeCompleteBias(int input, int output)
 {
-	nWork.neurons[startL][startI].connectList[k].layer = endL;
-	nWork.neurons[startL][startI].connectList[k].index = endI;
-	nWork.neurons[startL][startI].connectList[k].prevChange = 0.0;
-	nWork.neurons[startL][startI].connectList[k].weight =
+	return NInitializeSimpleMLP(input, output, UPow(2, input), 1);
+}
+
+Network *NInitializeCompleteNBias(int input, int output)
+{ 
+	return NInitializeSimpleMLP(input, output, UPow(2, input), 0);
+}
+
+Network *NInitializeLinearBias(int input, int output)
+{
+	return NInitializeSimpleMLP(input, output, input, 1);
+}
+
+Network *NInitializeLinearNBias(int input, int output)
+{
+	return NInitializeSimpleMLP(input, output, input, 0);
+}
+
+void NInitThresHoldSimpleMLP(Network *nWork, FAndDifF input, FAndDifF output,
+	FAndDifF bias, FAndDifF others)
+{
+	for (int i = 0; i < nWork->nbLayers; i ++)
+		for (int j = 0; j < nWork->layersSize[i]; j ++)
+		{
+			nWork->neurons[i][j].shockFoo = others;
+			if (i == nWork->nbLayers - 1)
+				nWork->neurons[i][j].shockFoo = output;
+			else if (j == nWork->layersSize[i] - 1 && nWork->bias)
+				nWork->neurons[i][j].shockFoo = bias;
+			else if (i == 0)
+				nWork->neurons[i][j].shockFoo = input;
+		}
+}
+
+void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI,int k)
+{
+	nWork->neurons[startL][startI].connectList[k].layer = endL;
+	nWork->neurons[startL][startI].connectList[k].index = endI;
+	nWork->neurons[startL][startI].connectList[k].prevChange = 0.0;
+	nWork->neurons[startL][startI].connectList[k].weight =
 						(double)rand() / (double)RAND_MAX *
 						(RAND_UP - RAND_DOWN) + RAND_DOWN;
 }
 
-void NInitializeSumNetwork(Network nWork)
+void NInitializeSumNetwork(Network *nWork)
 {
-	for (int i = 0; i < nWork.nbLayers; i ++)
-		for (int j = 0; j < nWork.layersSize[i]; j ++)
-			if (j == nWork.layersSize[i] - 1 && nWork.bias)
-				nWork.neurons[i][j].sum = 1;
+	for (int i = 0; i < nWork->nbLayers; i ++)
+		for (int j = 0; j < nWork->layersSize[i]; j ++)
+			if(nWork->bias && nWork->layersSize[i]-1==j && nWork->nbLayers-1!=i)
+				nWork->neurons[i][j].sum = 1;
 			else
-				nWork.neurons[i][j].sum = 0;
+				nWork->neurons[i][j].sum = 0;
 }
 
-double *NRun(Network nWork, double *input)
+int NRun(Network *nWork, double *input, double **r)
 {
-	double *r;
 	int rSize;
 
 	NInitializeSumNetwork(nWork);
-	if (nWork.nbLayers <= 0)
-		return NULL;
-	for (int i = 0; i < nWork.nbLayers; i ++)
-		for (int j = 0; j < nWork.layersSize[i] ; j ++)
+	if (nWork->nbLayers <= 0)
+		return 0;
+	for (int i = 0; i < nWork->nbLayers; i ++)
+		for (int j = 0; j < nWork->layersSize[i] ; j ++)
 		{
-			Neuron *tmp = &nWork.neurons[i][j];
-			if (i == 0)
+			Neuron *tmp = &nWork->neurons[i][j];
+			if (i == 0 && (!nWork->bias || j < nWork->layersSize[i] - 1))
 				tmp->sum = input[j];
 			tmp->shock = tmp->shockFoo.f(tmp->sum);
 			for (int k = 0; k < tmp->nbConnections; k ++)
 			{
-				nWork.neurons
+				nWork->neurons
 					[tmp->connectList[k].layer]
 					[tmp->connectList[k].index].sum +=
-						tmp->connectList[k].weight * tmp->shock;
+					tmp->connectList[k].weight * tmp->shock;
 			}
 		}
-	rSize = nWork.layersSize[nWork.nbLayers - 1];
-	r = malloc(sizeof(double) * rSize);
+	rSize = nWork->layersSize[nWork->nbLayers - 1];
+	*r = malloc(sizeof(double) * rSize);
 	for (int i = 0; i < rSize; i ++)
-		r[i] = nWork.neurons[nWork.nbLayers - 1][i].shock;
-	return r;
+		(*r)[i] = nWork->neurons[nWork->nbLayers - 1][i].shock;
+	return 1;
 }
 
-double NComputeSquarredError(Network nWork, ExempleSet exSet, int needPrint)
+double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*))
 {
+	int count = 0;
 	double totalError = 0;
+	char tmp[10];
 	double error;
-	double *output;
-	for (int i = 0; i < exSet.size; i++)
+	double *output = NULL;
+	Exemple *ex = exSet.exemple;
+	while (ex)
 	{
-		output = NRun(nWork, exSet.exempleList[i].input);
-		error = USquarredError(output, exSet.exempleList[i].target,
-					exSet.targetSize);
+		NRun(nWork, ex->input, &output);
+		error = USquarredError(ex->target, output, exSet.targetSize);
 		totalError += error;
-		if(needPrint)
+		if(print)
 		{
-			printf("error : %f\n\t", error);
+			print("error: ");
+			snprintf(tmp, 10, "%f", error);
+			print(tmp);
+			print("\n");
+			print("input ->\n\t");
 			for (int j = 0; j < exSet.inputSize; j ++)
-				printf("input_%d : %f ", j, exSet.exempleList[i].input[j]);
-			printf("\n\t");
-			for (int j = 0; j < exSet.targetSize; j++)
-				printf("output_%d : %f ", j, output[j]);
-			printf("\n\t");
-			for (int j = 0; j < exSet.targetSize; j++)
-				printf("target_%d : %f ", j, exSet.exempleList[i].target[j]);
-			printf("\n");
+			{
+				snprintf(tmp, 10, "%f", ex->input[j]);
+				print(tmp);
+				print(" ");
+			}
+			print("\noutput ->\n\t");
+			for (int j = 0; j < exSet.targetSize; j ++)
+			{
+				snprintf(tmp, 10, "%f", output[j]);
+				print(tmp);
+				print(" ");
+			}
+			print("\ntarget ->\n\t");
+			for (int j = 0; j < exSet.targetSize; j ++)
+			{
+				snprintf(tmp, 10, "%f", ex->target[j]);
+				print(tmp);
+				print(" ");
+			}
+			print("\n");
 		}
+		ex = ex->next;
+		count++;
 	}
-	totalError /= exSet.size;
-	if (needPrint)
-		printf("totalError : %f\n", totalError);
+	totalError /= count;
+	if (print)
+	{
+		print("average error: ");
+		snprintf(tmp, 10, "%f", totalError);
+		print(tmp);
+		print("\n");
+	}
+	nWork->error = totalError;
 	return totalError;
 }
 
 void NPrintNetwork(Network nWork)
 {
-	printf("nbLayers : %d\n\n", nWork.nbLayers);
+	if (nWork.nbLayers <= 1)
+		printf("There is %d layer.\n", nWork.nbLayers);
+	else
+		printf("There are %d layers.\n", nWork.nbLayers);
 	for (int i = 0 ; i < nWork.nbLayers; i ++)
 	{
-		printf("Layer : %d Size : %d\n", i, nWork.layersSize[i]);
+		printf("\tLayer: %d Size:  %d\n", i, nWork.layersSize[i]);
 		for (int j = 0; j < nWork.layersSize[i]; j ++)
 		{
-			printf("number : %d size : %d error : %f sum : %f shock : %f\n",
-				j, nWork.neurons[i][j].nbConnections, nWork.neurons[i][j].error,
-				nWork.neurons[i][j].sum, nWork.neurons[i][j].shock);
+			printf("\t\tnumber: %d size: %d\n",
+				j, nWork.neurons[i][j].nbConnections);
 			for (int k = 0; k < nWork.neurons[i][j].nbConnections; k++)
-				printf("\tlayer : %d index : %d weight : %f prevChange : %f\n", 
+				printf("\t\t\tlayer: %d index: %d weight: %f\n",
 					nWork.neurons[i][j].connectList[k].layer,
 					nWork.neurons[i][j].connectList[k].index,
-					nWork.neurons[i][j].connectList[k].weight,
-					nWork.neurons[i][j].connectList[k].prevChange);
+					nWork.neurons[i][j].connectList[k].weight);
 		}
 		printf("\n");
 	}
 }
 
-int main()
+void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
+	double *target, int targetSize)
 {
-	ExempleSet exSet;
-	Network nWork;
+	Exemple *ex = malloc(sizeof(Exemple));
+	ex->input = malloc(sizeof(inputSize));
+	ex->target = malloc(sizeof(targetSize));
+	for (int i = 0; i < inputSize; i ++)
+		ex->input[i] = input[i];
+	for (int i = 0; i < targetSize; i ++)
+		ex->target[i] = target[i];
+	if (!exSet->exemple)
+		exSet->exemple = ex;
+	else
+	{
+		Exemple *tmp = exSet->exemple;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = ex;
+	}
+}
 
-	srand(time(NULL));
-	exSet.size = 4;
+ExempleSet NGetXorExempleSet()
+{
+	double input[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+	double target[4][1] = {{0}, {1}, {1}, {0}};
+	ExempleSet exSet;
 	exSet.inputSize = 2;
 	exSet.targetSize = 1;
-	exSet.exempleList = malloc(sizeof(Exemple) * 4);
-	for (int i = 0; i < exSet.size; i ++)
-	{
-		exSet.exempleList[i].input = malloc(sizeof(double) * exSet.inputSize);
-		exSet.exempleList[i].target = malloc(sizeof(double) * exSet.targetSize);
-	}
-	exSet.exempleList[0].input[0] = 0;
-	exSet.exempleList[0].input[1] = 0;
-	exSet.exempleList[0].target[0] = 0;
-	exSet.exempleList[1].input[0] = 0;
-	exSet.exempleList[1].input[1] = 1;
-	exSet.exempleList[1].target[0] = 1;
-	exSet.exempleList[2].input[0] = 1;
-	exSet.exempleList[2].input[1] = 0;
-	exSet.exempleList[2].target[0] = 1;
-	exSet.exempleList[3].input[0] = 1;
-	exSet.exempleList[3].input[1] = 1;
-	exSet.exempleList[3].target[0] = 0;
-
-	nWork = NGetDichotomicTrainingNetwork(exSet, 0.00001);
-	NPrintNetwork(nWork);
-	NComputeSquarredError(nWork, exSet, 1);
-	nWork = NGetBackPropTrainingNetwork(exSet, 0.00001, 0.005, 0.008);
-	NPrintNetwork(nWork);
-	NComputeSquarredError(nWork, exSet, 1);
-	return 0;
+	exSet.exemple = NULL;
+	for (int i = 0; i < 4; i ++)
+		addInExempleSet(&exSet, input[i], 2, target[i], 1);
+	return exSet;
 }
 
-Network NGetBackPropTrainingNetwork(ExempleSet exSet, double maxError, double momentum, double lRate)
+NetworkSet NInitNetworkSet(int *arg);
+
+NetworkSet NDefaultNetworkSet()
 {
-	Network nWork;
-	double *output;
-	nWork = NInitializeCompleteNetwork(exSet, SIGMOID);
-	int round = 0;
-	while (NComputeSquarredError(nWork, exSet, 0) > maxError)
-	{
-		for (int i = 0; i < exSet.size; i++)
-		{
-			output = NRun(nWork, exSet.exempleList[i].input);
-			for (int j = 0; j < exSet.targetSize; j ++)
-			{
-				Neuron *tmp = &nWork.neurons[nWork.nbLayers - 1][j];
-				tmp->error = tmp->shockFoo.df(output[j]) * (exSet.exempleList[i].target[j] - output[j]);
-			}
-			for (int j = nWork.nbLayers - 2; j > 0; j --)
-				for (int k = 0; k < nWork.layersSize[j]; k++)
-				{
-					Neuron *tmp = &nWork.neurons[j][k];
-					tmp->error = 0.0;
-					for (int l = 0; l < tmp->nbConnections; l ++)
-						tmp->error += tmp->connectList[l].weight * nWork.neurons
-																	[tmp->connectList[l].layer]
-																	[tmp->connectList[l].index].error;
-					tmp->error *= tmp->shockFoo.df(tmp->shock);
-				}
-			for (int j = 0; j < nWork.nbLayers; j ++)
-				for (int k = 0; k < nWork.layersSize[j]; k++)
-				{
-					Neuron *tmp = &nWork.neurons[j][k];
-					for (int l = 0; l < tmp->nbConnections; l++)
-					{
-						tmp->connectList[l].weight += momentum * tmp->connectList[l].prevChange;
-						tmp->connectList[l].prevChange =  lRate * nWork.neurons[tmp->connectList[l].layer]
-																				[tmp->connectList[l].index].error * tmp->shock;
-						tmp->connectList[l].weight += tmp->connectList[l].prevChange;
-					}
-				}
-		}
-		printf("%d  %f haaaaaaaaaaaaaaaaaa\n", round++, NComputeSquarredError(nWork, exSet, 0));
-	}
-	return nWork;
+	NetworkSet r;
+	r.learn = &NBackPropLearn;
+	r.nWork = NInitializeLinearBias(2, 1);
+	r.maxError = 0.000001;
+	r.lRate = 0.06;
+	r.momentum = 0.2;
+	r.exSet = NGetXorExempleSet();
+	NInitThresHoldSimpleMLP(r.nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
+	NComputeError(r.nWork, r.exSet, NULL);
+	return r;
 }
 
-Network NGetDichotomicTrainingNetwork(ExempleSet exSet, double maxError)
+int specialPrint(char *s)
 {
-	Network nWorks[2];
-	double errors[2];
+	printf("%s", s);
+	return 1;
+}
+
+int main()
+{
 	srand(time(NULL));
-	int round = 0;
-	for (int i = 0; i < 2; i ++)
+	for(;;)
 	{
-		nWorks[i] = NInitializeCompleteNetwork(exSet, SIGMOID);
-		errors[i] = NComputeSquarredError(nWorks[i], exSet, 0);
+		int count = 0;
+		NetworkSet nWorkSet = NDefaultNetworkSet();
+		while(nWorkSet.learn(&nWorkSet))
+		{
+			count ++;
+			if (count > 10000)
+				break;
+		}
+		NPrintNetwork(*nWorkSet.nWork);
+		NComputeError(nWorkSet.nWork, nWorkSet.exSet, specialPrint);
+		printf("iterations: %d\n", count);
+		getchar();
 	}
-	do
-	{
-		if (errors[0] > errors[1])
-			NChangeLostNetwork(nWorks[1], errors[1], nWorks[0], errors[0]);
-		else
-			NChangeLostNetwork(nWorks[0], errors[0], nWorks[1], errors[1]);
-	 	for (int i = 0; i < 2; i ++)
-			errors[i] = NComputeSquarredError(nWorks[i], exSet, 0);
-		round ++;
-	}while(errors[0] > maxError && errors[1] > maxError);
-	printf("round : %d\n", round);
-	if (errors[0] < maxError)
-		return nWorks[0];
-	return nWorks[1];
-}
-
-void NChangeLostNetwork(Network won, double wError, Network lost, double lError)
-{
-	double rdm;
-	for (int i = 0; i < lost.nbLayers; i ++)
-		for (int j = 0; j < lost.layersSize[i]; j ++)
-			for (int k = 0; k < lost.neurons[i][j].nbConnections; k ++)
-			{
-				rdm = (double)rand() / (double)RAND_MAX * 2.0;
-				if (rdm <= 1 - wError)
-					lost.neurons[i][j].connectList[k].weight = 
-						won.neurons[i][j].connectList[k].weight;
-				else if (rdm > 2 - (wError + lError))
-					lost.neurons[i][j].connectList[k].weight += 
-						(double)rand() / (double)RAND_MAX *
-						(1 - lError) * 2 - (1 - lError);
-			}
+	return 0;
 }
 

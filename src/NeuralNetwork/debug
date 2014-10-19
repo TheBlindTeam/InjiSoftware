@@ -1,0 +1,11 @@
+In file included from neuronsUtils.c:1:0:
+neuronsUtils.h:2:35: fatal error: neuralNetworkTemplate.h: No such file or directory
+ #include "neuralNetworkTemplate.h"
+                                   ^
+compilation terminated.
+In file included from learning.h:1:0,
+                 from learning.c:1:
+neuronsUtils.h:2:35: fatal error: neuralNetworkTemplate.h: No such file or directory
+ #include "neuralNetworkTemplate.h"
+                                   ^
+compilation terminated.

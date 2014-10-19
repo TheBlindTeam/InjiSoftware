@@ -1,5 +1,6 @@
+#ifndef _NEURONSUTILS
+#define _NEURONSUTILS
 #include "../Utils/math.h"
-
 extern const double RAND_UP;
 extern const double RAND_DOWN;
 
@@ -21,43 +22,71 @@ typedef struct
 	Connection *connectList;
 } Neuron;
 
-typedef struct
+typedef struct Network
 {
 	int nbLayers;
 	int *layersSize;
 	int bias;
+	double error;
 	Neuron **neurons;
+	struct Network *sibling;
 } Network;
 
-typedef struct
+typedef struct Exemple
 {
 	double *input;
 	double *target;
+	struct Exemple *next;
 } Exemple;
 
 typedef struct
 {
-	int size;
 	int inputSize;
 	int targetSize;
-	Exemple *exempleList;
+	Exemple *exemple;
 } ExempleSet;
 
-Network NInitializeCompleteNetwork(ExempleSet exSet, FAndDifF shockFoo);
+typedef struct NetworkSet
+{
+	int (*learn)(struct NetworkSet *nWorkSet);
+	Network *nWork;
+	double maxError;
+	double lRate;
+	double momentum;
+	ExempleSet exSet;
+} NetworkSet;
 
-void NInitializeSumNetwork(Network nWork);
+Network *NInitializeSimpleMLP(int input, int output, int middle, int bias);
 
-double *NRun(Network nWork, double *input);
+Network *NInitializeCompleteBias(int input, int output);
 
-double NComputeSquarredError(Network nWork, ExempleSet exSet, int needPrint);
+Network *NInitializeCompleteNBias(int input, int output);
+
+Network *NInitializeLinearBias(int input, int output);
+
+Network *NInitializeLinearNBias(int input, int output);
+
+void NInitThresHoldSimpleMLP(Network *nWork, FAndDifF input, FAndDifF output,
+	FAndDifF bias, FAndDifF others);
+
+void NInitializeSumNetwork(Network *nWork);
+
+int NRun(Network *nWork, double *input, double **r);
+
+double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*));
 
 void NPrintNetwork(Network nWork);
 
-Network NGetDichotomicTrainingNetwork(ExempleSet exSet, double maxError);
+void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI, int k);
 
-void NChangeLostNetwork(Network won, double wError, Network lost, double lError);
+void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
+	double *target, int targetSize);
 
-void NInitEdge(Network nWork, int startL, int startI, int endL, int endI, int k);
+ExempleSet NGetXorExempleSet();
 
+NetworkSet NInitNetworkSet(int *argv);
 
-Network NGetBackPropTrainingNetwork(ExempleSet exSet, double maxError, double momentum, double lRate);
+NetworkSet NDefaultNetworkSet();
+
+int specialPrint(char *s);
+#endif

@@ -180,10 +180,12 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 		cairo_fill(cr);
 
-		cairo_move_to(cr, data->neuronData->click_x,
-			data->neuronData->click_y);
-		cairo_line_to(cr, 10, 10);
-		//cairo_stroke(cr);
+		cairo_set_source_rgba(cr, 0.7, 0.5, 0.8, 1);
+		cairo_set_line_width(cr, 0.5);
+		cairo_move_to(cr, 0,0);/*data->neuronData->click_x,
+			data->neuronData->click_y);*/
+		cairo_line_to(cr, 100, 100);
+		cairo_stroke(cr);
 	}
 }
 

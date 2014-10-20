@@ -1,3 +1,5 @@
+#ifndef __IMAGE__
+#define __IMAGE__
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -53,3 +55,4 @@ GdkPixbuf *UGetPixbufFromImage(Image img);
 
 // Adrien: Rotate an image matrix left/right
 void URotateImage(Image *img);
+#endif

@@ -165,27 +165,50 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 
-		//Network network = NULL;
+		NetworkSet networkSet = data->networkSet;
 
-		if (data->neuronData->has_clicked)
-		{}
+		Network network =  *networkSet.nWork;
+
+		while(networkSet.learn(&networkSet))
+		{
+			
+		}
+
 
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
 
-		cairo_translate(cr, data->neuronData->click_x,
+
+		if (data->neuronData->has_clicked)
+		{}
+
+
+		for(int l = 0; l < network.nbLayers; l++)
+		{
+			for(int n = 0; n < network.layersSize[l]; n++)
+			{
+				printf("%d %d %d\n", l, n, network.layersSize[l]);
+				cairo_translate(cr, 20 + l * 50, 20 + n * 25);
+				cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
+				cairo_stroke(cr);
+				cairo_fill(cr);
+			}
+		}
+
+
+/*		cairo_translate(cr, data->neuronData->click_x,
 			data->neuronData->click_y);
 		cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
 		cairo_stroke(cr);
 
 		cairo_fill(cr);
-
-		cairo_set_source_rgba(cr, 0.7, 0.5, 0.8, 1);
+*/
+/*		cairo_set_source_rgba(cr, 0.7, 0.5, 0.8, 1);
 		cairo_set_line_width(cr, 0.5);
-		cairo_move_to(cr, 0,0);/*data->neuronData->click_x,
-			data->neuronData->click_y);*/
+		cairo_move_to(cr, 0,0);//data->neuronData->click_x,
+			//data->neuronData->click_y);
 		cairo_line_to(cr, 100, 100);
-		cairo_stroke(cr);
+		cairo_stroke(cr);*/
 	}
 }
 

@@ -258,7 +258,7 @@ int specialPrint(char *s)
 	return 1;
 }
 
-int main()
+/*int main()
 {
 	srand(time(NULL));
 	for(;;)
@@ -277,5 +277,5 @@ int main()
 		getchar();
 	}
 	return 0;
-}
+}*/
 

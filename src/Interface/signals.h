@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include "unistd.h"
 
-//#include "../NeuralNetwork/neuronsUtils.h"
+#include "../NeuralNetwork/neuronsUtils.h"
 #include "../Utils/matrixOperation.h"
 #include "globalData.h"
 

@@ -138,25 +138,24 @@ double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*))
 		totalError += error;
 		if(print)
 		{
-			print("error: ");
+			print("\terror: ");
 			snprintf(tmp, 10, "%f", error);
 			print(tmp);
-			print("\n");
-			print("input ->\n\t");
+			print("\tinput -> ");
 			for (int j = 0; j < exSet.inputSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", ex->input[j]);
 				print(tmp);
 				print(" ");
 			}
-			print("\noutput ->\n\t");
+			print("output -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", output[j]);
 				print(tmp);
 				print(" ");
 			}
-			print("\ntarget ->\n\t");
+			print("target -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", ex->target[j]);

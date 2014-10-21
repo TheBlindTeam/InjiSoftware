@@ -3,7 +3,6 @@
 
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
-#include "PreTreatment/split.h"
 #include "Interface/interface.h"
 
 int main(int argc, char *argv[])

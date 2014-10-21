@@ -206,8 +206,9 @@ void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
 	double *target, int targetSize)
 {
 	Exemple *ex = malloc(sizeof(Exemple));
-	ex->input = malloc(sizeof(inputSize));
-	ex->target = malloc(sizeof(targetSize));
+	ex->next = NULL;
+	ex->input = malloc(sizeof(double) * inputSize);
+	ex->target = malloc(sizeof(double) * targetSize);
 	for (int i = 0; i < inputSize; i ++)
 		ex->input[i] = input[i];
 	for (int i = 0; i < targetSize; i ++)

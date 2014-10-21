@@ -7,6 +7,72 @@
 J'ai considéré l'image comme ayant un repère d'axe x VERTICAL orienté vers 
 le bas et d'axe y HORIZONTAL orienté vers la gauche*/
 
+BoxList AddInList(BoxList list, Box b)
+{
+	BoxElementList *elt = malloc(sizeof(BoxElementList));
+	elt->value = b;
+	elt->next = NULL;
+	BoxList tmp = list;
+	if (!list)
+		return elt;
+	while (tmp->next)
+		tmp = tmp->next;
+	tmp->next = elt;
+	return list;
+}
+
+int LengthBoxList(BoxList list)
+{
+	int count = 0;
+	while (list)
+	{
+		list = list->next;
+		count ++;
+	}
+	return count;
+}
+
+Box *BoxListToArray(BoxList list, int *count)
+{
+	Box *r;
+	BoxList tmp = list
+	r = malloc(sizeof(count));
+	*count = LengthBoxList(list);
+	for (int i = 0; i < *count; i ++)
+	{
+		r[i] = tmp->elt;
+		tmp = tmp->next;
+	}
+	FreeBoxList(list);
+}
+
+void FreeBoxList(BoxList list)
+{
+	if (list->next)
+		FreeBoxList(list->next);
+	free(list);
+}
+
+void SetIncrementOrientation(Orientation orient,
+	int *primWidth, int *primHeight, int *secondWidth, int *secondHeight)
+{
+	int primWidth = orient == ORIENTATION.VERTICAL ? 1 : 0;
+	int primHeight = primWidth ? 0 : 1;
+	int secondWidth = primHeight;
+	int secondHeight = primWidth;
+}
+
+int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
+{
+	int x1, y1, x2, y2;
+	int *r;
+	int count;
+	SetIncrementOrientation(orient, &x1, &y1, &x2, &y2);
+	*size = b.width * x1 + b.height * y1;
+	r = malloc(sizeof(int) * b->width * x1 + b->height * y1);
+	
+}
+
 List Enqueue(List list, Box b, int * count)
 {
 	ElementList * elt = malloc(sizeof(ElementList));

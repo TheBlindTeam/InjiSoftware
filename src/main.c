@@ -3,7 +3,7 @@
 
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
-#include "Utils/split.h"
+#include "PreTreatment/split.h"
 #include "Interface/interface.h"
 
 int main(int argc, char *argv[])
@@ -14,6 +14,5 @@ int main(int argc, char *argv[])
 
 	Gtk_Initialize(argc, argv, &img);
 	gtk_main();
-	Test();
 	return 0;
 }

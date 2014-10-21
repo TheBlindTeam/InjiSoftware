@@ -188,7 +188,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			for(int n = 0; n < network.layersSize[l]; n++)
 			{
 				printf("%d %d %d\n", l, n, network.layersSize[l]);
-				cairo_translate(cr, 20 + l * 50, 20 + n * 25);
+				cairo_move_to(cr, 20 + l * 50, 20 + n * 25);
 				cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
 				cairo_stroke(cr);
 				cairo_fill(cr);

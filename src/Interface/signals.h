@@ -7,7 +7,7 @@
 #include "unistd.h"
 
 #include "../NeuralNetwork/neuronsUtils.h"
-#include "../Utils/matrixOperation.h"
+#include "../PreTreatment/matrixOperation.h"
 #include "globalData.h"
 
 void connectSignals(SGlobalData* data);

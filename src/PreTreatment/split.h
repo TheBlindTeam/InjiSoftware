@@ -1,4 +1,4 @@
-#include "image.h"
+#include "../Utils/image.h"
 typedef struct
 {
 	int x, y, width, height;

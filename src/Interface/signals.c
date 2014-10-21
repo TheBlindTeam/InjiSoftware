@@ -202,7 +202,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 						(network.layersSize[l] - 1) *
 						neuronSpaceY) / 2 +
 						2 * NN_NEURON_RADIUS * n +
-						n * neuronSpaceY;i
+						n * neuronSpaceY;
 			}
 		}
 

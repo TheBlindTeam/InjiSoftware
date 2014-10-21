@@ -259,6 +259,23 @@ int specialPrint(char *s)
 	return 1;
 }
 
+int getMaxNeuronsLayer(Network nWork)
+{
+	int max = 0;
+	for (int l = 0; l < nWork.nbLayers; l ++)
+		if (nWork.layersSize[l] > max)
+			max = nWork.layersSize[l];
+	return max;
+}
+
+int getTotalNeuronsAmount(Network nWork)
+{
+	int count = 0;
+	for (int l = 0; l < nWork.nbLayers; l ++)
+		count += nWork.layersSize[l];
+	return count;
+}
+
 /*int main()
 {
 	srand(time(NULL));

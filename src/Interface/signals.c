@@ -164,14 +164,16 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	if (widget && cr && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-
 		NetworkSet networkSet = data->networkSet;
-
 		Network network =  *networkSet.nWork;
 
+		int maxNeuron = getMaxNeuronsLayer(network);
+		int maxHeight = maxNeuron * NN_MAXHEIGHT_COEF;
+		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
+			* maxNeuron) / (maxNeuron - 1);
+		
 		while(networkSet.learn(&networkSet))
 		{
-			
 		}
 
 
@@ -182,20 +184,47 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (data->neuronData->has_clicked)
 		{}
 
+		NeuronPos** neuronPos = malloc(network.nbLayers *
+			sizeof(NeuronPos *));
 
-		for(int l = 0; l < network.nbLayers; l++)
+		for (int l = 0; l < network.nbLayers; l++)
 		{
-			for(int n = 0; n < network.layersSize[l]; n++)
+			neuronPos[l] = malloc(network.layersSize[l] *
+				sizeof(NeuronPos));
+			for (int n = 0; n < network.layersSize[l]; n++)
 			{
-				printf("%d %d %d\n", l, n, network.layersSize[l]);
-				cairo_move_to(cr, 20 + l * 50, 20 + n * 25);
-				cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
-				cairo_stroke(cr);
-				cairo_fill(cr);
+				neuronPos[l][n].x = NN_MARGIN_LEFT +
+					l * NN_SPACE_X;
+				neuronPos[l][n].y = NN_NEURON_RADIUS +
+					NN_MARGIN_TOP + (maxHeight -
+						network.layersSize[l] * 2
+						* NN_NEURON_RADIUS -
+						(network.layersSize[l] - 1) *
+						neuronSpaceY) / 2 +
+						2 * NN_NEURON_RADIUS * n +
+						n * neuronSpaceY;i
 			}
 		}
 
+		for (int l = 0; l < network.nbLayers; l++)
+			for (int n = 0; n < network.layersSize[l]; n++)
+			{
+				cairo_save(cr);
+				cairo_translate(cr, neuronPos[l][n].x,
+					neuronPos[l][n].y);
 
+				cairo_arc(cr, 0, 0, NN_NEURON_RADIUS,
+					0, 2 * M_PI);
+				cairo_fill(cr);
+				cairo_stroke(cr);
+				cairo_restore(cr);
+				cairo_move_to(cr, neuronPos[l][n].x,
+					neuronPos[l][n].y);
+				cairo_line_to(cr, 100, 100);
+				cairo_stroke(cr);
+			}
+
+		free(neuronPos);
 /*		cairo_translate(cr, data->neuronData->click_x,
 			data->neuronData->click_y);
 		cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);

@@ -20,9 +20,7 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 
 	data->img_rgb = img;
 	data->builder = gtk_builder_new();
-	printf("testa\n");
 	data->networkSet = NDefaultNetworkSet();
-	printf("testb\n");
 
 	gtk_builder_add_from_file(data->builder, uiFilename, &error);
 	g_free(uiFilename);

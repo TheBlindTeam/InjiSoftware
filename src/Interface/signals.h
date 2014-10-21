@@ -10,6 +10,20 @@
 #include "../PreTreatment/matrixOperation.h"
 #include "globalData.h"
 
+// Neuron Network Visualizer Data
+#define NN_MARGIN_LEFT 20
+#define NN_MARGIN_TOP 20
+#define NN_SPACE_X 50
+#define NN_SPACE_Y 50
+#define NN_NEURON_RADIUS 12
+
+#define NN_MAXHEIGHT_COEF 75
+
+typedef struct
+{
+	double x,y;
+} NeuronPos;
+
 void connectSignals(SGlobalData* data);
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data);

@@ -89,4 +89,7 @@ NetworkSet NInitNetworkSet(int *argv);
 NetworkSet NDefaultNetworkSet();
 
 int specialPrint(char *s);
+
+int getMaxNeuronsLayer(Network nWork);
+int getTotalNeuronsAmount(Network nWork);
 #endif

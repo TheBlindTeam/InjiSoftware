@@ -7,7 +7,6 @@ typedef struct
 	double (*df)(double);
 }FAndDifF;
 
-
 int UPow(int a, int b);
 
 double USquarredError(double *target, double *output, int size);

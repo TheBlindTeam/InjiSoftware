@@ -29,6 +29,11 @@ void connectSignals(SGlobalData *data)
 		"button-press-event",
 		G_CALLBACK(on_click_on_network), data);
 
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"RenderButton")),
+		"clicked",
+		G_CALLBACK(on_click_render_network), data);
 	/* Menu */
 
 	// File
@@ -164,6 +169,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	if (widget && cr && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
+
+		if (!data->neuronData->shouldDraw)
+			return;
+
 		NetworkSet networkSet = data->networkSet;
 		Network network =  *networkSet.nWork;
 
@@ -172,9 +181,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
 			* maxNeuron) / (maxNeuron - 1);
 		
-		while(networkSet.learn(&networkSet))
-		{
-		}
+		while(networkSet.learn(&networkSet) && 
+			!data->neuronData->shouldBlock);
 
 
 		cairo_set_line_width(cr, 1);
@@ -205,11 +213,31 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 						n * neuronSpaceY;
 			}
 		}
-
 		for (int l = 0; l < network.nbLayers; l++)
 			for (int n = 0; n < network.layersSize[l]; n++)
 			{
 				cairo_save(cr);
+				if (network.bias != 0 &&
+					n == network.layersSize[l] - 1 &&
+					l != network.nbLayers - 1)
+					cairo_set_source_rgba(cr, 0.7, 0.27,
+						0.0, 1);
+				else
+					cairo_set_source_rgba(cr, 1.0, 0.5,
+						0.2, 1);
+
+				for (int c = 0; c < network.neurons[l][n].
+						nbConnections; c++)
+				{
+					int xCo = network.neurons[l][n].
+						connectList[c].layer;
+					int yCo = network.neurons[l][n].
+						connectList[c].index;
+					cr_draw_arrow(cr, neuronPos[l][n].x,
+						neuronPos[l][n].y,
+						neuronPos[xCo][yCo].x,
+						neuronPos[xCo][yCo].y);
+				}
 				cairo_translate(cr, neuronPos[l][n].x,
 					neuronPos[l][n].y);
 
@@ -218,27 +246,41 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				cairo_fill(cr);
 				cairo_stroke(cr);
 				cairo_restore(cr);
-				cairo_move_to(cr, neuronPos[l][n].x,
-					neuronPos[l][n].y);
-				cairo_line_to(cr, 100, 100);
-				cairo_stroke(cr);
+
+				cairo_move_to(cr, NN_MARGIN_LEFT -
+						NN_NEURON_RADIUS,
+					NN_MARGIN_TOP+maxHeight+30);
+				cairo_show_text(cr, "Errors: None");
+
 			}
 
 		free(neuronPos);
-/*		cairo_translate(cr, data->neuronData->click_x,
-			data->neuronData->click_y);
-		cairo_arc(cr, 0, 0, 10, 0, 2 * M_PI);
-		cairo_stroke(cr);
-
-		cairo_fill(cr);
-*/
-/*		cairo_set_source_rgba(cr, 0.7, 0.5, 0.8, 1);
-		cairo_set_line_width(cr, 0.5);
-		cairo_move_to(cr, 0,0);//data->neuronData->click_x,
-			//data->neuronData->click_y);
-		cairo_line_to(cr, 100, 100);
-		cairo_stroke(cr);*/
 	}
+}
+
+void cr_draw_arrow(cairo_t *cr, double fromx, double fromy, double tox,
+	double toy)
+{
+	cairo_save(cr);
+	cairo_move_to(cr, fromx, fromy);
+	cairo_line_to(cr, tox, toy);
+	cairo_stroke(cr);
+	// Head arrowi
+	double slope = (toy-fromy)/(tox-fromx);
+	double org = fromy - slope * fromx;
+	tox -= (tox-fromx)/5;
+	toy = slope * tox + org;
+	double length = 10;
+	double angle = atan2(toy - fromy, tox - fromx) + M_PI;
+	cairo_move_to(cr, tox, toy);
+	cairo_line_to(cr, tox + length * cos(angle - 0.5),
+		toy + length * sin(angle - 0.5));
+	cairo_line_to(cr, tox + length * cos(angle + 0.5),
+		toy + length * sin(angle + 0.5));
+	cairo_line_to(cr, tox, toy);
+	cairo_fill(cr);
+	cairo_stroke(cr);
+	cairo_restore(cr);
 }
 
 void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
@@ -252,6 +294,23 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 		data->neuronData->click_x = event->x;
 		data->neuronData->click_y = event->y;
 		gtk_widget_queue_draw(widget);
+	}
+}
+
+void on_click_render_network(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		GtkWidget *cb = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "BlockStepsCheckbox"));
+
+		data->neuronData->shouldBlock = gtk_toggle_button_get_active(
+			GTK_TOGGLE_BUTTON(cb));
+		data->neuronData->shouldDraw = TRUE;
+		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkDrawArea")));
 	}
 }
 

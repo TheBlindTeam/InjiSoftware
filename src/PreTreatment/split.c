@@ -67,13 +67,14 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
 int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start)
 {
 	int x1, x2, y1, y2;
-	int max;
+	int min, max;
 	int r = 1;
 
 	GetIterPrim(orient, &x1, &x2);
 	GetIterSec(orient, &x2, &y2);
-	int max = b.width * x2 + b.height * y2;
-	for (int i = 0; i < max && r; i ++)
+	min = b.rectangle.x1 * x2 + b.rectangle.y1 * y2;
+	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
+	for (int i = min; i <= max && r; i ++)
 		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
 	return r;
 }
@@ -83,17 +84,23 @@ int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
 	int x1, y1;
 	int *r;
 	int count = 0;
-
+	int max;
+	int min;
 	GetIterPrim(orient, &x1, &x2);
-	*size = b.width * x1 + b.height * y1;
-	r = malloc(sizeof(int) * b->width * x1 + b->height * y1);
-	for (int i = 0; i < *size; i ++)
+	min = b.rectangle.x1 * x2 + b.rectangle.y1 * y2;
+	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
+	*size = max - min + 1;
+	r = malloc(sizeof(int) * *size);
+	for (int i = min; i <= max; i ++)
 	{
 		r[i] = 0;
 		if (isBlank(img, b, c, orient, i))
 			count ++;
 		else
-			r[count]++;
+		{
+			r[count - 1]++;
+			count = 0;
+		}
 	}
 	return r;
 }
@@ -133,7 +140,7 @@ int SpacesVariance(int *spaces, int nbSpaces, int add, double *r)
 		return 0;
 	for (int i = 0; i < nbSpaces; i ++)
 	{
-		sum += spaces[i] * pow((expectedValue - i + 1 + add), 2);
+		sum += spaces[i] * pow((expectedValue - (i + 1 + add), 2));
 		count += spaces[i];
 	}
 	if (count)
@@ -144,44 +151,145 @@ int SpacesVariance(int *spaces, int nbSpaces, int add, double *r)
 	return 0;
 }
 
-int ClassifySpace(int *spaces, int nbSpaces, *r)
+int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min)
 {
-	double min;
 	double tmpA = 0;
 	double tmpB = 0;
  	if(!SpacesVariance(spaces, nbSpaces, 0, tmpB));
 		return 0;
-	min = pow((tmpB - tmpA), 2);
+	*min = pow(tmpB, 2);
 	*r = 0;
 	for (int i = 1; i < nbSpaces - 1; i ++)
 		if (spaces[i] > 0)
 			if (SpacesVariance(spaces, i, i, &tmpA) &&
 				SpacesVariance(&spaces[i + 1], nbSpaces - i, i + 1, &tmpB) &&
-				pow(tmpB - tmpA, 2) < min)
+				pow(tmpB, 2) + pow(tmpA, 2) < *min)
 			{
-				min = pow(tmpB - tmpA, 2);
-				*r = i;
+				*min = pow(tmpB,2) + pow(tmpA, 2);
+				*r = i + 1;
 			}
 	return 1;
 }
 
-CutMargin(ImageGS img, Box *b)
+CutMargin(ImageGS img, Box *b, guchar c)
 {
+	int var;
+
+	int min = b->rectangle.x1;
+	int max = b->rectangle.x2;
+	for (int i = min; i <= max; i ++)
+		if(!isBlank(img, b, c, ORIENTATION.VERTICAL, i))
+		{
+			b->rectangle.x1 = i;
+			break;
+		}
+	for (int i = b->rectangle.width; i >= 0; i --)
+		if(!isBlank(img, b, c, ORIENTATION.VERTICAL, i + var))
+		{
+			b->rectangle.width = i;
+			break;
+		}
+	var = b->rectangle.y;
+	for (int i = 0; i < b->rectangle.height; i ++)
+		if(!isBlank(img, b, c, ORIENTATION.HORIZONTAL, i + var))
+		{
+			b->rectangle.y += i;
+			var += i;
+			b->rectangle.height -= i;
+			break;
+		}
+	for (int i = b->rectangle.height; i >= 0; i --)
+		if(!isBlank(img, b, c, ORIENTATION.VERTICAL, i + var))
+		{
+			b->rectangle.height = i;
+			break;
+		}
 }
 
-void Split(ImageGS img, Box *b, Orientation orient, int minBlank)
+void Split(ImageGS img, Box *b, Orientation orient, minBlank)
 {
-	int x1, x2, y1, y2;
-	int max;
-	int r = 1;
 
-	GetIterPrim(orient, &x1, &x2);
-	GetIterSec(orient, &x2, &y2);
-	int max = b.width * x2 + b.height * y2;
-	for (int i = 0; i < max && r; i ++)
-		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
+	int x1, y1;
+	int *r;
+	int count = 0;
+	int prev;
+	BoxList list = NULL;
+
+	GetIterPrim(orient, &x1, &y1);
+	*size = b.rectangle.width * x1 + b.rectangle.height * y1;
+	r = malloc(sizeof(int) * *size);
+	var = b.rectangle.x * x1 + b.rectangle.y * y1;
+	prev = 0;
+	for (int i = 0; i < *size; i ++)
+	{
+		r[i] = 0;
+		if (isBlank(img, b, c, orient, i + var))
+			count ++;
+		else
+		{
+			count = 0;
+			if (count >= minBlank)
+			{
+				box tmp;
+				tmp.rectangle.x = x1 * prev + b->rectangle.x;
+				tmp.rectangle.y = y1 * prev + b->rectangle.y;
+				tmp.rectangle.width = x1 * (i - prev) + x2 * b->rectangle.width;
+				tmp.rectangle.height = y1 * (i - prev) + y2 * b->rectangle.height;
+				
+			list = AddInList(list, )
+		}
+	}
+	return r;
 }
 
+Box GetBoxFromSplit(Image img)
+{
+	Box r;
+	r.rectangle.x = 0;
+	r.rectangle.y;
+	r.rectangle.width = img
+}
+
+Box *GetBreadthBoxArray(Box b, int *count)
+{
+	BoxList list;
+	list = AddInList(list, b);
+	GetBreadthBoxArrayAux(&list);
+	return BoxListToArray(list, count);
+}
+
+void GetBreadthBoxArrayAux(BoxList *list)
+{
+	for (int i = 0; i < list->value.nbSubBoxes; i ++)
+		if (list->value.subBoxes[i].nbSubBoxes)
+			list = AddInList(list, list->value.subBoxes[i]);
+	if (list->next)
+		GetBreadthBoxArray(list->next);
+}
+
+void DrawNotInSubBoxes(Image img, Box b)
+{
+	int **rect;
+	rect = malloc(sizeof(int) * b.width);
+	for (int i = 0; i < b.rectangle.width; i ++)
+	{
+		rect = malloc(sizeof(int) * b.height);
+		for (int j = 0; j < b.rectangle.height; j ++);
+			rect[i][j] = 1;
+	}
+	for (int i = 0; i < size; i ++)
+	{
+		int varX = b.subBoxes[i].rectangle x - b.rectangle.x;
+		int varY = b.subBoxes[i].rectangle.y - b.rectangle.y;
+		for (int j = 0; k < varX + b.subBoxes[i].width; j++)
+			for (int k = 0; k < varY + b.subBoxes[i].height; k++)
+				rect[j][k] = 0;
+	}
+	for (int i = 0; i < b.rectangle.width; i ++)
+		for (int j = 0; j < b.rectangle.height; j ++)
+			if (rect[i][j])
+				img.pixList[i + b.rectangle.x][j + b.rectangle.y] = RED;
+}
 
 Box SplitChars(ImageGS img, Box b, guchar c)
 {

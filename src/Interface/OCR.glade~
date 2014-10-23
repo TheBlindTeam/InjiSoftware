@@ -862,9 +862,7 @@
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
             <property name="resize_mode">immediate</property>
-            <property name="hscrollbar_policy">always</property>
-            <property name="vscrollbar_policy">never</property>
-            <property name="shadow_type">in</property>
+            <property name="shadow_type">etched-in</property>
             <child>
               <object class="GtkViewport" id="viewport2">
                 <property name="visible">True</property>

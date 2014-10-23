@@ -192,6 +192,22 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		NetworkSet networkSet = data->networkSet;
 		Network network =  *networkSet.nWork;
 
+		// Parameters
+/*		gint p_archi = gtk_combo_box_get_active(
+			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
+				"NNArchitecture")));
+		gint p_typelearn = gtk_combo_box_get_active(
+			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
+				"NNTypeLearn")));
+		gint p_thrin = gtk_combo_box_get_active(
+			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
+				"NNThrIn")));
+		gint p_throut = gtk_combo_box_get_active(
+			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
+				"NNThrOut")));
+		gint p_thrhid = gtk_combo_box_get_active(
+			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
+				"NNThrHidLay")));*/
 		int maxNeuron = getMaxNeuronsLayer(network);
 		int maxHeight = maxNeuron * NN_MAXHEIGHT_COEF;
 		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
@@ -203,10 +219,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
-
-
-		if (data->neuronData->has_clicked)
-		{}
 
 		NeuronPos** neuronPos = malloc(network.nbLayers *
 			sizeof(NeuronPos *));
@@ -229,18 +241,55 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 						n * neuronSpaceY;
 			}
 		}
+
+		// Click detection
+		int selectedNeuronx = -1;
+		int selectedNeurony = -1;
+		if (data->neuronData->has_clicked)
+		{
+			int closestLayer, closestRow;
+			double dist = 100;
+			for(int l = 0; l < network.nbLayers; l++)
+				for(int n = 0; n < network.layersSize[l]; n++)
+				{
+					double tmpDist = sqrt(
+						pow(neuronPos[l][n].x -
+						data->neuronData->click_x,2) +
+						pow(neuronPos[l][n].y -
+						data->neuronData->click_y,2));
+					if (tmpDist < dist)
+					{
+						dist = tmpDist;
+						closestLayer = l;
+						closestRow = n;
+					}
+				}
+			if (dist < 25 && closestLayer < network.nbLayers &&
+				closestRow < maxNeuron)
+			{
+				selectedNeuronx = closestLayer;
+				selectedNeurony = closestRow;
+			}
+		}
+
 		for (int l = 0; l < network.nbLayers; l++)
 			for (int n = 0; n < network.layersSize[l]; n++)
 			{
+				int isSelect = (selectedNeuronx == l &&
+					selectedNeurony == n);
 				cairo_save(cr);
 				if (network.bias != 0 &&
 					n == network.layersSize[l] - 1 &&
-					l != network.nbLayers - 1)
-					cairo_set_source_rgba(cr, 0.7, 0.27,
-						0.0, 1);
-				else
-					cairo_set_source_rgba(cr, 1.0, 0.5,
-						0.2, 1);
+					l != network.nbLayers - 1 &&
+					!isSelect)
+					cairo_set_source_rgba(cr, 0.7,
+						0.27, 0.0, 1);
+				else if (!isSelect)
+					cairo_set_source_rgba(cr, 1.0,
+						0.5, 0.2, 1);
+				else if (isSelect)
+					cairo_set_source_rgba(cr, 0.0,
+						0.5, 0.0, 1);
 
 				for (int c = 0; c < network.neurons[l][n].
 						nbConnections; c++)
@@ -350,10 +399,15 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
+		gint wx, wy;
+		GtkWidget *widget = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkDrawArea"));
+		gtk_widget_translate_coordinates(widget,
+			gtk_widget_get_toplevel(widget), 0, 0, &wx, &wy);
 
 		data->neuronData->has_clicked = TRUE;
-		data->neuronData->click_x = event->x;
-		data->neuronData->click_y = event->y;
+		data->neuronData->click_x = event->x - wx;
+		data->neuronData->click_y = event->y - wy;
 		gtk_widget_queue_draw(widget);
 	}
 }

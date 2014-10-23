@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 
 CFL=-Wall -Werror -Wextra -std=c99 -O2 -rdynamic `pkg-config gtk+-3.0 --cflags`
 

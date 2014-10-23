@@ -782,7 +782,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBox" id="NNTypeArchi">
+              <object class="GtkComboBox" id="NNTypeLearn">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="model">liststore1</property>

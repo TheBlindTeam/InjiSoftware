@@ -84,7 +84,7 @@ ImageGS URgbToGrayscale(Image rgbImage)
 			result.intensity[x][y] = (
 				(0.3 * rgbImage.pixList[x][y].r) +
 				(0.59 * rgbImage.pixList[x][y].g) +
-				(0.11 * rgbImage.pixList[x][y].b));
+				(0.11 * rgbImage.pixList[x][y].b)) + 0.5;
 		}
 	}
 	

@@ -1,13 +1,13 @@
 #include "../Utils/image.h"
 typedef struct
 {
-	int x, y, width, height;
+	int x1, y1, x2, y2;
 } Rectangle;
 
 typedef struct Box
 {
-	int nbSubBoxes;
 	Rectangle rectangle;
+	int nbSubBoxes;
 	struct Box * subBoxes;
 } Box;
 
@@ -25,33 +25,31 @@ typedef enum
 	VERTICAL;
 } Orientation;
 
+
+
 BoxList AddInList(BoxList list, Box b);
 
 int LengthBoxList(BoxList list);
 
-Box *BoxListToArray(BoxList list);
+Box *BoxListToArray(BoxList list, int *count);
 
 void FreeBoxList(BoxList list);
 
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
-void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
+void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
-int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int x, int y);
+int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start);
 
 int *GetSpaceArray(ImageGS, Box b, guchar c, Orientation orient, int *size);
 
-void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB)
-{
-	if (sizeB > sizeA)
-		ArraySum()
-}
+void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
 int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
-int ClassifySpace(int *spaces, int nbSpaces, *r);
+int ClassifySpace(int *spaces, int nbSpaces, int *r);
 
 void Split(ImageGS img, Box *b, Orientation orient, int minBlank);
 

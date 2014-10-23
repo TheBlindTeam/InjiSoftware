@@ -30,7 +30,6 @@ typedef struct
 	guchar** intensity;
 } ImageGS;
 
-
 // Adrien: Creates an Image structure from the path str
 Image ULoadImage(char* str);
 
@@ -55,4 +54,9 @@ GdkPixbuf *UGetPixbufFromImage(Image img);
 
 // Adrien: Rotate an image matrix left/right
 void URotateImage(Image *img);
+
+extern const Pixel RED;
+extern const Pixel GREEN;
+extern const Pixel BLUE;
+
 #endif

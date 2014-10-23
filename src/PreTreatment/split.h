@@ -33,20 +33,29 @@ Box *BoxListToArray(BoxList list);
 
 void FreeBoxList(BoxList list);
 
-int isBlank(ImageGS img, Box b, guchar c, Orientation orient, )
+void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
-void SetIncrementOrientation(Orientation orient,
-	int *primWidth, int *primHeight, int *secondWidth, int *secondHeight)
+void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
+
+int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int x, int y);
 
 int *GetSpaceArray(ImageGS, Box b, guchar c, Orientation orient, int *size);
 
-int *ClassifySpace(int *spaces, int nbSpaces, int nbGroup);
+void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB)
+{
+	if (sizeB > sizeA)
+		ArraySum()
+}
 
-double SpacesVariance(int *spaces, int nbSpaces);
+int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
-double SpacesExpectedValue(int *spaces, int nbSpaces);
+int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
-Box Split(ImageGs img, Box)
+int ClassifySpace(int *spaces, int nbSpaces, *r);
+
+void Split(ImageGS img, Box *b, Orientation orient, int minBlank);
+
+CutMargin(ImageGS img, Box *b);
 
 Box SplitChars(ImageGS img, Box b, guchar c);//fait
 

@@ -567,7 +567,7 @@
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Neuron Network Visualizer</property>
-    <property name="window_position">mouse</property>
+    <property name="window_position">center</property>
     <property name="default_height">800</property>
     <property name="type_hint">utility</property>
     <child>

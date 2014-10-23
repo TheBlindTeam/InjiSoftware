@@ -181,11 +181,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	if (widget && cr && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		if (data->neuronData->shouldReset)
-		{
-			data->neuronData->shouldReset = FALSE;
-			return;
-		}
 		if (!data->neuronData->shouldDraw)
 			return;
 
@@ -323,20 +318,33 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		{
 			cr_draw_arrow(cr, neuronPos[lastLayer][i].x,
 				neuronPos[lastLayer][i].y,
-				neuronPos[lastLayer][i].x + 30,
+				neuronPos[lastLayer][i].x + 50,
 				neuronPos[lastLayer][i].y, 1);
 		}
-		cairo_move_to(cr, NN_MARGIN_LEFT -
-				NN_NEURON_RADIUS,
-			NN_MARGIN_TOP+maxHeight + 30);
 
 		if (data->neuronData->shouldErr)
 		{
+			cairo_move_to(cr, NN_MARGIN_LEFT -
+					NN_NEURON_RADIUS,
+				NN_MARGIN_TOP+maxHeight + 30);
 			data->neuronData->shouldErr = FALSE;
 			char **str = malloc(sizeof(char*));
 			NComputeError(&network, networkSet.exSet, 1, str);
 			cairo_show_text(cr, *str);
 			printf("%s\n", *str);
+		}
+		if (selectedNeuronx != -1 && selectedNeurony != -1)
+		{
+			char str1[10], str2[10], str3[50];
+			sprintf(str1, "Layer: %d", selectedNeuronx);
+			sprintf(str2, "Row: %d", selectedNeurony);
+			sprintf(str3, "Weight:");
+			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 10);
+			cairo_show_text(cr, str1);
+			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 20);
+			cairo_show_text(cr, str2);
+			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 30);
+			cairo_show_text(cr, str3);
 		}
 		free(neuronPos);
 	}
@@ -359,7 +367,7 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		data->neuronData->shouldReset = TRUE;
+		data->neuronData->shouldDraw = FALSE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
 	}

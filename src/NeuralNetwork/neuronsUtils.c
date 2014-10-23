@@ -124,13 +124,14 @@ int NRun(Network *nWork, double *input, double **r)
 	return 1;
 }
 
-double NComputeError(Network *nWork, ExempleSet exSet, int print, char **str)
+double NComputeError(Network *nWork, ExempleSet exSet, int print, char **r)
 {
 	int count = 0;
 	double totalError = 0;
-	char tmp[10];
+	//char tmp[10];
 	double error;
 	double *output = NULL;
+	char *str = "error";
 	Exemple *ex = exSet.exemple;
 	while (ex)
 	{
@@ -139,31 +140,32 @@ double NComputeError(Network *nWork, ExempleSet exSet, int print, char **str)
 		totalError += error;
 		if(print)
 		{
-			*str = "\terror: ";
-			snprintf(tmp, 10, "%f", error);
-			*str = strcat(*str, tmp);
-			*str = strcat(*str, "\tinput -> ");
+			/*str = "\terror: ";
+			snprintf(tmp, 8, "%lf", error);
+			str = strcatAlloc(str, tmp);
+			str = strcatAlloc(str, "\tinput -> ");
 			for (int j = 0; j < exSet.inputSize; j ++)
 			{
-				snprintf(tmp, 10, "%f", ex->input[j]);
-				*str = strcat(*str, tmp);
-				*str = strcat(*str, " ");
+				snprintf(tmp, 8, "%lf", ex->input[j]);
+				printf("%s\n", tmp);
+				str = strcatAlloc(str, tmp);
+				str = strcatAlloc(str, " ");
 			}
-			*str = strcat(*str, "output -> ");
+			str = strcatAlloc(str, "output -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
-				snprintf(tmp, 10, "%f", output[j]);
-				*str = strcat(*str, tmp);
-				*str = strcat(*str, " ");
+				snprintf(tmp, 8, "%lf", output[j]);
+				str = strcatAlloc(str, tmp);
+				str = strcatAlloc(str, " ");
 			}
-			*str = strcat(*str, "target -> ");
+			str = strcatAlloc(str, "target -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
-				snprintf(tmp, 10, "%f", ex->target[j]);
-				*str = strcat(*str, tmp);
-				*str = strcat(*str, " ");
+				snprintf(tmp, 8, "%lf", ex->target[j]);
+				str = strcatAlloc(str, tmp);
+				str = strcatAlloc(str, " ");
 			}
-			*str = strcat(*str, "\n");
+			str = strcatAlloc(str, "\n");*/
 		}
 		ex = ex->next;
 		count++;
@@ -171,15 +173,28 @@ double NComputeError(Network *nWork, ExempleSet exSet, int print, char **str)
 	totalError /= count;
 	if (print)
 	{
-		*str = strcat(*str, "average error: ");
+		/*str = strcatAlloc(str, "average error: ");
 		snprintf(tmp, 10, "%f", totalError);
-		*str = strcat(*str, tmp);
-		*str = strcat(*str, "\n");
+		str = strcatAlloc(str, tmp);
+		str = strcatAlloc(str, "\n");*/
+		*r = str;
 	}
 	nWork->error = totalError;
 	return totalError;
 }
 
+char* strcatAlloc(char *str, char *str2)
+{
+	printf("%zu %zu\n", strlen(str), strlen(str2));
+	char *tmp = malloc(sizeof(char) * (strlen(str) + strlen(str2)));
+	printf("b\n");
+	for (size_t i = 0; i < strlen(str); i++)
+		tmp[i] = str[i];
+	for (size_t i = 0; i < strlen(str2); i++)
+		tmp[i + strlen(str)] = str2[i];
+	printf("c\n");
+	return tmp;
+}
 void NPrintNetwork(Network nWork)
 {
 	if (nWork.nbLayers <= 1)

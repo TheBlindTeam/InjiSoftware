@@ -92,4 +92,5 @@ int specialPrint(char *s);
 
 int getMaxNeuronsLayer(Network nWork);
 int getTotalNeuronsAmount(Network nWork);
+char* strcatAlloc(char*, char*);
 #endif

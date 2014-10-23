@@ -73,7 +73,7 @@ void NInitializeSumNetwork(Network *nWork);
 
 int NRun(Network *nWork, double *input, double **r);
 
-double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*));
+double NComputeError(Network *nWork, ExempleSet exSet, int print, char** str);
 
 void NPrintNetwork(Network nWork);
 

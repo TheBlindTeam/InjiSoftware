@@ -10,8 +10,8 @@ void NInitBinary(NetworkSet *nWorkSet, Network* (*NInit)(int, int),
 	Network *N2 = NInit(input, output);
 	NChangeThreshold(N1);
 	NChangeThreshold(N2);
-	NComputeError(N1, nWorkSet->exSet, NULL);
-	NComputeError(N2, nWorkSet->exSet, NULL);
+	NComputeError(N1, nWorkSet->exSet, 0, NULL);
+	NComputeError(N2, nWorkSet->exSet, 0, NULL);
 	N1->sibling = N2;
 	N2->sibling = N1;
 	if (N1->error < N2->error)
@@ -29,8 +29,8 @@ int NDichotomicLearn(NetworkSet *nWorkSet)
 	if (wError < nWorkSet->maxError)
 		return 0;
 	NChangeLostNetwork(*nWon, wError, *nLost, lError);
-	wError = NComputeError(nWon, nWorkSet->exSet, NULL);
-	lError = NComputeError(nLost, nWorkSet->exSet, NULL);
+	wError = NComputeError(nWon, nWorkSet->exSet, 0, NULL);
+	lError = NComputeError(nLost, nWorkSet->exSet, 0, NULL);
 	if (lError < wError)
 		nWorkSet->nWork = nLost;
 	return 1;
@@ -103,6 +103,6 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 			}
 		ex = ex->next;
 	}
-	NComputeError(nWork, nWorkSet->exSet, NULL);
+	NComputeError(nWork, nWorkSet->exSet, 0, NULL);
 	return 1;
 }

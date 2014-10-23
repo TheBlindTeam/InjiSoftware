@@ -3,6 +3,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 const double RAND_UP = 5;
 const double RAND_DOWN = -5;
@@ -123,7 +124,7 @@ int NRun(Network *nWork, double *input, double **r)
 	return 1;
 }
 
-double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*))
+double NComputeError(Network *nWork, ExempleSet exSet, int print, char **str)
 {
 	int count = 0;
 	double totalError = 0;
@@ -138,31 +139,31 @@ double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*))
 		totalError += error;
 		if(print)
 		{
-			print("\terror: ");
+			*str = "\terror: ";
 			snprintf(tmp, 10, "%f", error);
-			print(tmp);
-			print("\tinput -> ");
+			*str = strcat(*str, tmp);
+			*str = strcat(*str, "\tinput -> ");
 			for (int j = 0; j < exSet.inputSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", ex->input[j]);
-				print(tmp);
-				print(" ");
+				*str = strcat(*str, tmp);
+				*str = strcat(*str, " ");
 			}
-			print("output -> ");
+			*str = strcat(*str, "output -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", output[j]);
-				print(tmp);
-				print(" ");
+				*str = strcat(*str, tmp);
+				*str = strcat(*str, " ");
 			}
-			print("target -> ");
+			*str = strcat(*str, "target -> ");
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 10, "%f", ex->target[j]);
-				print(tmp);
-				print(" ");
+				*str = strcat(*str, tmp);
+				*str = strcat(*str, " ");
 			}
-			print("\n");
+			*str = strcat(*str, "\n");
 		}
 		ex = ex->next;
 		count++;
@@ -170,10 +171,10 @@ double NComputeError(Network *nWork, ExempleSet exSet, int (*print)(char*))
 	totalError /= count;
 	if (print)
 	{
-		print("average error: ");
+		*str = strcat(*str, "average error: ");
 		snprintf(tmp, 10, "%f", totalError);
-		print(tmp);
-		print("\n");
+		*str = strcat(*str, tmp);
+		*str = strcat(*str, "\n");
 	}
 	nWork->error = totalError;
 	return totalError;
@@ -249,7 +250,7 @@ NetworkSet NDefaultNetworkSet()
 	r.momentum = 0.2;
 	r.exSet = NGetXorExempleSet();
 	NInitThresHoldSimpleMLP(r.nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
-	NComputeError(r.nWork, r.exSet, NULL);
+	NComputeError(r.nWork, r.exSet, 0, NULL);
 	return r;
 }
 

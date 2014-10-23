@@ -13,9 +13,9 @@
 #include "globalData.h"
 
 // Neuron Network Visualizer Data
-#define NN_MARGIN_LEFT 20
+#define NN_MARGIN_LEFT 50
 #define NN_MARGIN_TOP 20
-#define NN_SPACE_X 50
+#define NN_SPACE_X 80
 #define NN_SPACE_Y 50
 #define NN_NEURON_RADIUS 12
 #define NN_ARROWS_COEF 0.1
@@ -47,4 +47,4 @@ void on_click_render_network(GtkWidget *widget, gpointer user_data);
 
 void on_detect_chars(GtkWidget *widget, gpointer user_data);
 
-void cr_draw_arrow(cairo_t*, double, double, double, double);
+void cr_draw_arrow(cairo_t*, double, double, double, double, int);

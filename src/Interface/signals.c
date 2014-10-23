@@ -236,7 +236,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 					cr_draw_arrow(cr, neuronPos[l][n].x,
 						neuronPos[l][n].y,
 						neuronPos[xCo][yCo].x,
-						neuronPos[xCo][yCo].y);
+						neuronPos[xCo][yCo].y, 0);
 				}
 				cairo_translate(cr, neuronPos[l][n].x,
 					neuronPos[l][n].y);
@@ -246,30 +246,46 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				cairo_fill(cr);
 				cairo_stroke(cr);
 				cairo_restore(cr);
-
-				cairo_move_to(cr, NN_MARGIN_LEFT -
-						NN_NEURON_RADIUS,
-					NN_MARGIN_TOP+maxHeight+30);
-				cairo_show_text(cr, "Errors: None");
-
 			}
+
+		for (int i = 0; i < network.layersSize[0] - 1; i++)
+		{
+			cr_draw_arrow(cr, 0, neuronPos[0][i].y,
+				neuronPos[0][i].x, neuronPos[0][i].y, 0);
+		}
+		int lastLayer = network.nbLayers - 1;
+		for (int i = 0; i < network.layersSize[lastLayer]; i++)
+		{
+			cr_draw_arrow(cr, neuronPos[lastLayer][i].x,
+				neuronPos[lastLayer][i].y,
+				neuronPos[lastLayer][i].x + 30,
+				neuronPos[lastLayer][i].y, 1);
+		}
+		cairo_move_to(cr, NN_MARGIN_LEFT -
+				NN_NEURON_RADIUS,
+			NN_MARGIN_TOP+maxHeight+30);
+		cairo_show_text(cr, "Errors: None");
 
 		free(neuronPos);
 	}
 }
 
+
 void cr_draw_arrow(cairo_t *cr, double fromx, double fromy, double tox,
-	double toy)
+	double toy, int headArrow)
 {
 	cairo_save(cr);
 	cairo_move_to(cr, fromx, fromy);
 	cairo_line_to(cr, tox, toy);
 	cairo_stroke(cr);
-	// Head arrowi
-	double slope = (toy-fromy)/(tox-fromx);
-	double org = fromy - slope * fromx;
-	tox -= (tox-fromx)/5;
-	toy = slope * tox + org;
+	// Head arrow
+	if (!headArrow)
+	{
+		double slope = (toy-fromy)/(tox-fromx);
+		double org = fromy - slope * fromx;
+		tox -= (tox-fromx)/5;
+		toy = slope * tox + org;
+	}
 	double length = 10;
 	double angle = atan2(toy - fromy, tox - fromx) + M_PI;
 	cairo_move_to(cr, tox, toy);

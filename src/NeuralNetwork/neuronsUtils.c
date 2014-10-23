@@ -243,7 +243,7 @@ NetworkSet NDefaultNetworkSet()
 {
 	NetworkSet r;
 	r.learn = &NBackPropLearn;
-	r.nWork = NInitializeLinearBias(2, 1);
+	r.nWork = NInitializeCompleteBias(2, 1);
 	r.maxError = 0.000001;
 	r.lRate = 0.06;
 	r.momentum = 0.2;

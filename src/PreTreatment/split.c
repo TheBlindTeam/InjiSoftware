@@ -53,140 +53,134 @@ void FreeBoxList(BoxList list)
 	free(list);
 }
 
-void SetIncrementOrientation(Orientation orient,
-	int *primWidth, int *primHeight, int *secondWidth, int *secondHeight)
+void GetIterPrim(Orientation orient, int *primWidth, int *primHeight)
 {
-	int primWidth = orient == ORIENTATION.VERTICAL ? 1 : 0;
-	int primHeight = primWidth ? 0 : 1;
-	int secondWidth = primHeight;
-	int secondHeight = primWidth;
+	int *primWidth = orient == ORIENTATION.VERTICAL ? 1 : 0;
+	int *primHeight = primWidth ? 0 : 1;
+}
+
+void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
+{
+	GetIterPrim(orient, secondHeight, secondWidth);
+}
+
+int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start)
+{
+	int x1, x2, y1, y2;
+	int max;
+	int r = 1;
+
+	GetIterPrim(orient, &x1, &x2);
+	GetIterSec(orient, &x2, &y2);
+	int max = b.width * x2 + b.height * y2;
+	for (int i = 0; i < max && r; i ++)
+		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
+	return r;
 }
 
 int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
 {
-	int x1, y1, x2, y2;
+	int x1, y1;
 	int *r;
-	int count;
-	SetIncrementOrientation(orient, &x1, &y1, &x2, &y2);
+	int count = 0;
+
+	GetIterPrim(orient, &x1, &x2);
 	*size = b.width * x1 + b.height * y1;
 	r = malloc(sizeof(int) * b->width * x1 + b->height * y1);
-	
+	for (int i = 0; i < *size; i ++)
+	{
+		r[i] = 0;
+		if (isBlank(img, b, c, orient, i))
+			count ++;
+		else
+			r[count]++;
+	}
+	return r;
 }
 
-List Enqueue(List list, Box b, int * count)
+void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB)
 {
-	ElementList * elt = malloc(sizeof(ElementList));
-	elt->value = b;
-	elt->next = list;
-	(*count)++;
-	printf("valeur de count : %d\n", *count);
-	return elt;
+	if (sizeB > sizeA)
+		ArraySum(arrayB, sizeB, arrayA, sizeA);
+	for (int i = 0; i < sizeB; i++)
+		arrayA[i] += arrayB[i];
+	free(arrayB);
 }
 
-Box * ListToArray(List list, int count)
+int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r)
 {
-	ElementList * temp = list;
-	Box * b = malloc(sizeof(Box)*count);
-	int i = count - 1;
-	while(i >= 0 && temp != NULL)
+	int count = 0;
+	int sum = 0;
+	for (int i = 0; i < nbSpaces; i ++)
 	{
-		b[i] = temp->value;
-		temp = temp->next;
-		i--;
+		sum += spaces[i] * (i + 1 + add)
+		count += spaces[i];
 	}
-	return b;
+	if (count)
+	{
+		*r = (double)sum / (double)count;
+		return 1;
+	}
+	return 0;
 }
 
-
-
-//#flemmeDeDeplacerLeCode
-ImageGS BuildImageGS(int width, int height);
-int VerticalSpaceInfo(ImageGS img, Box b, guchar c);
-
-
-
-int HorizontalSpaceInfo(ImageGS img, Box b, guchar c)
-/*
-Renvoie la moyenne des espaces entre les lignes, sans prendre en compte les espaces
-aux extrémités (qui peuvent être très grands).
-*/
+int SpacesVariance(int *spaces, int nbSpaces, int add, double *r)
 {
-	int nbSpaces = 0, total = 0, firstSpace;
-	int inLine = 0;
-	int space = 0;
-	for (int i = b.rectangle.y; i < b.rectangle.y + b.rectangle.height; i++)
+	double expectedValue = 0;
+	double sum = 0;
+	int count = 0;
+	if(!SpacesExpectedValue(spaces, nbSpaces, add, &expectedValue))
+		return 0;
+	for (int i = 0; i < nbSpaces; i ++)
 	{
-		int j = b.rectangle.x;
-		while (j < b.rectangle.x + b.rectangle.width && img.intensity[i][j] >= c)
-			j++;
-		if (!inLine && j != b.rectangle.width)
-			inLine = 1;
-		if (inLine && j == b.rectangle.width)
-		{
-			inLine = 0;
-			firstSpace = i;
-		}
+		sum += spaces[i] * pow((expectedValue - i + 1 + add), 2);
+		count += spaces[i];
 	}
-
-	for (int i = firstSpace; i < b.rectangle.y + b.rectangle.height; i++)
+	if (count)
 	{
-		int j = b.rectangle.x;
-		while (j < b.rectangle.x + b.rectangle.width && img.intensity[i][j] >= c)
-			j++;
-		if (!inLine && j != b.rectangle.width)
-			inLine = 1;
-			total += space;
-			space = 0;
-			nbSpaces++;
-		if (inLine && j == b.rectangle.width)
-		{
-			inLine = 0;
-			space++;
-		}
+		*r = sum / (double)count;
+		return 1;
 	}
-	return total / nbSpaces;
+	return 0;
 }
 
-
-
-int VerticalSpaceInfo(ImageGS img, Box b, guchar c)
+int ClassifySpace(int *spaces, int nbSpaces, *r)
 {
-	int nbSpaces = 0, total = 0, firstSpace;
-	int inLine = 0;
-	int space = 0;
-	for (int i = b.rectangle.x; i < b.rectangle.x + b.rectangle.width; i++)
-	{
-		int j = b.rectangle.y;
-		while (j < b.rectangle.y + b.rectangle.height && img.intensity[j][i] >= c)
-			j++;
-		if (!inLine && j != b.rectangle.height)
-			inLine = 1;
-		if (inLine && j == b.rectangle.height)
-		{
-			inLine = 0;
-			firstSpace = i;
-		}
-	}
-
-	for (int i = firstSpace; i < b.rectangle.x + b.rectangle.width; i++)
-	{
-		int j = b.rectangle.y;
-		while (j < b.rectangle.y + b.rectangle.height && img.intensity[j][i] >= c)
-			j++;
-		if (!inLine && j != b.rectangle.height)
-			inLine = 1;
-			total += space;
-			space = 0;
-			nbSpaces++;
-		if (inLine && j == b.rectangle.width)
-		{
-			inLine = 0;
-			space++;
-		}
-	}
-	return total / nbSpaces;
+	double min;
+	double tmpA = 0;
+	double tmpB = 0;
+ 	if(!SpacesVariance(spaces, nbSpaces, 0, tmpB));
+		return 0;
+	min = pow((tmpB - tmpA), 2);
+	*r = 0;
+	for (int i = 1; i < nbSpaces - 1; i ++)
+		if (spaces[i] > 0)
+			if (SpacesVariance(spaces, i, i, &tmpA) &&
+				SpacesVariance(&spaces[i + 1], nbSpaces - i, i + 1, &tmpB) &&
+				pow(tmpB - tmpA, 2) < min)
+			{
+				min = pow(tmpB - tmpA, 2);
+				*r = i;
+			}
+	return 1;
 }
 
+CutMargin(ImageGS img, Box *b)
+{
+}
+
+void Split(ImageGS img, Box *b, Orientation orient, int minBlank)
+{
+	int x1, x2, y1, y2;
+	int max;
+	int r = 1;
+
+	GetIterPrim(orient, &x1, &x2);
+	GetIterSec(orient, &x2, &y2);
+	int max = b.width * x2 + b.height * y2;
+	for (int i = 0; i < max && r; i ++)
+		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
+}
 
 
 Box SplitChars(ImageGS img, Box b, guchar c)

@@ -264,8 +264,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		cairo_move_to(cr, NN_MARGIN_LEFT -
 				NN_NEURON_RADIUS,
 			NN_MARGIN_TOP+maxHeight + 30);
-		char *str;
-		NComputeError(&network, networkSet.exSet, 1, &str);
+		printf("ok\n");
+		char *str = "";
+		NComputeError(&network, networkSet.exSet, 0, &str);
+		printf("ok2\n");
 		cairo_show_text(cr, str);
 
 		free(neuronPos);

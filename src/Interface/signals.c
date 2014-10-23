@@ -34,6 +34,18 @@ void connectSignals(SGlobalData *data)
 			"RenderButton")),
 		"clicked",
 		G_CALLBACK(on_click_render_network), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"ComputeErrorButton")),
+		"clicked",
+		G_CALLBACK(on_click_compute_errors), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NNResetButton")),
+		"clicked",
+		G_CALLBACK(on_click_reset), data);
 	/* Menu */
 
 	// File
@@ -169,7 +181,11 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 	if (widget && cr && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-
+		if (data->neuronData->shouldReset)
+		{
+			data->neuronData->shouldReset = FALSE;
+			return;
+		}
 		if (!data->neuronData->shouldDraw)
 			return;
 
@@ -265,17 +281,40 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				NN_NEURON_RADIUS,
 			NN_MARGIN_TOP+maxHeight + 30);
 
-		char **str = malloc(sizeof(char*));
-		printf("aa\n");
-		NComputeError(&network, networkSet.exSet, 1, str);
-		printf("ab\n");
-		cairo_show_text(cr, *str);
-		printf("%s\n", *str);
-		printf("bb\n");
+		if (data->neuronData->shouldErr)
+		{
+			data->neuronData->shouldErr = FALSE;
+			char **str = malloc(sizeof(char*));
+			NComputeError(&network, networkSet.exSet, 1, str);
+			cairo_show_text(cr, *str);
+			printf("%s\n", *str);
+		}
 		free(neuronPos);
 	}
 }
 
+void on_click_compute_errors(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		data->neuronData->shouldErr = TRUE;
+		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkDrawArea")));
+		
+	}
+}
+
+void on_click_reset(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		data->neuronData->shouldReset = TRUE;
+		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NetworkDrawArea")));
+	}
+}
 
 void cr_draw_arrow(cairo_t *cr, double fromx, double fromy, double tox,
 	double toy, int headArrow)

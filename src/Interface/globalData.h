@@ -2,7 +2,8 @@
 
 typedef struct
 {
-	gboolean has_clicked, shouldDraw, shouldBlock;
+	gboolean has_clicked, shouldDraw, shouldBlock, shouldErr,
+		 shouldReset;
 	double click_x, click_y;
 } CairoNeuronData;
 

@@ -242,7 +242,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int selectedNeurony = -1;
 		if (data->neuronData->has_clicked)
 		{
-			int closestLayer, closestRow;
+			int closestLayer = 0; 
+			int closestRow = 0;
 			double dist = 100;
 			for(int l = 0; l < network.nbLayers; l++)
 				for(int n = 0; n < network.layersSize[l]; n++)

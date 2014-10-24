@@ -1,4 +1,8 @@
 #include "../Utils/image.h"
+
+#include <math.h>
+extern const guchar BLACKGS;
+
 typedef struct
 {
 	int x1, y1, x2, y2;
@@ -21,11 +25,9 @@ typedef BoxElementList *BoxList;
 
 typedef enum
 {
-	HORIZONTAL;
-	VERTICAL;
+	HORIZONTAL,
+	VERTICAL
 } Orientation;
-
-
 
 BoxList AddInList(BoxList list, Box b);
 
@@ -35,6 +37,7 @@ Box *BoxListToArray(BoxList list, int *count);
 
 void FreeBoxList(BoxList list);
 
+//Interessant
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
@@ -43,32 +46,32 @@ int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start);
 
 int *GetSpaceArray(ImageGS, Box b, guchar c, Orientation orient, int *size);
 
-void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB);
+int *ArraySum(int *arrayA, int sizeA, int *arrayB, int sizeB, int *newSize);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
 int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
-int ClassifySpace(int *spaces, int nbSpaces, int *r);
 
-void Split(ImageGS img, Box *b, Orientation orient, int minBlank);
-
-CutMargin(ImageGS img, Box *b);
-
-Box SplitChars(ImageGS img, Box b, guchar c);//fait
-
-Box SplitWords(ImageGS img, Box b, guchar c);//A FAIRE
+//Interessant
+int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
 
-Box SplitLines(ImageGS img, Box b, guchar c);//fait
+//Interessant
+void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c);
 
-Box SplitBlocks(ImageGS img, Box b, guchar c);//A FAIRE
+void CutMargin(ImageGS img, Box *b, guchar c);
 
-ImageGS BuildImageGS(int width, int height);
+void SplitChars(ImageGS img, Box *b, guchar c);
 
-void PrintBoxInformations(Box b);//fait
+void SplitWords(ImageGS img, Box *b, guchar c, int minBlank);
 
-void PrintImageGS(ImageGS img);//fait mais useless
+void SplitLines(ImageGS img, Box *b, guchar c);
 
-void Test();//à modifier à loisir pour tester
+void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank);
 
+Box *GetBreadthBoxArray(Box b, int *count);
+
+void GetBreadthBoxArrayAux(BoxList list);
+
+void DrawNotInSubBoxes(Image img, Box b);

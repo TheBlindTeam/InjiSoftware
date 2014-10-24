@@ -37,6 +37,7 @@ Box *BoxListToArray(BoxList list, int *count);
 
 void FreeBoxList(BoxList list);
 
+//Interessant
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
@@ -51,8 +52,12 @@ int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
 int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
+
+//Interessant
 int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
+
+//Interessant
 void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c);
 
 void CutMargin(ImageGS img, Box *b, guchar c);

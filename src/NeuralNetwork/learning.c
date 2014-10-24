@@ -4,12 +4,10 @@
 #include <stdio.h>
 
 void NInitBinary(NetworkSet *nWorkSet, Network* (*NInit)(int, int),
-	int input, int output, void(NChangeThreshold)(Network *nWork))
+	int input, int output)
 {
 	Network *N1 = NInit(input, output);
 	Network *N2 = NInit(input, output);
-	NChangeThreshold(N1);
-	NChangeThreshold(N2);
 	NComputeError(N1, nWorkSet->exSet, 0, NULL);
 	NComputeError(N2, nWorkSet->exSet, 0, NULL);
 	N1->sibling = N2;

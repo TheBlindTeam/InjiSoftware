@@ -311,12 +311,21 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 		for (int i = 0; i < network.layersSize[0] - 1; i++)
 		{
+			if (selectedNeuronx == 0 && selectedNeurony == i)
+				cairo_set_source_rgba(cr, 0.0, 0.5, 0.0, 1);
+			else
+				cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
+				
 			cr_draw_arrow(cr, 0, neuronPos[0][i].y,
 				neuronPos[0][i].x, neuronPos[0][i].y, 0);
 		}
 		int lastLayer = network.nbLayers - 1;
 		for (int i = 0; i < network.layersSize[lastLayer]; i++)
-		{
+		{	
+			if (selectedNeuronx == lastLayer && selectedNeurony == i)
+				cairo_set_source_rgba(cr, 0.0, 0.5, 0.0, 1);
+			else
+				cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
 			cr_draw_arrow(cr, neuronPos[lastLayer][i].x,
 				neuronPos[lastLayer][i].y,
 				neuronPos[lastLayer][i].x + 50,
@@ -336,16 +345,26 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		}
 		if (selectedNeuronx != -1 && selectedNeurony != -1)
 		{
-			char str1[10], str2[10], str3[50];
+			cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
+			char str1[10], str2[10];
 			sprintf(str1, "Layer: %d", selectedNeuronx);
 			sprintf(str2, "Row: %d", selectedNeurony);
-			sprintf(str3, "Weight:");
+
+			for (int i = 0; i < network.neurons[selectedNeuronx]
+				[selectedNeurony].nbConnections; i++)
+			{
+				char str[25];
+				sprintf(str, "Weight %d: %f", i+1, network.neurons
+					[selectedNeuronx][selectedNeurony]
+						.connectList[i].weight);
+				cairo_move_to(cr, neuronPos[lastLayer][0].x + 120,
+					30 + 10 * i);
+				cairo_show_text(cr, str);
+			}
 			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 10);
 			cairo_show_text(cr, str1);
 			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 20);
 			cairo_show_text(cr, str2);
-			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 30);
-			cairo_show_text(cr, str3);
 		}
 		free(neuronPos);
 	}

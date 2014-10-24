@@ -1,4 +1,8 @@
 #include "../Utils/image.h"
+
+#include <math.h>
+extern const guchar BLACKGS;
+
 typedef struct
 {
 	int x1, y1, x2, y2;
@@ -21,11 +25,9 @@ typedef BoxElementList *BoxList;
 
 typedef enum
 {
-	HORIZONTAL;
-	VERTICAL;
+	HORIZONTAL,
+	VERTICAL
 } Orientation;
-
-
 
 BoxList AddInList(BoxList list, Box b);
 
@@ -43,32 +45,28 @@ int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start);
 
 int *GetSpaceArray(ImageGS, Box b, guchar c, Orientation orient, int *size);
 
-void ArraySum(int *arrayA, sizeA, int *arrayB, int sizeB);
+int *ArraySum(int *arrayA, int sizeA, int *arrayB, int sizeB, int *newSize);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
 int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
-int ClassifySpace(int *spaces, int nbSpaces, int *r);
+int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
-void Split(ImageGS img, Box *b, Orientation orient, int minBlank);
+void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c);
 
-CutMargin(ImageGS img, Box *b);
+void CutMargin(ImageGS img, Box *b, guchar c);
 
-Box SplitChars(ImageGS img, Box b, guchar c);//fait
+void SplitChars(ImageGS img, Box *b, guchar c);
 
-Box SplitWords(ImageGS img, Box b, guchar c);//A FAIRE
+void SplitWords(ImageGS img, Box *b, guchar c, int minBlank);
 
+void SplitLines(ImageGS img, Box *b, guchar c);
 
-Box SplitLines(ImageGS img, Box b, guchar c);//fait
+void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank);
 
-Box SplitBlocks(ImageGS img, Box b, guchar c);//A FAIRE
+Box *GetBreadthBoxArray(Box b, int *count);
 
-ImageGS BuildImageGS(int width, int height);
+void GetBreadthBoxArrayAux(BoxList list);
 
-void PrintBoxInformations(Box b);//fait
-
-void PrintImageGS(ImageGS img);//fait mais useless
-
-void Test();//à modifier à loisir pour tester
-
+void DrawNotInSubBoxes(Image img, Box b);

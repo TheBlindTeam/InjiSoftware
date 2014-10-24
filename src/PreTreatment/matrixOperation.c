@@ -165,8 +165,8 @@ Image URotate(Image ref, double angle)
 
 Vector2 ApplyVectorRot(Vector2 origin, double radian)
 {
-	Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian), 
-		-origin.x * sin(radian) + origin.y * cos(radian)};
+	Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian) + 0.5, 
+		-origin.x * sin(radian) + origin.y * cos(radian) + 0.5};
 
 	return result;
 }

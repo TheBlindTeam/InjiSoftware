@@ -253,7 +253,9 @@ ExempleSet NGetXorExempleSet()
 	return exSet;
 }
 
-NetworkSet NInitNetworkSet(int *arg);
+NetworkSet NInitNetworkSet(int archi, int learning, int init, int threshold)
+{
+}
 
 NetworkSet NDefaultNetworkSet()
 {

@@ -94,7 +94,9 @@ Image URotate(Image ref, double angle)
 {
 	// Calculate Rotation 
 	double radian = (angle * M_PI) / 180;
-
+	int newWidth;
+	int newHeight;
+	Vector2 min, max;
 	// Calculate 4 obvious points to find the new size of the image
 	Vector2 p[] = {{0,0}, {ref.width, 0},
 		{0, ref.height}, {ref.width, ref.height}};
@@ -106,14 +108,15 @@ Image URotate(Image ref, double angle)
 		p[i] = ApplyVectorRot(p[i], radian);
 		printf("putain1\n");
 	}
-	Vector2 min, max;
-	ExtremumVectorValues(p, 4, &min, &max);
-	
-	int newWidth = ((min.x < 0) ? -min.x : min.x) +
-		((max.x < 0) ? -max.x : max.x);
 
-	int newHeight = ((min.y < 0) ? -min.y : min.y) +
-		((max.y < 0) ? -max.y : max.y);
+	ExtremumVectorValues(p, 4, &min, &max);
+	newWidth = max.x - min.x + 1;
+
+	newHeight = max.y - min.y + 1;
+	
+	for(int i =0; i<4;i++)
+		printf("\n (AFTER)Vect %i : x = %i and y %i",i, p[i].x, p[i].y);
+	printf("\nnewHeight = %i, newWidth = %i", newHeight, newWidth);
 	
 	Image image;
 	image.width = newWidth;
@@ -124,12 +127,11 @@ Image URotate(Image ref, double angle)
 	Pixel **pix;
 	pix = malloc(newWidth * sizeof(Pixel *));
 
-		printf("putain1\n");
+		printf("putain2\n");
 	for (int i = 0; i < newWidth; i++)
-	{
 		pix[i] = malloc(newHeight * sizeof(Pixel));
-	}
 
+		printf("putain3\n");
 	for (int y = 0; y < newHeight; y++)
 		for (int x = 0; x < newWidth; x++)
 		{	
@@ -139,30 +141,24 @@ Image URotate(Image ref, double angle)
 			pix[x][y].a = 0;
 		}
 
-		printf("putain1\n");
+		printf("putain4\n");
 	for (int y = ref.height - 1; y >= 0; y--)
 	{
 		for (int x = 0; x < ref.width; x++)
 		{
-
 			Vector2 tmp = {x, y};
 			tmp = ApplyVectorRot(tmp, radian);
 
-			if ((tmp.x >= 0 && tmp.x < newWidth)
-				&& (tmp.y >= 0 && tmp.y < newHeight))
+			if ((tmp.x - min.x>= 0 && tmp.x - min.x < newWidth)
+				&& (tmp.y - min.y>= 0 && tmp.y - min.y < newHeight))
 			{
 				pix[tmp.x - min.x][tmp.y - min.y] = ref.pixList[x][y];
 				
 			}
-
 		}
 	}
 
 	image.pixList = pix;
-
-	for(int i =0; i<4;i++)
-		printf("\n (AFTER)Vect %i : x = %i and y %i",i, p[i].x, p[i].y);
-	printf("\nnewHeight = %i, newWidth = %i", newHeight, newWidth);
 	return image;
 
 }
@@ -170,7 +166,7 @@ Image URotate(Image ref, double angle)
 Vector2 ApplyVectorRot(Vector2 origin, double radian)
 {
 	Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian), 
-		-origin.x * sin(radian) * origin.y * cos(radian)};
+		-origin.x * sin(radian) + origin.y * cos(radian)};
 
 	return result;
 }
@@ -178,7 +174,9 @@ Vector2 ApplyVectorRot(Vector2 origin, double radian)
 void ExtremumVectorValues(Vector2 *tab, int arraySize, Vector2 *min,
 	 Vector2 *max)
 {
-	for(int i = 0; i < arraySize; i++)
+	*min = tab[0];
+	*max = tab[0];
+	for(int i = 1; i < arraySize; i++)
 	{
 		min->x = (min->x <= tab[i].x) ? min->x : tab[i].x;
 		min->y = (min->y <= tab[i].y) ? min->y : tab[i].y;

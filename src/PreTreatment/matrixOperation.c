@@ -103,20 +103,13 @@ Image URotate(Image ref, double angle)
 	
 	for(int i = 0; i < 4; i++)
 	{
-		printf("\n(BEFORE) V%i : x = %i and y = %i Sin te = %lf",i, 
-			p[i].x, p[i].y, sin(radian));
 		p[i] = ApplyVectorRot(p[i], radian);
-		printf("putain1\n");
 	}
 
 	ExtremumVectorValues(p, 4, &min, &max);
 	newWidth = max.x - min.x + 1;
 
 	newHeight = max.y - min.y + 1;
-	
-	for(int i =0; i<4;i++)
-		printf("\n (AFTER)Vect %i : x = %i and y %i",i, p[i].x, p[i].y);
-	printf("\nnewHeight = %i, newWidth = %i", newHeight, newWidth);
 	
 	Image image;
 	image.width = newWidth;
@@ -127,11 +120,9 @@ Image URotate(Image ref, double angle)
 	Pixel **pix;
 	pix = malloc(newWidth * sizeof(Pixel *));
 
-		printf("putain2\n");
 	for (int i = 0; i < newWidth; i++)
 		pix[i] = malloc(newHeight * sizeof(Pixel));
 
-		printf("putain3\n");
 	for (int y = 0; y < newHeight; y++)
 		for (int x = 0; x < newWidth; x++)
 		{	
@@ -141,7 +132,6 @@ Image URotate(Image ref, double angle)
 			pix[x][y].a = 0;
 		}
 
-		printf("putain4\n");
 	for (int y = ref.height - 1; y >= 0; y--)
 	{
 		for (int x = 0; x < ref.width; x++)
@@ -165,8 +155,14 @@ Image URotate(Image ref, double angle)
 
 Vector2 ApplyVectorRot(Vector2 origin, double radian)
 {
-	Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian) + 0.5, 
-		-origin.x * sin(radian) + origin.y * cos(radian) + 0.5};
+	/*Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian) + 0.5, 
+		-origin.x * sin(radian) + origin.y * cos(radian) + 0.5};*/
+
+	// Shear rotation
+	double x1 = round(origin.x - origin.y * tan(radian / 2));
+	double y1 = round(sin(radian) * x1 + origin.y);
+	double xResult = round(x1 - tan(radian / 2) * y1);
+	Vector2 result = {xResult, y1};
 
 	return result;
 }

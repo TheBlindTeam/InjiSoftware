@@ -70,6 +70,8 @@ void SplitLines(ImageGS img, Box *b, guchar c);
 
 void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank);
 
+Box GetBoxFromSplit(Image img);
+
 Box *GetBreadthBoxArray(Box b, int *count);
 
 void GetBreadthBoxArrayAux(BoxList list);

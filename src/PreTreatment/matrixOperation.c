@@ -99,11 +99,12 @@ Image URotate(Image ref, double angle)
 	Vector2 p[] = {{0,0}, {ref.width, 0},
 		{0, ref.height}, {ref.width, ref.height}};
 	
-	for(int i=0; i < 4; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		printf("\n(BEFORE) V%i : x = %i and y = %i Sin te = %lf",i, 
 			p[i].x, p[i].y, sin(radian));
 		p[i] = ApplyVectorRot(p[i], radian);
+		printf("putain1\n");
 	}
 	Vector2 min, max;
 	ExtremumVectorValues(p, 4, &min, &max);
@@ -123,6 +124,7 @@ Image URotate(Image ref, double angle)
 	Pixel **pix;
 	pix = malloc(newWidth * sizeof(Pixel *));
 
+		printf("putain1\n");
 	for (int i = 0; i < newWidth; i++)
 	{
 		pix[i] = malloc(newHeight * sizeof(Pixel));
@@ -137,6 +139,7 @@ Image URotate(Image ref, double angle)
 			pix[x][y].a = 0;
 		}
 
+		printf("putain1\n");
 	for (int y = ref.height - 1; y >= 0; y--)
 	{
 		for (int x = 0; x < ref.width; x++)

@@ -12,4 +12,6 @@ typedef struct
 	Image *img_rgb;
 	CairoNeuronData *neuronData;
 	NetworkSet networkSet;
+	Box* segBoxArray;
+	int boxDetectIndex, boxCount;
 } SGlobalData;

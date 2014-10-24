@@ -76,4 +76,4 @@ Box *GetBreadthBoxArray(Box b, int *count);
 
 void GetBreadthBoxArrayAux(BoxList list);
 
-void DrawNotInSubBoxes(Image img, Box b);
+void DrawNotInSubBoxes(Image img, Box b, Pixel p);

@@ -10,6 +10,7 @@
 
 #include "../NeuralNetwork/neuronsUtils.h"
 #include "../PreTreatment/matrixOperation.h"
+#include "../PreTreatment/split.h"
 #include "globalData.h"
 
 // Neuron Network Visualizer Data
@@ -50,3 +51,5 @@ void on_click_reset(GtkWidget *widget, gpointer user_data);
 void on_detect_chars(GtkWidget *widget, gpointer user_data);
 
 void cr_draw_arrow(cairo_t*, double, double, double, double, int);
+
+void on_click_segmentation(GtkWidget *widget, gpointer user_data);

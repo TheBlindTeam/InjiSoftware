@@ -336,7 +336,7 @@ void GetBreadthBoxArrayAux(BoxList list)
 		GetBreadthBoxArrayAux(list->next);
 }
 
-void DrawNotInSubBoxes(Image img, Box b)
+void DrawNotInSubBoxes(Image img, Box b, Pixel p)
 {
 	int **rect;
 	int width = b.rectangle.x2 - b.rectangle.x1 + 1;
@@ -363,5 +363,5 @@ void DrawNotInSubBoxes(Image img, Box b)
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
 			if (rect[i][j])
-				img.pixList[i + b.rectangle.x1][j + b.rectangle.y1] = RED;
+				img.pixList[i + b.rectangle.x1][j + b.rectangle.y1] = p;
 }

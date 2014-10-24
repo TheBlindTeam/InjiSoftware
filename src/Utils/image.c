@@ -36,7 +36,6 @@ Image ULoadImage(char *str)
 				tmp.pixList[i][j] = UGetPixel(pixbuf, i, j);
 		}
 	}
-
 	return tmp;
 }
 

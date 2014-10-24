@@ -11,11 +11,6 @@ void connectSignals(SGlobalData *data)
 		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
 		"clicked",
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
-
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut2")),
-		"clicked",
-		G_CALLBACK(on_detect_chars), data);
 	
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -46,6 +41,12 @@ void connectSignals(SGlobalData *data)
 			"NNResetButton")),
 		"clicked",
 		G_CALLBACK(on_click_reset), data);
+	
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"BSegmentation")),
+		"clicked",
+		G_CALLBACK(on_click_segmentation), data);
 	/* Menu */
 
 	// File
@@ -141,9 +142,8 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
-
+				data->img_rgb = malloc(sizeof(Image));
 				*data->img_rgb = ULoadImage(filename);
-
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
@@ -502,11 +502,39 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 	}
 }
 
-void on_detect_chars(GtkWidget *widget, gpointer user_data)
+void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-	//	SGlobalData *data = (SGlobalData*) user_data;
-
+		SGlobalData *data = (SGlobalData*) user_data;
+		if(data->img_rgb != NULL)
+		{
+			if (data->segBoxArray == NULL)
+			{
+				int count;
+				Box box = GetBoxFromSplit(*data->img_rgb);
+				printf("a\n");
+				Box* boxArray = GetBreadthBoxArray(box, &count);
+				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
+					data->builder, "BSegmentation")), "Detect");
+				if(boxArray){}
+				return;
+			}
+			if (data->boxDetectIndex == data->boxCount)
+				return;
+/*			for (int i = 0; i < data->boxDetectIndex; i++)
+			{
+				DrawNotInSubBoxes(data->img_rgb, boxArray[i],
+					(i+1 == data->boxDetectIndex) ? BLUE : RED)
+			}*/
+			if (data->boxDetectIndex != 0)	
+				DrawNotInSubBoxes(*data->img_rgb, data->segBoxArray[data->boxDetectIndex - 1], BLUE);
+			DrawNotInSubBoxes(*data->img_rgb, data->segBoxArray[data->boxDetectIndex], RED);
+			data->boxDetectIndex++;
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
+		}
 	}
 }

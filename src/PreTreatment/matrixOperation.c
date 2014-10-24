@@ -92,12 +92,28 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 
 Image URotate(Image ref, double angle)
 {
+	// Calculate Rotation 
 	double radian = (angle * M_PI) / 180;
-	int newWidth =
-		(int)(cos(radian) * ref.width + sin(radian) * ref.height + 1);
-	int newHeight =
-		(int)(-cos(radian) * ref.height - sin(radian) * ref.width + 1);
 
+	// Calculate 4 obvious points to find the new size of the image
+	Vector2 p[] = {{0,0}, {ref.width, 0},
+		{0, ref.height}, {ref.width, ref.height}};
+	
+	for(int i=0; i < 4; i++)
+	{
+		printf("\n(BEFORE) V%i : x = %i and y = %i Sin te = %lf",i, 
+			p[i].x, p[i].y, sin(radian));
+		p[i] = ApplyVectorRot(p[i], radian);
+	}
+	Vector2 min, max;
+	ExtremumVectorValues(p, 4, &min, &max);
+	
+	int newWidth = ((min.x < 0) ? -min.x : min.x) +
+		((max.x < 0) ? -max.x : max.x);
+
+	int newHeight = ((min.y < 0) ? -min.y : min.y) +
+		((max.y < 0) ? -max.y : max.y);
+	
 	Image image;
 	image.width = newWidth;
 	image.height = newHeight;
@@ -118,21 +134,22 @@ Image URotate(Image ref, double angle)
 			pix[x][y].r = 255;
 			pix[x][y].g = 255;
 			pix[x][y].b = 255;
-			pix[x][y].a = 255;
+			pix[x][y].a = 0;
 		}
 
-
-	for (int y = 0; y < ref.height; y++)
+	for (int y = ref.height - 1; y >= 0; y--)
 	{
 		for (int x = 0; x < ref.width; x++)
 		{
-			int newX = (int)(cos(radian) * x + sin(radian) * y);
-			int newY = (int)(cos(radian) * y - sin(radian) * x);
 
-			if ((newX >= 0 && newX < newWidth) && 
-				(newY >= 0 && newY < newHeight))
+			Vector2 tmp = {x, y};
+			tmp = ApplyVectorRot(tmp, radian);
+
+			if ((tmp.x >= 0 && tmp.x < newWidth)
+				&& (tmp.y >= 0 && tmp.y < newHeight))
 			{
-				pix[newX][newY] = ref.pixList[x][y];
+				pix[tmp.x - min.x][tmp.y - min.y] = ref.pixList[x][y];
+				
 			}
 
 		}
@@ -140,6 +157,29 @@ Image URotate(Image ref, double angle)
 
 	image.pixList = pix;
 
+	for(int i =0; i<4;i++)
+		printf("\n (AFTER)Vect %i : x = %i and y %i",i, p[i].x, p[i].y);
+	printf("\nnewHeight = %i, newWidth = %i", newHeight, newWidth);
 	return image;
 
+}
+
+Vector2 ApplyVectorRot(Vector2 origin, double radian)
+{
+	Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian), 
+		-origin.x * sin(radian) * origin.y * cos(radian)};
+
+	return result;
+}
+
+void ExtremumVectorValues(Vector2 *tab, int arraySize, Vector2 *min,
+	 Vector2 *max)
+{
+	for(int i = 0; i < arraySize; i++)
+	{
+		min->x = (min->x <= tab[i].x) ? min->x : tab[i].x;
+		min->y = (min->y <= tab[i].y) ? min->y : tab[i].y;
+		max->x = (max->x >= tab[i].x) ? max->x : tab[i].x;
+		max->y = (max->y >= tab[i].y) ? max->y : tab[i].y;
+	}
 }

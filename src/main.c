@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
@@ -10,6 +11,7 @@
 int main(int argc, char *argv[])
 {
 	Image *img = NULL;
+	srand(time(NULL));
 	if(argc > 1)
 		img = ULoadImage(argv[1]);
 

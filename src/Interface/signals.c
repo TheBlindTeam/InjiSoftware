@@ -32,12 +32,6 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"ComputeErrorButton")),
-		"clicked",
-		G_CALLBACK(on_click_compute_errors), data);
-
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
 			"NNResetButton")),
 		"clicked",
 		G_CALLBACK(on_click_reset), data);
@@ -355,7 +349,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				neuronPos[lastLayer][i].y, 1);
 		}
 
-		if (data->neuronData->shouldErr)
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
+			gtk_builder_get_object(data->builder, "ComputeErrorCB"))))
 		{
 			cairo_move_to(cr, NN_MARGIN_LEFT -
 					NN_NEURON_RADIUS,
@@ -390,17 +385,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			cairo_show_text(cr, str2);
 		}
 		free(neuronPos);
-	}
-}
-
-void on_click_compute_errors(GtkWidget *widget, gpointer user_data)
-{
-	if (widget && user_data)
-	{
-		SGlobalData *data = (SGlobalData*) user_data;
-		data->neuronData->shouldErr = TRUE;
-		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
-			data->builder, "NetworkDrawArea")));
 	}
 }
 

@@ -602,12 +602,19 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 			matrix[x] = malloc(sizeof(double));
 			for(int y = 0; y < 3; y++)
 			{
-				char wname[19];
-				sprintf(wname, "FilterMatrixButton%d", 3*x+y);
-					matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
-						gtk_builder_get_object(data->builder, wname)));
+				char wname[25];
+				sprintf(wname, "FilterMatrixButton%d", 3*x+y+1);
+				matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+					gtk_builder_get_object(data->builder, wname)));
 			}
 		}
+		Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
+		UFreeImage(*data->img_rgb);
+		data->img_rgb = &tmpImg;
+		gtk_image_set_from_pixbuf(GTK_IMAGE(
+			gtk_builder_get_object(data->builder,
+				"PreviewImage")),
+			UGetPixbufFromImage(*data->img_rgb));
 	}
 }
 

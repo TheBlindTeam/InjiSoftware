@@ -146,13 +146,13 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 {
 	int count = 0;
 	double totalError = 0;
-	//char tmp[10];
 	double error;
 	double *output = NULL;
 	char tmp[10];
 	Exemple *ex = exSet.exemple;
 	int i = 0;
-	r[0] = 0;
+	if (print)
+		r[0] = 0;
 	while (ex)
 	{
 		NRun(nWork, ex->input, &output);
@@ -160,11 +160,10 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 		totalError += error;
 		if(print)
 		{
-			
-			addInStringAt(r, "\terror: ", &i, max);
+			addInStringAt(r, "    error: ", &i, max);
 			snprintf(tmp, 9, "%lf", error);
 			addInStringAt(r, tmp, &i, max);
-			addInStringAt(r, "\tinput -> ", &i, max);
+			addInStringAt(r, "    input -> ", &i, max);
 			for (int j = 0; j < exSet.inputSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", ex->input[j]);
@@ -331,6 +330,7 @@ ExempleSet NGetXorExempleSet()
 NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 	int output, int others, int bias)
 {
+	printf("Begin init\n");
 	NetworkSet* r = malloc(sizeof(NetworkSet));
 
 	r->maxError = 0.000001;
@@ -366,9 +366,10 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			r->nWork = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
 			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
 				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
-			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
+			//NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}
+	printf("End init\n");
 	return r;
 }
 

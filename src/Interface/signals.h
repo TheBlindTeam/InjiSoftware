@@ -12,6 +12,7 @@
 #include "../NeuralNetwork/neuronsUtils.h"
 #include "../PreTreatment/matrixOperation.h"
 #include "../PreTreatment/split.h"
+#include "../PreTreatment/hough.h"
 #include "globalData.h"
 
 #define ZOOM_COEF 0.1

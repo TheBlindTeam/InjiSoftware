@@ -8,7 +8,7 @@ double FindInclinationAngle(Image ref)
 		* 2 + 1);
 	accu = malloc(thetaMax * sizeof(int *));
 
-	for(int i = 0; i < thetaMax; i++)
+	for(int i = 0; i < thetaMax + 1; i++)
 	{
 		accu[i] = malloc(rMax * sizeof(int));
 	}
@@ -52,6 +52,7 @@ int GetMaxIndex(int **array, int sizeX, int sizeY)
 		{
 			if(maxVal <= array[x][y])
 			{
+				printf("%d %d\n", x, y);
 				maxVal = array[x][y];
 				xMaxIndex = x;
 			}

@@ -644,8 +644,7 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 			data->img_rgb = &tmpImg;
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
+				gtk_builder_get_object(data->builder, "PreviewImage")),
 				UGetPixbufFromImage(*data->img_rgb));
 			
 			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
@@ -704,6 +703,17 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
+			double angle = FindInclinationAngle(*data->img_rgb);
+			printf("angle: %f\n", angle);
+			Image tmpImg = URotate(*data->img_rgb, angle);
+
+			UFreeImage(*data->img_rgb);
+
+			data->img_rgb = &tmpImg;
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder, "PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
 		}
 	}
 }

@@ -78,6 +78,16 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(file_chooser_select_file_from_button), data);
 
 	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "ImageChooser")),
+		"selection-changed",
+		G_CALLBACK(file_chooser_selection_changed), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "ImageChooser")),
+		"file-activated",
+		G_CALLBACK(file_chooser_select_file_from_button), data);
+
+	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"FCButtonCancel")),
 		"clicked",

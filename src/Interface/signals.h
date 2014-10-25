@@ -36,6 +36,7 @@ void on_load_button_clicked(GtkWidget *widget, gpointer user_data);
 void file_chooser_select_file_from_button(GtkWidget *widget,
 	gpointer user_data);
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
+void file_chooser_selection_changed(GtkWidget *widget, gpointer user_data);
 
 void on_rotate_img_open(GtkWidget *widget, gpointer user_data);
 void on_apply_rotation(GtkWidget *widget, gpointer user_data);

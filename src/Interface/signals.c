@@ -501,7 +501,6 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 		data->neuronData->click_x = event->x - wx;
 		data->neuronData->click_y = event->y - wy;
 		gtk_widget_queue_draw(widget);
-		printf("a\n");
 	}
 }
 
@@ -566,6 +565,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
+		printf("click_segmentation 1\n");
 		SGlobalData *data = (SGlobalData*) user_data;
 		if(data->img_rgb != NULL)
 		{
@@ -586,16 +586,16 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				DrawNotInSubBoxes(data->img_rgb, boxArray[i],
 					(i+1 == data->boxDetectIndex) ? BLUE : RED)
 			}*/
-			if (data->boxDetectIndex != 0)	
+			if (data->boxDetectIndex != 0)
 				DrawNotInSubBoxes(*data->img_rgb,
 					data->segBoxArray[data->boxDetectIndex - 1], BLUE);
 			DrawNotInSubBoxes(*data->img_rgb,
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
+				gtk_builder_get_object(data->builder, "PreviewImage")),
 				UGetPixbufFromImage(*data->img_rgb));
+		printf("click_segmentation 2\n");
 		}
 	}
 }

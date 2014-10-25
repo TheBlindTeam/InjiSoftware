@@ -1,6 +1,7 @@
 #include <math.h>
 #ifndef _MATHUTILS
 #define _MATHUTILS
+
 typedef struct
 {
 	double (*f)(double);
@@ -22,5 +23,5 @@ double UDTanSigmoid(double sum);
 extern const FAndDifF SIGMOID;
 extern const FAndDifF TAN_SIGMOID;
 extern const FAndDifF LINEAR;
-
+extern const FAndDifF FUNCTIONS[];
 #endif

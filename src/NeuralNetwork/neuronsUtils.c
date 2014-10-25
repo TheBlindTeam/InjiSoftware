@@ -7,6 +7,12 @@
 
 const double RAND_UP = 5;
 const double RAND_DOWN = -5;
+const Ninit NINIT[] = {
+	&NInitializeCompleteBias,
+	&NInitializeCompleteNBias,
+	&NInitializeLinearBias,
+	&NInitializeLinearNBias };
+
 
 Network *NInitializeSimpleMLP(int input, int output, int middle, int bias)
 {
@@ -240,22 +246,130 @@ void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
 	}
 }
 
-ExempleSet NGetXorExempleSet()
+ExempleSet NGetExempleSet(double *input[], int inputDim2,
+	double *target[], int targetDim2, int size)
 {
-	double input[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
-	double target[4][1] = {{0}, {1}, {1}, {0}};
-	ExempleSet exSet;
-	exSet.inputSize = 2;
-	exSet.targetSize = 1;
-	exSet.exemple = NULL;
-	for (int i = 0; i < 4; i ++)
-		addInExempleSet(&exSet, input[i], 2, target[i], 1);
-	return exSet;
+	ExempleSet r;
+	r.inputSize = inputDim2;
+	r.targetSize = targetDim2;
+	r.exemple = NULL;
+	for (int i = 0; i < size; i ++)
+		addInExempleSet(&r, input[i], inputDim2, target[i], targetDim2);
+	return r;
 }
 
-/*NetworkSet NInitNetworkSet(int archi, int learning, int init, int threshold)
+ExempleSet NGetAndExempleSet()
 {
-}*/
+	double **input = malloc(sizeof(double) * 4);
+	double **target = malloc(sizeof(double) * 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		input[i] = malloc(sizeof(double) * 2);
+		target[i] = malloc (sizeof(double));
+		input[i][0] = i % 2;
+		input[i][1] = i / 2;
+		target[i][0] = i == 3 ? 1 : 0;
+	}
+	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		free(input[i]);
+		free(target[i]);
+	}
+	free(input);
+	free(target);
+	return r;
+}
+
+ExempleSet NGetOrExempleSet()
+{
+	double **input = malloc(sizeof(double) * 4);
+	double **target = malloc(sizeof(double) * 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		input[i] = malloc(sizeof(double) * 2);
+		target[i] = malloc (sizeof(double));
+		input[i][0] = i % 2;
+		input[i][1] = i / 2;
+		target[i][0] = i > 1 ? 1 : 0;
+	}
+	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		free(input[i]);
+		free(target[i]);
+	}
+	free(input);
+	free(target);
+	return r;
+}
+
+ExempleSet NGetXorExempleSet()
+{
+	double **input = malloc(sizeof(double) * 4);
+	double **target = malloc(sizeof(double) * 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		input[i] = malloc(sizeof(double) * 2);
+		target[i] = malloc (sizeof(double));
+		input[i][0] = i % 2;
+		input[i][1] = i / 2;
+		target[i][0] = i == 1 || i == 2 ? 1 : 0;
+	}
+	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	for (int i = 0; i < 4; i ++)
+	{
+		free(input[i]);
+		free(target[i]);
+	}
+	free(input);
+	free(target);
+	return r;
+}
+
+NetworkSet NInitNetworkSet(int gate, int archi, int learning, int input,
+	int output, int others, int bias)
+{
+	NetworkSet r;
+
+	r.maxError = 0.000001;
+	r.lRate = 0.06;
+	r.momentum = 0.2;
+	if (gate == 0)
+		r.exSet = NGetAndExempleSet();
+	else if (gate == 1)
+		r.exSet = NGetOrExempleSet();
+	else
+		r.exSet = NGetXorExempleSet();
+	if (learning == 0)
+	{
+		Network *N1 = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
+		Network *N2 = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
+
+		NInitThresHoldSimpleMLP(N1, FUNCTIONS[input], FUNCTIONS[output],
+			FUNCTIONS[bias], FUNCTIONS[others]);
+		NInitThresHoldSimpleMLP(N2, FUNCTIONS[input], FUNCTIONS[output],
+			FUNCTIONS[bias], FUNCTIONS[others]);
+		N1->sibling = N2;
+		N2->sibling = N1;
+		NComputeError(N1, r.exSet, 0, NULL);
+		NComputeError(N2, r.exSet, 0, NULL);
+		if (N1->error < N2->error)
+			r.nWork = N1;
+		else
+			r.nWork = N2;
+		r.learn = &NBackPropLearn;
+	}
+	else
+	{
+			r.nWork = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
+			NInitThresHoldSimpleMLP(r.nWork, FUNCTIONS[input]
+				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
+			NComputeError(r.nWork, r.exSet, 0, NULL);
+			r.learn = &NDichotomicLearn;
+	}
+	return r;
+}
 
 NetworkSet NDefaultNetworkSet()
 {

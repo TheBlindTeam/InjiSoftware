@@ -3,7 +3,6 @@
 #include "../Utils/math.h"
 extern const double RAND_UP;
 extern const double RAND_DOWN;
-
 typedef struct
 {
 	int layer;
@@ -77,20 +76,32 @@ double NComputeError(Network *nWork, ExempleSet exSet, int print, char** str);
 
 void NPrintNetwork(Network nWork);
 
-void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI, int k);
+void NInitEdge(Network *nWork, int startL, int startI, int endL,int endI,int k);
 
 void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
 	double *target, int targetSize);
 
+
+ExempleSet NGetExempleSet(double **input, int inputDim2,
+	double **target, int targetDim2, int size);
+
+ExempleSet NGetAndExempleSet();
+ExempleSet NGetOrExempleSet();
 ExempleSet NGetXorExempleSet();
 
-NetworkSet NInitNetworkSet(int *argv);
+NetworkSet NInitNetworkSet(int gate, int archi, int learning, int input,
+	int output, int others, int bias);
 
 NetworkSet NDefaultNetworkSet();
 
 int specialPrint(char *s);
 
 int getMaxNeuronsLayer(Network nWork);
+
 int getTotalNeuronsAmount(Network nWork);
+
 char* strcatAlloc(char*, char*);
+
+typedef Network* (*Ninit)(int, int);
+extern const Ninit NINIT[];
 #endif

@@ -3,21 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void NInitBinary(NetworkSet *nWorkSet, Network* (*NInit)(int, int),
-	int input, int output)
-{
-	Network *N1 = NInit(input, output);
-	Network *N2 = NInit(input, output);
-	NComputeError(N1, nWorkSet->exSet, 0, NULL);
-	NComputeError(N2, nWorkSet->exSet, 0, NULL);
-	N1->sibling = N2;
-	N2->sibling = N1;
-	if (N1->error < N2->error)
-		nWorkSet->nWork = N1;
-	else
-		nWorkSet->nWork = N2;
-}
-
 int NDichotomicLearn(NetworkSet *nWorkSet)
 {
 	Network *nWon = nWorkSet->nWork;

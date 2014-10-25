@@ -327,24 +327,24 @@ ExempleSet NGetXorExempleSet()
 	return r;
 }
 
-NetworkSet NInitNetworkSet(int gate, int archi, int learning, int input,
+NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 	int output, int others, int bias)
 {
-	NetworkSet r;
+	NetworkSet* r = malloc(sizeof(NetworkSet));
 
-	r.maxError = 0.000001;
-	r.lRate = 0.06;
-	r.momentum = 0.2;
+	r->maxError = 0.000001;
+	r->lRate = 0.06;
+	r->momentum = 0.2;
 	if (gate == 0)
-		r.exSet = NGetAndExempleSet();
+		r->exSet = NGetAndExempleSet();
 	else if (gate == 1)
-		r.exSet = NGetOrExempleSet();
+		r->exSet = NGetOrExempleSet();
 	else
-		r.exSet = NGetXorExempleSet();
+		r->exSet = NGetXorExempleSet();
 	if (learning == 0)
 	{
-		Network *N1 = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
-		Network *N2 = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
+		Network *N1 = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
+		Network *N2 = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
 
 		NInitThresHoldSimpleMLP(N1, FUNCTIONS[input], FUNCTIONS[output],
 			FUNCTIONS[bias], FUNCTIONS[others]);
@@ -352,37 +352,42 @@ NetworkSet NInitNetworkSet(int gate, int archi, int learning, int input,
 			FUNCTIONS[bias], FUNCTIONS[others]);
 		N1->sibling = N2;
 		N2->sibling = N1;
-		NComputeError(N1, r.exSet, 0, NULL);
-		NComputeError(N2, r.exSet, 0, NULL);
+		NComputeError(N1, r->exSet, 0, NULL);
+		NComputeError(N2, r->exSet, 0, NULL);
 		if (N1->error < N2->error)
-			r.nWork = N1;
+			r->nWork = N1;
 		else
-			r.nWork = N2;
-		r.learn = &NBackPropLearn;
+			r->nWork = N2;
+		r->learn = &NBackPropLearn;
 	}
 	else
 	{
-			r.nWork = NINIT[archi](r.exSet.inputSize, r.exSet.targetSize);
-			NInitThresHoldSimpleMLP(r.nWork, FUNCTIONS[input]
+			r->nWork = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
+			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
 				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
-			NComputeError(r.nWork, r.exSet, 0, NULL);
-			r.learn = &NDichotomicLearn;
+			NComputeError(r->nWork, r->exSet, 0, NULL);
+			r->learn = &NDichotomicLearn;
 	}
 	return r;
 }
 
-NetworkSet NDefaultNetworkSet()
+NetworkSet* NDefaultNetworkSet()
 {
-	NetworkSet r;
-	r.learn = &NBackPropLearn;
-	r.nWork = NInitializeCompleteBias(2, 1);
-	r.maxError = 0.000001;
-	r.lRate = 0.06;
-	r.momentum = 0.2;
-	r.exSet = NGetXorExempleSet();
-	NInitThresHoldSimpleMLP(r.nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
-	NComputeError(r.nWork, r.exSet, 0, NULL);
+	NetworkSet* r = malloc(sizeof(NetworkSet));
+	r->learn = &NBackPropLearn;
+	r->nWork = NInitializeCompleteBias(2, 1);
+	r->maxError = 0.000001;
+	r->lRate = 0.06;
+	r->momentum = 0.2;
+	r->exSet = NGetXorExempleSet();
+	NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
+	NComputeError(r->nWork, r->exSet, 0, NULL);
 	return r;
+}
+
+void NFreeNetworkSet(NetworkSet* nWorkset)
+{
+	if(nWorkset){}
 }
 
 int specialPrint(char *s)

@@ -20,7 +20,6 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 
 	data->img_rgb = img;
 	data->builder = gtk_builder_new();
-	data->networkSet = NDefaultNetworkSet();
 	data->neuronData->shouldDraw = FALSE;
 	data->neuronData->shouldErr = FALSE;
 	data->segBoxArray = NULL;

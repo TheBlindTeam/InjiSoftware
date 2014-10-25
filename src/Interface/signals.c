@@ -201,8 +201,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (!data->neuronData->shouldDraw)
 			return;
 
-		NetworkSet networkSet = data->networkSet;
-		Network network =  *networkSet.nWork;
+		NetworkSet *networkSet = data->networkSet;
+		Network network = *networkSet->nWork;
 
 		// Parameters
 /*		gint p_archi = gtk_combo_box_get_active(
@@ -230,7 +230,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 
 		int iterCalls = 0;
-		while(networkSet.learn(&networkSet) && iterCalls < maxIter)
+		while(networkSet->learn(networkSet) && iterCalls < maxIter)
 			iterCalls++;
 
 
@@ -361,7 +361,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				NN_MARGIN_TOP+maxHeight + 30);
 			data->neuronData->shouldErr = FALSE;
 			char **str = malloc(sizeof(char*));
-			NComputeError(&network, networkSet.exSet, 1, str);
+			NComputeError(&network, networkSet->exSet, 1, str);
 			cairo_show_text(cr, *str);
 			printf("%s\n", *str);
 		}
@@ -412,6 +412,9 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 		data->neuronData->shouldDraw = FALSE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
+
+		NFreeNetworkSet(data->networkSet);
+
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "InitButton")), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
@@ -432,17 +435,24 @@ void on_click_initialize(GtkWidget *widget, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 
+		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
+			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
+		gint val[7];
+		for (int i = 0; i < 7; i ++)
+		{
+			GObject* object = gtk_builder_get_object(data->builder,
+				paramsName[i]);
+			gtk_widget_set_sensitive(GTK_WIDGET(object), TRUE);
+			val[i] = gtk_combo_box_get_active(GTK_COMBO_BOX(object));
+		}
+		data->networkSet = NInitNetworkSet(val[0], val[1], val[2], val[3],
+			val[4], val[5], val[6]);
+
 		// Disable buttons
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "InitButton")), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), TRUE);
-
-		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
-			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
-		for (int i = 0; i < 7; i ++)
-			gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
-				data->builder, paramsName[i])), FALSE);
 	}
 }
 
@@ -562,7 +572,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			{
 				int count;
 				Box box = GetBoxFromSplit(*data->img_rgb);
-				printf("a\n");
 				Box* boxArray = GetBreadthBoxArray(box, &count);
 				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
 					data->builder, "BSegmentation")), "Detect");

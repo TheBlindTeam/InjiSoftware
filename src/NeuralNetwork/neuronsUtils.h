@@ -89,10 +89,12 @@ ExempleSet NGetAndExempleSet();
 ExempleSet NGetOrExempleSet();
 ExempleSet NGetXorExempleSet();
 
-NetworkSet NInitNetworkSet(int gate, int archi, int learning, int input,
+NetworkSet *NInitNetworkSet(int gate, int archi, int learning, int input,
 	int output, int others, int bias);
 
-NetworkSet NDefaultNetworkSet();
+NetworkSet *NDefaultNetworkSet();
+
+void NFreeNetworkSet(NetworkSet *nWorkset);
 
 int specialPrint(char *s);
 

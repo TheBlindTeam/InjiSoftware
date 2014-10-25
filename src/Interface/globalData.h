@@ -11,7 +11,7 @@ typedef struct
 	GtkBuilder *builder;
 	Image *img_rgb;
 	CairoNeuronData *neuronData;
-	NetworkSet networkSet;
+	NetworkSet* networkSet;
 	Box* segBoxArray;
 	int boxDetectIndex, boxCount;
 } SGlobalData;

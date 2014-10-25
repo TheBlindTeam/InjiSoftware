@@ -31,7 +31,7 @@ typedef struct
 } ImageGS;
 
 // Adrien: Creates an Image structure from the path str
-Image ULoadImage(char* str);
+Image* ULoadImage(char* str);
 
 // Laurent : Free the Pixels buffer of an Image
 void UFreeImage(Image img);

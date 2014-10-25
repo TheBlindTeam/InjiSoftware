@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
 	Image *img = NULL;
 	if(argc > 1)
-		*img = ULoadImage(argv[1]);
+		img = ULoadImage(argv[1]);
 
 	Gtk_Initialize(argc, argv, img);
 	gtk_main();

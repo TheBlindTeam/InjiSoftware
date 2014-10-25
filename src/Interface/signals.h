@@ -48,6 +48,7 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 void on_click_render_network(GtkWidget *widget, gpointer user_data);
 void on_click_compute_errors(GtkWidget *widget, gpointer user_data);
 void on_click_reset(GtkWidget *widget, gpointer user_data);
+void on_click_initialize(GtkWidget *widget, gpointer user_data);
 
 void on_detect_chars(GtkWidget *widget, gpointer user_data);
 

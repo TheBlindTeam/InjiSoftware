@@ -41,6 +41,12 @@ void connectSignals(SGlobalData *data)
 			"NNResetButton")),
 		"clicked",
 		G_CALLBACK(on_click_reset), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"InitButton")),
+		"clicked",
+		G_CALLBACK(on_click_initialize), data);
 	
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -152,8 +158,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
-				data->img_rgb = malloc(sizeof(Image));
-				*data->img_rgb = ULoadImage(filename);
+				data->img_rgb = ULoadImage(filename);
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
@@ -181,6 +186,8 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkVisualizer"));
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NNResetButton")), FALSE);
 
 		gtk_widget_show_all(window);
 	}
@@ -400,8 +407,29 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 		data->neuronData->shouldDraw = FALSE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "InitButton")), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NNResetButton")), FALSE);
+
 	}
 }
+
+void on_click_initialize(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		// Disable buttons
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "InitButton")), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "NNResetButton")), TRUE);
+	}
+}
+
+
 
 void cr_draw_arrow(cairo_t *cr, double fromx, double fromy, double tox,
 	double toy, int headArrow)

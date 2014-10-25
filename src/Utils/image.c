@@ -6,34 +6,34 @@ const Pixel RED = {255, 0, 0, 255};
 const Pixel GREEN = {0, 255, 0, 255};
 const Pixel BLUE = {0, 0, 0, 255};
 
-Image ULoadImage(char *str)
+Image* ULoadImage(char *str)
 {
-	Image tmp;
+	Image *tmp = malloc(sizeof(Image));
 	GError *error = NULL;
 
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(str, &error);
 
 	if (!pixbuf || error)
 	{
-		tmp.width = 0;
-		tmp.height = 0;
-		tmp.has_alpha = FALSE;
-		tmp.pixList = NULL;
+		tmp->width = 0;
+		tmp->height = 0;
+		tmp->has_alpha = FALSE;
+		tmp->pixList = NULL;
 		printf("%d : %s\n", error->code, error->message);
 	}
 	else
 	{
-		tmp.width = gdk_pixbuf_get_width(pixbuf);
-		tmp.height = gdk_pixbuf_get_height(pixbuf);
-		tmp.has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
-		tmp.bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
-		tmp.pixList = malloc(sizeof(Pixel*) * tmp.width);
-		for (int i = 0 ; i < tmp.width; i ++)
+		tmp->width = gdk_pixbuf_get_width(pixbuf);
+		tmp->height = gdk_pixbuf_get_height(pixbuf);
+		tmp->has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
+		tmp->bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
+		tmp->pixList = malloc(sizeof(Pixel*) * tmp->width);
+		for (int i = 0 ; i < tmp->width; i ++)
 		{
-			tmp.pixList[i] = malloc(sizeof(Pixel) *
-					tmp.height);
-			for (int j = 0; j < tmp.height; j ++)
-				tmp.pixList[i][j] = UGetPixel(pixbuf, i, j);
+			tmp->pixList[i] = malloc(sizeof(Pixel) *
+					tmp->height);
+			for (int j = 0; j < tmp->height; j ++)
+				tmp->pixList[i][j] = UGetPixel(pixbuf, i, j);
 		}
 	}
 	return tmp;

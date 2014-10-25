@@ -1,5 +1,6 @@
+#ifndef SPLIT_H
+#define SPLIT_H
 #include "../Utils/image.h"
-
 #include <math.h>
 extern const guchar BLACKGS;
 
@@ -77,3 +78,4 @@ Box *GetBreadthBoxArray(Box b, int *count);
 void GetBreadthBoxArrayAux(BoxList list);
 
 void DrawNotInSubBoxes(Image img, Box b, Pixel p);
+#endif

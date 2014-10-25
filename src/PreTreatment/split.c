@@ -7,7 +7,10 @@
 J'ai considéré l'image comme ayant un repère d'axe x VERTICAL orienté vers 
 le bas et d'axe y HORIZONTAL orienté vers la gauche*/
 const guchar BLACKGS = 200;
-
+int mineX = 999;
+int mineY = 999;
+int maxeX = -1;
+int maxeY = -1;
 BoxList AddInList(BoxList list, Box b)
 {
 	BoxElementList *elt = malloc(sizeof(BoxElementList));
@@ -37,8 +40,8 @@ Box *BoxListToArray(BoxList list, int *count)
 {
 	Box *r;
 	BoxList tmp = list;
-	r = malloc(sizeof(Box) * *count);
 	*count = LengthBoxList(list);
+	r = malloc(sizeof(Box) * *count);
 	for (int i = 0; i < *count; i ++)
 	{
 		r[i] = tmp->value;
@@ -78,8 +81,31 @@ int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start)
 	GetIterSec(orient, &x2, &y2);
 	min = b.rectangle.x1 * x2 + b.rectangle.y1 * y2;
 	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
+
 	for (int i = min; i <= max && r; i ++)
+	{
 		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
+/*		if (start * x1 + i * x2 > maxeX)
+		{
+			maxeX = start * x1 + i * x2;
+			printf("MINMAX %d %d %d %d\n", mineX, maxeX, mineY, maxeY);
+		}
+		if (start * x1 + i * x2 < mineX)
+		{
+			mineX = start * x1 + i * x2;
+			printf("MINMAX %d %d %d %d\n", mineX, maxeX, mineY, maxeY);
+		}
+		if (start * y1 + i * y2 > maxeY)
+		{
+			maxeY = start * y1 + i * y2;
+			printf("MINMAX %d %d %d %d\n", mineX, maxeX, mineY, maxeY);
+		}
+		if (start * y1 + i * y2 < mineY)
+		{
+			mineY = start * y1 + i * y2;
+			printf("MINMAX %d %d %d %d\n", mineX, maxeX, mineY, maxeY);
+		}
+*/	}
 	return r;
 }
 
@@ -223,37 +249,39 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 
 	int x1, y1, x2, y2;
 	int count = 0;
-	int prev = 0;
+	int prev;
 	int min;
 	int max;
 	BoxList list = NULL;
 
 	GetIterPrim(orient, &x1, &y1);
-	GetIterPrim(orient, &x2, &y2);
+	GetIterSec(orient, &x2, &y2);
 	min = x1 * b->rectangle.x1 + y1 * b->rectangle.y1;
 	max = x1 * b->rectangle.x2 + y1 * b->rectangle.y2;
+	prev = min;
 	for (int i = min; i <= max; i ++)
 	{
 		int isCurBlank = isBlank(img, *b, c, orient, i);
 		if (isCurBlank)
 			count ++;
-		if (!isCurBlank || i == max)
+		if ((!isCurBlank && count >= minBlank) || i == max)
 		{
-			count = 0;
-			if (count >= minBlank)
-			{
-				Box tmp;
-				tmp.rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
-				tmp.rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
-				tmp.rectangle.x2 = x1 * i + x2 * b->rectangle.x2;
-				tmp.rectangle.y2 = y1 * i + y2 * b->rectangle.y2;
-				tmp.nbSubBoxes = 0;
-				tmp.subBoxes = NULL;
-				prev = i;
-				CutMargin(img, &tmp, c);
-				list = AddInList(list, tmp);
-			}
+			printf("count %d prev %d x1 %d x2 %d y1 %d y2 %d\n", count, prev, x1, x2, y1 ,y2);
+			Box tmp;
+			tmp.rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
+			tmp.rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
+			tmp.rectangle.x2 = x1 * i + x2 * b->rectangle.x2;
+			tmp.rectangle.y2 = y1 * i + y2 * b->rectangle.y2;
+			tmp.nbSubBoxes = 0;
+			tmp.subBoxes = NULL;
+			prev = i;
+			CutMargin(img, &tmp, c);
+			printf("Big %d %d %d %d\n", b->rectangle.x1, b->rectangle.y1, b->rectangle.x2, b->rectangle.y2);
+			printf("Small %d %d %d %d\n", tmp.rectangle.x1, tmp.rectangle.y1, tmp.rectangle.x2, tmp.rectangle.y2);
+			list = AddInList(list, tmp);
 		}
+		if (!isCurBlank)
+			count = 0;
 	}
 	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
 }
@@ -300,9 +328,11 @@ void SplitLines(ImageGS img, Box *b, guchar c)
 
 void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank)
 {
+	printf("Split Blocks minBlank %d\n", minBlank);
 	Split(img, b, HORIZONTAL, minBlank, c);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		SplitLines(img, &b->subBoxes[i], c);
+	printf("nBlocks %d\n", b->nbSubBoxes);
 }
 
 Box GetBoxFromSplit(Image img)
@@ -311,12 +341,6 @@ Box GetBoxFromSplit(Image img)
 	int tmp = 0;
 	double minVar = 0;
 	ImageGS imgGs = URgbToGrayscale(img);
-	for (int i = 0; i < imgGs.height; i ++)
-	{
-		for (int j = 0; j < imgGs.width; j ++)
-			printf("%d ", imgGs.intensity[j][i]);
-		printf("\n");
-	}
 	Box b = {{0, 0, img.width - 1, img.height - 1}, 0, NULL};
 	Box *sub = malloc(sizeof(Box));
 	b.nbSubBoxes = 1;
@@ -327,8 +351,7 @@ Box GetBoxFromSplit(Image img)
 	CutMargin(imgGs, sub, BLACKGS);
 	
 	int *spaces = GetSpaceArray(imgGs, *sub, BLACKGS, HORIZONTAL, &tmp);
-	if (ClassifySpace(spaces, tmp, &minBlank, &minVar)
-		&& minVar > 0.3 && minBlank > 1)
+	if (ClassifySpace(spaces, tmp, &minBlank, &minVar) && minBlank > 1)
 		SplitBlocks(imgGs, sub, BLACKGS, minBlank);
 	else
 		SplitLines(imgGs, sub, BLACKGS);
@@ -355,16 +378,19 @@ void GetBreadthBoxArrayAux(BoxList list)
 void DrawNotInSubBoxes(Image img, Box b, Pixel p)
 {
 	printf("DRAW\n");
-	int **rect;
+	int **rect = NULL;
 	int width = b.rectangle.x2 - b.rectangle.x1 + 1;
 	int height = b.rectangle.y2 - b.rectangle.y1 + 1;
-	rect = malloc(sizeof(int) * width);
+	printf("width %d height %d\n", width, height);
+	rect = malloc(sizeof(int*) * width);
+	printf("DRAW1\n");
 	for (int i = 0; i < width; i ++)
 	{
-		rect = malloc(sizeof(int) * height);
+		rect[i] = malloc(sizeof(int) * height);
 		for (int j = 0; j < height; j ++)
 			rect[i][j] = 1;
 	}
+	printf("DRAW2\n");
 	for (int i = 0; i < b.nbSubBoxes; i ++)
 	{
 		int subWidth =  b.subBoxes[i].rectangle.x2
@@ -373,12 +399,21 @@ void DrawNotInSubBoxes(Image img, Box b, Pixel p)
 			- b.subBoxes[i].rectangle.y1 + 1;
 		int varX = b.subBoxes[i].rectangle.x1 - b.rectangle.x1;
 		int varY = b.subBoxes[i].rectangle.y1 - b.rectangle.y1;
+		printf("parent coordinates %d %d %d %d\n", b.rectangle.x1, b.rectangle.y1, b.rectangle.x2, b.rectangle.y2);
+		printf("chlid coordinates %d %d %d %d\n", b.subBoxes[i].rectangle.x1, b.subBoxes[i].rectangle.y1, b.subBoxes[i].rectangle.x2, b.subBoxes[i].rectangle.y2);
+		printf("subWidth subHeight varX var Y %d %d %d %d\n", subWidth, subHeight, varX, varY);
 		for (int j = 0; j < subWidth; j++)
 			for (int k = 0; k < subHeight; k++)
 				rect[j + varX][k + varY] = 0;
 	}
+	printf("DRAW3\n");
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
 			if (rect[i][j])
 				img.pixList[i + b.rectangle.x1][j + b.rectangle.y1] = p;
+	printf("DRAW4\n");
+	for (int i = 0; i < width; i ++)
+		free(rect[i]);
+	free(rect);
+	printf("DRAW5\n");
 }

@@ -67,6 +67,11 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_rotate_img_open), data);
 
 	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "Edit.Filter")),
+		"activate",
+		G_CALLBACK(on_filter_img_open), data);
+
+	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"LoadFileButton")),
 		"clicked",
@@ -98,6 +103,16 @@ void connectSignals(SGlobalData *data)
 			"FCButtonCancel")),
 		"clicked",
 		G_CALLBACK(file_chooser_cancel), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "FilterCancel")),
+		"clicked",
+		G_CALLBACK(filter_window_cancel), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "ApplyFilter")),
+		"clicked",
+		G_CALLBACK(filter_click_apply), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -191,6 +206,16 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 	}
 }
 
+void filter_window_cancel(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "FilterWindow")));
+	}
+}
+
 void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
@@ -198,8 +223,6 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkVisualizer"));
-		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
-			data->builder, "NNResetButton")), FALSE);
 
 		gtk_widget_show_all(window);
 	}
@@ -540,6 +563,29 @@ void on_rotate_img_open(GtkWidget *widget, gpointer user_data)
 	}
 }
 
+void on_filter_img_open(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+
+		GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "FilterWindow"));
+
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void filter_click_apply(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		//SGlobalData *data = (SGlobalData*) user_data;
+
+	}
+}
+
 void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
@@ -583,10 +629,9 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			{
 				int count;
 				Box box = GetBoxFromSplit(*data->img_rgb);
-				Box* boxArray = GetBreadthBoxArray(box, &count);
+				data->segBoxArray = GetBreadthBoxArray(box, &count);
 				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
 					data->builder, "BSegmentation")), "Detect");
-				if(boxArray){}
 				return;
 			}
 			if (data->boxDetectIndex == data->boxCount)

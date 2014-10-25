@@ -24,6 +24,9 @@ Pixel** UMultiply(Pixel **matrix, double **convolution, int matrixSize)
 				tmp[x][y].b += (matrix[x][y].b *
 					(guchar)convolution[y][x]);
 			}
+
+			// Clamp RGB values
+			ClampPixel(&tmp[x][y], 0, 255);
 		}
 	}
 

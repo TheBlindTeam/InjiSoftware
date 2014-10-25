@@ -220,13 +220,18 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		gint p_thrhid = gtk_combo_box_get_active(
 			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
 				"NNThrHidLay")));*/
+		gint maxIter = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
+			gtk_builder_get_object(data->builder, "SBMaxIter")));
+
 		int maxNeuron = getMaxNeuronsLayer(network);
 		int maxHeight = maxNeuron * NN_MAXHEIGHT_COEF;
 		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
 			* maxNeuron) / (maxNeuron - 1);
-		
-		while(networkSet.learn(&networkSet) && 
-			!data->neuronData->shouldBlock);
+
+
+		int iterCalls = 0;
+		while(networkSet.learn(&networkSet) && iterCalls < maxIter)
+			iterCalls++;
 
 
 		cairo_set_line_width(cr, 1);
@@ -395,7 +400,7 @@ void on_click_compute_errors(GtkWidget *widget, gpointer user_data)
 		data->neuronData->shouldErr = TRUE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
-		
+
 	}
 }
 
@@ -412,6 +417,12 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), FALSE);
 
+		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
+			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
+		for (int i = 0; i < 7; i ++)
+			gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+				data->builder, paramsName[i])), TRUE);
+
 	}
 }
 
@@ -426,9 +437,14 @@ void on_click_initialize(GtkWidget *widget, gpointer user_data)
 			data->builder, "InitButton")), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), TRUE);
+
+		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
+			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
+		for (int i = 0; i < 7; i ++)
+			gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+				data->builder, paramsName[i])), FALSE);
 	}
 }
-
 
 
 void cr_draw_arrow(cairo_t *cr, double fromx, double fromy, double tox,
@@ -484,11 +500,6 @@ void on_click_render_network(GtkWidget *widget, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 
-		GtkWidget *cb = GTK_WIDGET(gtk_builder_get_object(
-			data->builder, "BlockStepsCheckbox"));
-
-		data->neuronData->shouldBlock = gtk_toggle_button_get_active(
-			GTK_TOGGLE_BUTTON(cb));
 		data->neuronData->shouldDraw = TRUE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
@@ -566,8 +577,10 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 					(i+1 == data->boxDetectIndex) ? BLUE : RED)
 			}*/
 			if (data->boxDetectIndex != 0)	
-				DrawNotInSubBoxes(*data->img_rgb, data->segBoxArray[data->boxDetectIndex - 1], BLUE);
-			DrawNotInSubBoxes(*data->img_rgb, data->segBoxArray[data->boxDetectIndex], RED);
+				DrawNotInSubBoxes(*data->img_rgb,
+					data->segBoxArray[data->boxDetectIndex - 1], BLUE);
+			DrawNotInSubBoxes(*data->img_rgb,
+				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,

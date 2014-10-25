@@ -14,4 +14,5 @@ typedef struct
 	NetworkSet* networkSet;
 	Box* segBoxArray;
 	int boxDetectIndex, boxCount;
+	double previewScale;
 } SGlobalData;

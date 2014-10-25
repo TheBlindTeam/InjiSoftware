@@ -119,6 +119,15 @@ void connectSignals(SGlobalData *data)
 			"RotateButton")),
 		"clicked",
 		G_CALLBACK(on_apply_rotation), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "ZoomInButton")),
+		"clicked",
+		G_CALLBACK(on_zoom_in), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "ZoomOutButton")),
+		"clicked",
+		G_CALLBACK(on_zoom_out), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -182,6 +191,9 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 			if (stat(filename, &statbuf) == 0 &&
 				S_ISREG(statbuf.st_mode))
 			{
+				if (data->img_rgb != NULL)
+					UFreeImage(*data->img_rgb);
+				data->previewScale = 1;
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
@@ -581,8 +593,20 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
-		//SGlobalData *data = (SGlobalData*) user_data;
+		SGlobalData *data = (SGlobalData*) user_data;
 
+		double **matrix = malloc(sizeof(double*));
+		for(int x = 0; x < 3; x++)
+		{
+			matrix[x] = malloc(sizeof(double));
+			for(int y = 0; y < 3; y++)
+			{
+				char wname[19];
+				sprintf(wname, "FilterMatrixButton%d", 3*x+y);
+					matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+						gtk_builder_get_object(data->builder, wname)));
+			}
+		}
 	}
 }
 
@@ -623,7 +647,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 	{
 		printf("click_segmentation 1\n");
 		SGlobalData *data = (SGlobalData*) user_data;
-		if(data->img_rgb != NULL)
+		if (data->img_rgb != NULL)
 		{
 			if (data->segBoxArray == NULL)
 			{
@@ -653,6 +677,44 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder, "PreviewImage")),
 				UGetPixbufFromImage(*data->img_rgb));
 		printf("click_segmentation 2\n");
+		}
+	}
+}
+
+void on_zoom_in(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			data->previewScale += ZOOM_COEF;
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				gdk_pixbuf_scale_simple(UGetPixbufFromImage(*data->img_rgb),
+					data->img_rgb->width * data->previewScale,
+					data->img_rgb->height * data->previewScale,
+					GDK_INTERP_BILINEAR));
+		}
+	}
+}
+
+void on_zoom_out(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL && data->previewScale > 2 * ZOOM_COEF)
+		{
+			data->previewScale -= ZOOM_COEF;
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				gdk_pixbuf_scale_simple(UGetPixbufFromImage(*data->img_rgb),
+					data->img_rgb->width * data->previewScale,
+					data->img_rgb->height * data->previewScale,
+					GDK_INTERP_BILINEAR));
 		}
 	}
 }

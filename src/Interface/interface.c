@@ -24,6 +24,7 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 	data->segBoxArray = NULL;
 	data->boxDetectIndex = 0;
 	data->boxCount = 0;
+	data->previewScale = 1;
 	gtk_builder_add_from_file(data->builder, uiFilename, &error);
 	g_free(uiFilename);
 

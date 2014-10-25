@@ -13,6 +13,8 @@
 #include "../PreTreatment/split.h"
 #include "globalData.h"
 
+#define ZOOM_COEF 0.1
+
 // Neuron Network Visualizer Data
 #define NN_MARGIN_LEFT 50
 #define NN_MARGIN_TOP 20
@@ -60,3 +62,6 @@ void on_detect_chars(GtkWidget *widget, gpointer user_data);
 void cr_draw_arrow(cairo_t*, double, double, double, double, int);
 
 void on_click_segmentation(GtkWidget *widget, gpointer user_data);
+
+void on_zoom_in(GtkWidget *widget, gpointer user_data);
+void on_zoom_out(GtkWidget *widget, gpointer user_data);

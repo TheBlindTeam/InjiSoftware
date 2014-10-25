@@ -33,6 +33,18 @@ Pixel** UMultiply(Pixel **matrix, double **convolution, int matrixSize)
 	return tmp;
 }
 
+void ClampPixel(Pixel *pix, int min, int max)
+{
+	pix->r = (pix->r <= min) ? min : pix->r;
+	pix->r = (pix->r >= max) ? max : pix->r;
+
+	pix->g = (pix->g <= min) ? min : pix->g;
+	pix->g = (pix->g >= max) ? max : pix->g;
+
+	pix->b = (pix->b <= min) ? min : pix->b;
+	pix->b = (pix->b >= max) ? max : pix->b;
+}
+
 Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	int pos_y)
 {

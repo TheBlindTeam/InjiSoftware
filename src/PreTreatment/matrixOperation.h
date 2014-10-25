@@ -13,17 +13,7 @@ typedef struct c_vector2{
 }Vector2;
 
 // David : Simple clamp function applied on all channels of a given Pixel
-void ClampPixel(Pixel *pix, int min, int max)
-{
-	pix->r = (pix->r <= min) ? min : pix->r;
-	pix->r = (pix->r >= max) ? max : pix->r;
-
-	pix->g = (pix->g <= min) ? min : pix->g;
-	pix->g = (pix->g >= max) ? max : pix->g;
-
-	pix->b = (pix->b <= min) ? min : pix->b;
-	pix->b = (pix->b >= max) ? max : pix->b;
-}
+void ClampPixel(Pixel *pix, int min, int max);
 
 // Modify the position of a point according to a angle of rotation.
 Vector2 ApplyVectorRot(Vector2 origin, double radian);

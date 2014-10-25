@@ -418,10 +418,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 					NN_NEURON_RADIUS,
 				NN_MARGIN_TOP+maxHeight + 30);
 			data->neuronData->shouldErr = FALSE;
-			char **str = malloc(sizeof(char*));
-			NComputeError(&network, networkSet->exSet, 1, str);
-			cairo_show_text(cr, *str);
-			printf("%s\n", *str);
+			char str[1000];
+			NComputeError(&network, networkSet->exSet, 1, str, 1000);
+			cairo_show_text(cr, str);
+			printf("%s\n", str);
 		}
 		if (selectedNeuronx != -1 && selectedNeurony != -1)
 		{

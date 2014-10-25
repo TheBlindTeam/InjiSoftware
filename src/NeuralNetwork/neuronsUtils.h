@@ -72,7 +72,9 @@ void NInitializeSumNetwork(Network *nWork);
 
 int NRun(Network *nWork, double *input, double **r);
 
-double NComputeError(Network *nWork, ExempleSet exSet, int print, char** str);
+void addInStringAt(char *r, char *s2, int *at, int max);
+
+double NComputeError(Network *nWork, ExempleSet exSet, int print, char *r, int max);
 
 void NPrintNetwork(Network nWork);
 
@@ -86,7 +88,9 @@ ExempleSet NGetExempleSet(double **input, int inputDim2,
 	double **target, int targetDim2, int size);
 
 ExempleSet NGetAndExempleSet();
+
 ExempleSet NGetOrExempleSet();
+
 ExempleSet NGetXorExempleSet();
 
 NetworkSet *NInitNetworkSet(int gate, int archi, int learning, int input,
@@ -94,9 +98,15 @@ NetworkSet *NInitNetworkSet(int gate, int archi, int learning, int input,
 
 NetworkSet *NDefaultNetworkSet();
 
-void NFreeNetworkSet(NetworkSet *nWorkset);
+void NFreeNeuron(Neuron *neuron);
 
-int specialPrint(char *s);
+void NFreeNetwork(Network *nWork);
+
+void NFreeExemple(Exemple *exemple);
+
+void NFreeExempleSet(ExempleSet exSet);
+
+void NFreeNetworkSet(NetworkSet *nWorkset);
 
 int getMaxNeuronsLayer(Network nWork);
 
@@ -105,5 +115,6 @@ int getTotalNeuronsAmount(Network nWork);
 char* strcatAlloc(char*, char*);
 
 typedef Network* (*Ninit)(int, int);
+
 extern const Ninit NINIT[];
 #endif

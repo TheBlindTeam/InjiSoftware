@@ -12,8 +12,8 @@ int NDichotomicLearn(NetworkSet *nWorkSet)
 	if (wError < nWorkSet->maxError)
 		return 0;
 	NChangeLostNetwork(*nWon, wError, *nLost, lError);
-	wError = NComputeError(nWon, nWorkSet->exSet, 0, NULL);
-	lError = NComputeError(nLost, nWorkSet->exSet, 0, NULL);
+	wError = NComputeError(nWon, nWorkSet->exSet, 0, NULL, 0);
+	lError = NComputeError(nLost, nWorkSet->exSet, 0, NULL, 0);
 	if (lError < wError)
 		nWorkSet->nWork = nLost;
 	return 1;
@@ -86,6 +86,6 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 			}
 		ex = ex->next;
 	}
-	NComputeError(nWork, nWorkSet->exSet, 0, NULL);
+	NComputeError(nWork, nWorkSet->exSet, 0, NULL, 0);
 	return 1;
 }

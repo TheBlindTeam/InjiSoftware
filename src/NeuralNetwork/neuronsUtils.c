@@ -19,6 +19,7 @@ Network *NInitializeSimpleMLP(int input, int output, int middle, int bias)
 	Network *r = malloc(sizeof(struct Network));
 	r->nbLayers = 3;
 	r->bias = bias ? 1 : 0;
+	r->sibling = NULL;
 	r->layersSize = malloc(sizeof(int) * 3);
 	r->layersSize[0] = input + r->bias;
 	r->layersSize[1] = middle + r->bias;
@@ -130,15 +131,28 @@ int NRun(Network *nWork, double *input, double **r)
 	return 1;
 }
 
-double NComputeError(Network *nWork, ExempleSet exSet, int print, char **r)
+void addInStringAt(char *r, char *s2, int *at, int max)
+{
+	for (int i = 0; s2[i] && *at < max; i ++)
+	{
+		r[*at] = s2[i];
+		(*at)++;
+	}
+	r[*at] = 0;
+}
+
+double NComputeError(Network *nWork, ExempleSet exSet,
+	int print, char *r, int max)
 {
 	int count = 0;
 	double totalError = 0;
 	//char tmp[10];
 	double error;
 	double *output = NULL;
-	char *str = "error";
+	char tmp[10];
 	Exemple *ex = exSet.exemple;
+	int i = 0;
+	r[0] = 0;
 	while (ex)
 	{
 		NRun(nWork, ex->input, &output);
@@ -146,32 +160,32 @@ double NComputeError(Network *nWork, ExempleSet exSet, int print, char **r)
 		totalError += error;
 		if(print)
 		{
-			/*str = "\terror: ";
-			snprintf(tmp, 8, "%lf", error);
-			str = strcatAlloc(str, tmp);
-			str = strcatAlloc(str, "\tinput -> ");
+			
+			addInStringAt(r, "\terror: ", &i, max);
+			snprintf(tmp, 9, "%lf", error);
+			addInStringAt(r, tmp, &i, max);
+			addInStringAt(r, "\tinput -> ", &i, max);
 			for (int j = 0; j < exSet.inputSize; j ++)
 			{
-				snprintf(tmp, 8, "%lf", ex->input[j]);
-				printf("%s\n", tmp);
-				str = strcatAlloc(str, tmp);
-				str = strcatAlloc(str, " ");
+				snprintf(tmp, 9, "%lf", ex->input[j]);
+				addInStringAt(r, tmp, &i, max);
+				addInStringAt(r, " ", &i, max);
 			}
-			str = strcatAlloc(str, "output -> ");
+			addInStringAt(r, "output -> ", &i, max);
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
-				snprintf(tmp, 8, "%lf", output[j]);
-				str = strcatAlloc(str, tmp);
-				str = strcatAlloc(str, " ");
+				snprintf(tmp, 9, "%lf", output[j]);
+				addInStringAt(r, tmp, &i, max);
+				addInStringAt(r, " ", &i, max);
 			}
-			str = strcatAlloc(str, "target -> ");
+			addInStringAt(r, "target -> ", &i, max);
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
-				snprintf(tmp, 8, "%lf", ex->target[j]);
-				str = strcatAlloc(str, tmp);
-				str = strcatAlloc(str, " ");
+				snprintf(tmp, 9, "%lf", ex->target[j]);
+				addInStringAt(r, tmp, &i, max);
+				addInStringAt(r, " ", &i, max);
 			}
-			str = strcatAlloc(str, "\n");*/
+			addInStringAt(r, "\n", &i, max);
 		}
 		ex = ex->next;
 		count++;
@@ -179,28 +193,15 @@ double NComputeError(Network *nWork, ExempleSet exSet, int print, char **r)
 	totalError /= count;
 	if (print)
 	{
-		/*str = strcatAlloc(str, "average error: ");
-		snprintf(tmp, 10, "%f", totalError);
-		str = strcatAlloc(str, tmp);
-		str = strcatAlloc(str, "\n");*/
-		*r = str;
+		addInStringAt(r, "average error: ", &i, max);
+		snprintf(tmp, 9, "%f", totalError);
+		addInStringAt(r, tmp, &i, max);
+		addInStringAt(r, "\n", &i, max);
 	}
 	nWork->error = totalError;
 	return totalError;
 }
 
-char* strcatAlloc(char *str, char *str2)
-{
-	printf("%zu %zu\n", strlen(str), strlen(str2));
-	char *tmp = malloc(sizeof(char) * (strlen(str) + strlen(str2)));
-	printf("b\n");
-	for (size_t i = 0; i < strlen(str); i++)
-		tmp[i] = str[i];
-	for (size_t i = 0; i < strlen(str2); i++)
-		tmp[i + strlen(str)] = str2[i];
-	printf("c\n");
-	return tmp;
-}
 void NPrintNetwork(Network nWork)
 {
 	if (nWork.nbLayers <= 1)
@@ -352,8 +353,8 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			FUNCTIONS[bias], FUNCTIONS[others]);
 		N1->sibling = N2;
 		N2->sibling = N1;
-		NComputeError(N1, r->exSet, 0, NULL);
-		NComputeError(N2, r->exSet, 0, NULL);
+		NComputeError(N1, r->exSet, 0, NULL, 0);
+		NComputeError(N2, r->exSet, 0, NULL, 0);
 		if (N1->error < N2->error)
 			r->nWork = N1;
 		else
@@ -365,7 +366,7 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			r->nWork = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
 			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
 				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
-			NComputeError(r->nWork, r->exSet, 0, NULL);
+			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}
 	return r;
@@ -381,19 +382,47 @@ NetworkSet* NDefaultNetworkSet()
 	r->momentum = 0.2;
 	r->exSet = NGetXorExempleSet();
 	NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
-	NComputeError(r->nWork, r->exSet, 0, NULL);
+	NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 	return r;
+}
+
+void NFreeNeuron(Neuron *neuron)
+{
+	free(neuron->connectList);
+}
+
+void NFreeNetwork(Network *nWork)
+{
+	for (int i = 0; i < nWork->nbLayers; i ++)
+		free(nWork->neurons[i]);
+	free(nWork->neurons);
+	free(nWork->layersSize);
+	free(nWork);
+}
+
+void NFreeExemple(Exemple *exemple)
+{
+	if(exemple)
+	{
+		NFreeExemple(exemple->next);
+		free(exemple->input);
+		free(exemple->target);
+		free(exemple);
+	}
+}
+
+void NFreeExempleSet(ExempleSet exSet)
+{
+	NFreeExemple(exSet.exemple);
 }
 
 void NFreeNetworkSet(NetworkSet* nWorkset)
 {
-	if(nWorkset){}
-}
-
-int specialPrint(char *s)
-{
-	printf("%s", s);
-	return 1;
+	if(nWorkset->nWork->sibling)
+		NFreeNetwork(nWorkset->nWork->sibling);
+	NFreeNetwork(nWorkset->nWork);
+	NFreeExempleSet(nWorkset->exSet);
+	free(nWorkset);
 }
 
 int getMaxNeuronsLayer(Network nWork)

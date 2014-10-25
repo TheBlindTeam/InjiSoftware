@@ -632,10 +632,12 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				data->segBoxArray = GetBreadthBoxArray(box, &count);
 				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
 					data->builder, "BSegmentation")), "Detect");
+				data->boxCount = count;
 				return;
 			}
 			if (data->boxDetectIndex == data->boxCount)
 				return;
+			printf("test");
 /*			for (int i = 0; i < data->boxDetectIndex; i++)
 			{
 				DrawNotInSubBoxes(data->img_rgb, boxArray[i],

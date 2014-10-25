@@ -62,11 +62,17 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	return tmp;
 }
 
-Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
+Image UConvolution(Image ref, double **convolution, int size,
 	int matrixSize)
 {
+	Image image;
 	Pixel **result;
 	Pixel **subMatrix;
+
+	image.width = ref.width;
+	image.height = ref.height;
+	image.bits_per_sample = ref.bits_per_sample;
+	image.has_alpha = ref.has_alpha;
 
 	result = malloc(size * sizeof(Pixel *));
 	for (int i = 0; i < size; i++)
@@ -78,7 +84,7 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			subMatrix = UExtract(matrix, size, matrixSize, x, y);
+			subMatrix = UExtract(ref.pixList, size, matrixSize, x, y);
 			subMatrix = UMultiply(subMatrix, convolution,
 				matrixSize);
 
@@ -87,11 +93,13 @@ Pixel** UConvolution(Pixel **matrix, double **convolution, int size,
 		}
 	}
 
-	return result;
+	image.pixList = result;
+	return image;
 }
 
 Image URotate(Image ref, double angle)
 {
+	Image image;
 	// Calculate Rotation 
 	double radian = (angle * M_PI) / 180;
 	int newWidth;
@@ -111,7 +119,6 @@ Image URotate(Image ref, double angle)
 
 	newHeight = max.y - min.y + 1;
 	
-	Image image;
 	image.width = newWidth;
 	image.height = newHeight;
 	image.bits_per_sample = ref.bits_per_sample;

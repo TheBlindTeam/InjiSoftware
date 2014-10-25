@@ -104,6 +104,11 @@ int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
 			count = 0;
 		}
 	}
+	printf("Space Array Info size: %d\n", *size);
+	for (int i = 0; i < *size; i ++)
+	{
+		printf("space %d count %d\n", i +1, r[i]);
+	}
 	return r;
 }
 
@@ -162,10 +167,13 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min)
 {
 	double tmpA = 0;
 	double tmpB = 0;
+	printf("Classify 1\n");
  	if(!SpacesVariance(spaces, nbSpaces, 0, &tmpB))
 		return 0;
+	printf("Classify 2\n");
 	*min = pow(tmpB, 2);
 	*r = 0;
+	printf("Classify 3\n");
 	for (int i = 1; i < nbSpaces - 1; i ++)
 		if (spaces[i] > 0)
 			if (SpacesVariance(spaces, i, i, &tmpA) &&
@@ -175,6 +183,7 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min)
 				*min = pow(tmpB,2) + pow(tmpA, 2);
 				*r = i + 1;
 			}
+	printf("Classify 4\n");
 	return 1;
 }
 
@@ -290,6 +299,7 @@ void SplitLines(ImageGS img, Box *b, guchar c)
 
 void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank)
 {
+	printf("Split Blocks");
 	Split(img, b, HORIZONTAL, minBlank, c);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		SplitLines(img, &b->subBoxes[i], c);
@@ -300,6 +310,7 @@ Box GetBoxFromSplit(Image img)
 	int minBlank = 0;
 	int tmp = 0;
 	double minVar = 0;
+	printf("1\n");
 	ImageGS imgGs = URgbToGrayscale(img);
 	Box b = {{0, 0, img.width - 1, img.height - 1}, 0, NULL};
 	Box *sub = malloc(sizeof(Box));
@@ -308,7 +319,9 @@ Box GetBoxFromSplit(Image img)
 	sub->rectangle = b.rectangle;
 	sub->nbSubBoxes = 0;
 	sub->subBoxes = NULL;
+	printf("2\n");
 	CutMargin(imgGs, sub, BLACKGS);
+	printf("3\n");
 	if (ClassifySpace(
 		GetSpaceArray(imgGs, *sub, BLACKGS, HORIZONTAL, &tmp),
 		tmp, &minBlank, &minVar)
@@ -316,6 +329,7 @@ Box GetBoxFromSplit(Image img)
 		SplitBlocks(imgGs, sub, BLACKGS, minBlank);
 	else
 		SplitLines(imgGs, sub, BLACKGS);
+	printf("4\n");
 	return b;
 }
 

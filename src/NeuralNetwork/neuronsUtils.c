@@ -358,7 +358,7 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			r->nWork = N1;
 		else
 			r->nWork = N2;
-		r->learn = &NBackPropLearn;
+		r->learn = &NDichotomicLearn;
 	}
 	else
 	{
@@ -366,7 +366,7 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
 				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
 			NComputeError(r->nWork, r->exSet, 0, NULL);
-			r->learn = &NDichotomicLearn;
+			r->learn = &NBackPropLearn;
 	}
 	return r;
 }

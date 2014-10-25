@@ -77,8 +77,7 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	return tmp;
 }
 
-Image UConvolution(Image ref, double **convolution, int size,
-	int matrixSize)
+Image UConvolution(Image ref, double **convolution, int matrixSize)
 {
 	Image image;
 	Pixel **result;
@@ -89,17 +88,17 @@ Image UConvolution(Image ref, double **convolution, int size,
 	image.bits_per_sample = ref.bits_per_sample;
 	image.has_alpha = ref.has_alpha;
 
-	result = malloc(size * sizeof(Pixel *));
-	for (int i = 0; i < size; i++)
+	result = malloc(ref.width * sizeof(Pixel *));
+	for (int i = 0; i < ref.width; i++)
 	{
-		result[i] = malloc(size * sizeof(Pixel));
+		result[i] = malloc(ref.height * sizeof(Pixel));
 	}
 	
 	for (int y = 0; y < matrixSize; y++)
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			subMatrix = UExtract(ref.pixList, size, matrixSize, x, y);
+			subMatrix = UExtract(ref.pixList, matrixSize, matrixSize, x, y);
 			subMatrix = UMultiply(subMatrix, convolution,
 				matrixSize);
 

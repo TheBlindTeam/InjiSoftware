@@ -30,8 +30,7 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	int pos_y);
 
 // David: Apply A Convulution Matrix On Every Pixel
-Image UConvolution(Image ref, double **convolution, int size,
-	int matrixSize);
+Image UConvolution(Image ref, double **convolution, int matrixSize);
 
 // David : Rotate A Given Matrix
 Image URotate(Image ref, double angle);

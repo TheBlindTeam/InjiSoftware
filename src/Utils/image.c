@@ -52,13 +52,14 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
 
 	guchar *pixelsBuf = gdk_pixbuf_get_pixels(pixbuf);
 	gint channel = gdk_pixbuf_get_n_channels(pixbuf);
-	gint width = gdk_pixbuf_get_width(pixbuf);
+	gint rowstride = gdk_pixbuf_get_rowstride(pixbuf);
 
-	pixel.r = pixelsBuf[(x*channel)+(y*width*channel)];
-	pixel.g = pixelsBuf[(x*channel)+(y*width*channel)+1];
-	pixel.b = pixelsBuf[(x*channel)+(y*width*channel)+2];
+	int idx = y * rowstride + x * channel;
+	pixel.r = pixelsBuf[idx];
+	pixel.g = pixelsBuf[idx + 1];
+	pixel.b = pixelsBuf[idx + 2];
 	if (channel == 4)
-		pixel.a = pixelsBuf[(x*channel)+(y*width*channel)+3];
+		pixel.a = pixelsBuf[idx + 3];
 	else
 		pixel.a = 255;
 	return pixel;

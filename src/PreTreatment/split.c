@@ -6,7 +6,7 @@
 /*Nota bene : 
 J'ai considéré l'image comme ayant un repère d'axe x VERTICAL orienté vers 
 le bas et d'axe y HORIZONTAL orienté vers la gauche*/
-const guchar BLACKGS = 10;
+const guchar BLACKGS = 200;
 
 BoxList AddInList(BoxList list, Box b)
 {
@@ -50,15 +50,17 @@ Box *BoxListToArray(BoxList list, int *count)
 
 void FreeBoxList(BoxList list)
 {
-	if (list->next)
+	if (list)
+	{
 		FreeBoxList(list->next);
-	free(list);
+		free(list);
+	}
 }
 
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight)
 {
 	*primWidth = orient == VERTICAL ? 1 : 0;
-	*primHeight = primWidth ? 0 : 1;
+	*primHeight = *primWidth ? 0 : 1;
 }
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
@@ -93,21 +95,19 @@ int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
 	max = b.rectangle.x2 * x1 + b.rectangle.y2 * y1;
 	*size = max - min + 1;
 	r = malloc(sizeof(int) * *size);
+	for (int i = 0; i < *size; i ++)
+		r[i] = 0;
 	for (int i = min; i <= max; i ++)
 	{
-		r[i] = 0;
 		if (isBlank(img, b, c, orient, i))
 			count ++;
-		else
+		else if (count > 1)
 		{
 			r[count - 1]++;
 			count = 0;
 		}
-	}
-	printf("Space Array Info size: %d\n", *size);
-	for (int i = 0; i < *size; i ++)
-	{
-		printf("space %d count %d\n", i +1, r[i]);
+		if (count == *size)
+			r[count - 1]++;
 	}
 	return r;
 }
@@ -167,23 +167,19 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min)
 {
 	double tmpA = 0;
 	double tmpB = 0;
-	printf("Classify 1\n");
  	if(!SpacesVariance(spaces, nbSpaces, 0, &tmpB))
 		return 0;
-	printf("Classify 2\n");
 	*min = pow(tmpB, 2);
 	*r = 0;
-	printf("Classify 3\n");
 	for (int i = 1; i < nbSpaces - 1; i ++)
 		if (spaces[i] > 0)
-			if (SpacesVariance(spaces, i, i, &tmpA) &&
-				SpacesVariance(&spaces[i + 1], nbSpaces - i, i + 1, &tmpB) &&
+			if (SpacesVariance(spaces, i + 1, i, &tmpA) &&
+				SpacesVariance(&spaces[i + 1], nbSpaces - i - 1, i + 1, &tmpB) &&
 				pow(tmpB, 2) + pow(tmpA, 2) < *min)
 			{
 				*min = pow(tmpB,2) + pow(tmpA, 2);
 				*r = i + 1;
 			}
-	printf("Classify 4\n");
 	return 1;
 }
 
@@ -237,9 +233,11 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 	min = x1 * b->rectangle.x1 + y1 * b->rectangle.y1;
 	max = x1 * b->rectangle.x2 + y1 * b->rectangle.y2;
 	for (int i = min; i <= max; i ++)
-		if (isBlank(img, *b, c, orient, i))
+	{
+		int isCurBlank = isBlank(img, *b, c, orient, i);
+		if (isCurBlank)
 			count ++;
-		else
+		if (!isCurBlank || i == max)
 		{
 			count = 0;
 			if (count >= minBlank)
@@ -256,6 +254,7 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 				list = AddInList(list, tmp);
 			}
 		}
+	}
 	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
 }
 
@@ -266,6 +265,7 @@ void SplitChars(ImageGS img, Box *b, guchar c)
 
 void SplitWords(ImageGS img, Box *b, guchar c, int minBlank)
 {
+	printf("Split Words\n");
 	Split(img, b,VERTICAL, minBlank, c);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		SplitChars(img, &b->subBoxes[i], c);
@@ -273,6 +273,7 @@ void SplitWords(ImageGS img, Box *b, guchar c, int minBlank)
 
 void SplitLines(ImageGS img, Box *b, guchar c)
 {
+	printf("Split line\n");
 	Split(img, b, HORIZONTAL, 1, c);
 	int *arrayA = NULL;
 	int *arrayB = NULL;
@@ -287,7 +288,7 @@ void SplitLines(ImageGS img, Box *b, guchar c)
 		arrayA = ArraySum(arrayA, sizeA, arrayB, sizeB, &sizeA);
 	}
 	if (ClassifySpace(arrayA, sizeA, &minBlank, &minVar)
-		&& minVar < 1.0 && minBlank > 1)
+		&& minVar > 0.3 && minBlank > 1)
 	{
 		for (int i = 0; i < b->nbSubBoxes; i ++)
 			SplitWords(img, &b->subBoxes[i], c, minBlank);
@@ -299,7 +300,6 @@ void SplitLines(ImageGS img, Box *b, guchar c)
 
 void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank)
 {
-	printf("Split Blocks");
 	Split(img, b, HORIZONTAL, minBlank, c);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		SplitLines(img, &b->subBoxes[i], c);
@@ -310,8 +310,13 @@ Box GetBoxFromSplit(Image img)
 	int minBlank = 0;
 	int tmp = 0;
 	double minVar = 0;
-	printf("1\n");
 	ImageGS imgGs = URgbToGrayscale(img);
+	for (int i = 0; i < imgGs.height; i ++)
+	{
+		for (int j = 0; j < imgGs.width; j ++)
+			printf("%d ", imgGs.intensity[j][i]);
+		printf("\n");
+	}
 	Box b = {{0, 0, img.width - 1, img.height - 1}, 0, NULL};
 	Box *sub = malloc(sizeof(Box));
 	b.nbSubBoxes = 1;
@@ -319,17 +324,14 @@ Box GetBoxFromSplit(Image img)
 	sub->rectangle = b.rectangle;
 	sub->nbSubBoxes = 0;
 	sub->subBoxes = NULL;
-	printf("2\n");
 	CutMargin(imgGs, sub, BLACKGS);
-	printf("3\n");
-	if (ClassifySpace(
-		GetSpaceArray(imgGs, *sub, BLACKGS, HORIZONTAL, &tmp),
-		tmp, &minBlank, &minVar)
-		&& minVar < 1.0 && minBlank > 1)
+	
+	int *spaces = GetSpaceArray(imgGs, *sub, BLACKGS, HORIZONTAL, &tmp);
+	if (ClassifySpace(spaces, tmp, &minBlank, &minVar)
+		&& minVar > 0.3 && minBlank > 1)
 		SplitBlocks(imgGs, sub, BLACKGS, minBlank);
 	else
 		SplitLines(imgGs, sub, BLACKGS);
-	printf("4\n");
 	return b;
 }
 
@@ -352,6 +354,7 @@ void GetBreadthBoxArrayAux(BoxList list)
 
 void DrawNotInSubBoxes(Image img, Box b, Pixel p)
 {
+	printf("DRAW\n");
 	int **rect;
 	int width = b.rectangle.x2 - b.rectangle.x1 + 1;
 	int height = b.rectangle.y2 - b.rectangle.y1 + 1;

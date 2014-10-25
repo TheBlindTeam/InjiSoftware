@@ -331,7 +331,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 				cairo_restore(cr);
 			}
 
-		for (int i = 0; i < network.layersSize[0] - 1; i++)
+		for (int i = 0; i < ((network.bias) ? network.layersSize[0] - 1 :
+				network.layersSize[0]); i++)
 		{
 			if (selectedNeuronx == 0 && selectedNeurony == i)
 				cairo_set_source_rgba(cr, 0.0, 0.5, 0.0, 1);
@@ -400,7 +401,6 @@ void on_click_compute_errors(GtkWidget *widget, gpointer user_data)
 		data->neuronData->shouldErr = TRUE;
 		gtk_widget_queue_draw(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkDrawArea")));
-
 	}
 }
 
@@ -501,6 +501,7 @@ void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 		data->neuronData->click_x = event->x - wx;
 		data->neuronData->click_y = event->y - wy;
 		gtk_widget_queue_draw(widget);
+		printf("a\n");
 	}
 }
 

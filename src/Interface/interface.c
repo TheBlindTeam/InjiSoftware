@@ -3,7 +3,6 @@
 #include <libgen.h>
 #include <string.h>
 
-
 void Gtk_Initialize(int argc, char *argv[], Image *img)
 {
 	GtkWidget *mainWindow = NULL;

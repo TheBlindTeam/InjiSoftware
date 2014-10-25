@@ -33,6 +33,8 @@ void connectSignals(SGlobalData* data);
 void on_window_destroy(GtkWidget *widget, gpointer user_data);
 
 void on_load_button_clicked(GtkWidget *widget, gpointer user_data);
+void on_about_button_clicked(GtkWidget *widget, gpointer user_data);
+
 void file_chooser_select_file_from_button(GtkWidget *widget,
 	gpointer user_data);
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
@@ -46,7 +48,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
 	gpointer user_data);
 void on_click_render_network(GtkWidget *widget, gpointer user_data);
-void on_click_compute_errors(GtkWidget *widget, gpointer user_data);
 void on_click_reset(GtkWidget *widget, gpointer user_data);
 void on_click_initialize(GtkWidget *widget, gpointer user_data);
 

@@ -2,6 +2,44 @@
 <!-- Generated with glade 3.16.1 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
+  <object class="GtkAboutDialog" id="AboutWindow">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Inji Software - OCR</property>
+    <property name="type_hint">dialog</property>
+    <property name="program_name">Inji Software</property>
+    <property name="version">V1.0</property>
+    <property name="copyright" translatable="yes">Copyright © 2014 - InjiSoftware</property>
+    <property name="comments" translatable="yes">Free Optical Character Recognition</property>
+    <property name="website">http://www.injisoftware.com</property>
+    <property name="website_label" translatable="yes">Website</property>
+    <property name="authors">Adrien NEVEU
+Laurent XU
+David PEICHO
+Aurelien LEANDRI</property>
+    <property name="documenters">Aurelien LEANDRI</property>
+    <property name="translator_credits" translatable="yes">ByungJun KANG
+Adrien NEVEU</property>
+    <property name="logo_icon_name">emblem-favorite</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="aboutdialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="aboutdialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkFileChooserDialog" id="ImageChooser">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Choose a file to open</property>

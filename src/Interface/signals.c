@@ -71,6 +71,12 @@ void connectSignals(SGlobalData *data)
 			"LoadFileButton")),
 		"clicked",
 		G_CALLBACK(on_load_button_clicked), data);
+	
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"AboutButton")),
+		"clicked",
+		G_CALLBACK(on_about_button_clicked), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOK")),
@@ -113,6 +119,18 @@ void on_load_button_clicked(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		GtkWidget *dialog = GTK_WIDGET(
 			gtk_builder_get_object(data->builder, "ImageChooser"));
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void on_about_button_clicked(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "AboutWindow"));
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_hide(dialog);
 	}
@@ -222,6 +240,15 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
 			* maxNeuron) / (maxNeuron - 1);
 
+		char *paramsName[3] = {"SBLearningRate", "SBMomentum", "SBMaxErr"};
+		gdouble val[3];
+		for (int i = 0; i < 3; i ++)
+			val[i] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+				gtk_builder_get_object(data->builder, paramsName[i])));
+
+		data->networkSet->lRate = val[0];
+		data->networkSet->momentum = val[1];
+		data->networkSet->maxError = val[2];
 
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
@@ -409,7 +436,6 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 		for (int i = 0; i < 7; i ++)
 			gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 				data->builder, paramsName[i])), TRUE);
-
 	}
 }
 

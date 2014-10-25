@@ -364,6 +364,20 @@ Adrien NEVEU</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkButton" id="BDetectOrientation">
+                    <property name="label" translatable="yes">Detect Orientation</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="resize">False</property>
@@ -929,7 +943,7 @@ Adrien NEVEU</property>
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Neuron Network Visualizer</property>
     <property name="window_position">center</property>
-    <property name="default_height">800</property>
+    <property name="default_height">810</property>
     <property name="type_hint">utility</property>
     <child>
       <object class="GtkBox" id="box2">
@@ -1067,6 +1081,7 @@ Adrien NEVEU</property>
               <object class="GtkButton" id="RenderButton">
                 <property name="label" translatable="yes">Render</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="margin_left">10</property>

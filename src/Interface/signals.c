@@ -47,6 +47,12 @@ void connectSignals(SGlobalData *data)
 			"BSegmentation")),
 		"clicked",
 		G_CALLBACK(on_click_segmentation), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"BDetectOrientation")),
+		"clicked",
+		G_CALLBACK(on_click_detect_orientation), data);
 	/* Menu */
 
 	// File
@@ -595,26 +601,28 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-
-		double **matrix = malloc(sizeof(double*));
-		for(int x = 0; x < 3; x++)
+		if (data->img_rgb != NULL)
 		{
-			matrix[x] = malloc(sizeof(double));
-			for(int y = 0; y < 3; y++)
+			double **matrix = malloc(3 * sizeof(double*));
+			for(int x = 0; x < 3; x++)
 			{
-				char wname[25];
-				sprintf(wname, "FilterMatrixButton%d", 3*x+y+1);
-				matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
-					gtk_builder_get_object(data->builder, wname)));
+				matrix[x] = malloc(3 * sizeof(double));
+				for(int y = 0; y < 3; y++)
+				{
+					char wname[25];
+					sprintf(wname, "FilterMatrixButton%d", 3*x+y+1);
+					matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+						gtk_builder_get_object(data->builder, wname)));
+				}
 			}
+			Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
+			UFreeImage(*data->img_rgb);
+			data->img_rgb = &tmpImg;
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
 		}
-		Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
-		UFreeImage(*data->img_rgb);
-		data->img_rgb = &tmpImg;
-		gtk_image_set_from_pixbuf(GTK_IMAGE(
-			gtk_builder_get_object(data->builder,
-				"PreviewImage")),
-			UGetPixbufFromImage(*data->img_rgb));
 	}
 }
 
@@ -689,6 +697,16 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 	}
 }
 
+void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+		}
+	}
+}
 void on_zoom_in(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)

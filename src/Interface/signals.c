@@ -251,22 +251,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		NetworkSet *networkSet = data->networkSet;
 		Network network = *networkSet->nWork;
 
-		// Parameters
-/*		gint p_archi = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNArchitecture")));
-		gint p_typelearn = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNTypeLearn")));
-		gint p_thrin = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrIn")));
-		gint p_throut = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrOut")));
-		gint p_thrhid = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrHidLay")));*/
 		gint maxIter = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 			gtk_builder_get_object(data->builder, "SBMaxIter")));
 
@@ -288,7 +272,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
 			iterCalls++;
-
 
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
@@ -414,14 +397,28 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 			gtk_builder_get_object(data->builder, "ComputeErrorCB"))))
 		{
-			cairo_move_to(cr, NN_MARGIN_LEFT -
-					NN_NEURON_RADIUS,
-				NN_MARGIN_TOP+maxHeight + 30);
+			cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+				NN_MARGIN_TOP + maxHeight + 22);
 			data->neuronData->shouldErr = FALSE;
-			char str[1000];
+			int posx = 0;
+			int i = 0;
+			int u = 0;
+			char str[1000], tmp[100];
 			NComputeError(&network, networkSet->exSet, 1, str, 1000);
-			cairo_show_text(cr, str);
-			printf("%s\n", str);
+			while(str[i])
+			{
+				if (str[i] == '\n')
+				{
+					memcpy(tmp, str + u, i - u);
+					tmp[i - u] = 0;
+					u = i + 1;
+					cairo_show_text(cr, tmp);
+					posx += 11;
+					cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+						NN_MARGIN_TOP + maxHeight + 22 + posx);
+				}
+				i++;
+			}
 		}
 		if (selectedNeuronx != -1 && selectedNeurony != -1)
 		{
@@ -465,6 +462,8 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 			data->builder, "InitButton")), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RenderButton")), FALSE);
 
 		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
 			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
@@ -498,6 +497,8 @@ void on_click_initialize(GtkWidget *widget, gpointer user_data)
 			data->builder, "InitButton")), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RenderButton")), TRUE);
 	}
 }
 

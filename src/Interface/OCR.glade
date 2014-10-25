@@ -929,7 +929,7 @@ Adrien NEVEU</property>
     <property name="border_width">10</property>
     <property name="title" translatable="yes">Neuron Network Visualizer</property>
     <property name="window_position">center</property>
-    <property name="default_height">800</property>
+    <property name="default_height">810</property>
     <property name="type_hint">utility</property>
     <child>
       <object class="GtkBox" id="box2">
@@ -1067,6 +1067,7 @@ Adrien NEVEU</property>
               <object class="GtkButton" id="RenderButton">
                 <property name="label" translatable="yes">Render</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="margin_left">10</property>

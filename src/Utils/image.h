@@ -53,7 +53,7 @@ ImageGS URgbToGrayscale(Image rgbImage);
 Image UGrayscaleToRgb(ImageGS reference);
 
 // David : RGBImage to Binary Image
-ImageBN UGrayScaleToBinary(ImageGS ref);
+ImageBN UGrayscaleToBinary(ImageGS ref);
 
 // Adrien: Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,

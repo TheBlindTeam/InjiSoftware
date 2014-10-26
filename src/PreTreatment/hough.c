@@ -2,27 +2,20 @@
 
 double FindInclinationAngle(ImageBN ref)
 {
-	int **accu;
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
 	int thetaMax = 2 * 90 + 1;
 	int rMax = (int)((ref.width * cos(M_PI / 4) + ref.height * sin(M_PI / 4))
 		* 2 + 1);
-	accu = malloc(thetaMax * sizeof(int *));
+	int **accu = malloc(thetaMax * sizeof(int *));
 
 	for(int i = 0; i < thetaMax; i++)
-	{
 		accu[i] = malloc(rMax * sizeof(int));
-	}
 
 	// Initialize the accumulator
 	for (int theta = 0; theta < thetaMax; theta++)
-	{
 		for (int r = 0; r < rMax; r++)
-		{
 			accu[theta][r] = 0;
-		}
-	}
 
 	printf("RMAX is equal to %i\n", rMax);
 
@@ -46,21 +39,20 @@ double FindInclinationAngle(ImageBN ref)
 		}
 	}
 
+	maxAngleAccu = GetMaxIndex(accu, thetaMax, rMax);
+
 	for(int i = 0; i < thetaMax; i++)
 		free(accu[i]);
 	free(accu);
 
-	printf("SALOUU");
-	maxAngleAccu = GetMaxIndex(accu, thetaMax, rMax);
-
 	return ((maxAngleAccu * M_PI) / 180);
 }
+
 
 int GetMaxIndex(int **array, int sizeX, int sizeY)
 {
 	int maxVal = array[0][0];
 	int xMaxIndex = 0;
-
 	for(int y = 0; y < sizeY; y++)
 	{
 		for(int x = 0; x < sizeX; x++)
@@ -72,6 +64,5 @@ int GetMaxIndex(int **array, int sizeX, int sizeY)
 			}
 		}
 	}
-
 	return xMaxIndex;
 }

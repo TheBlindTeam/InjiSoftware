@@ -703,7 +703,8 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			double angle = FindInclinationAngle(*data->img_rgb);
+			double angle = FindInclinationAngle(
+				UGrayscaleToBinary(URgbToGrayscale(*data->img_rgb)));
 			printf("angle: %f\n", angle);
 			Image tmpImg = URotate(*data->img_rgb, angle);
 

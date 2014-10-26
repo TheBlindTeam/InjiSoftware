@@ -58,8 +58,11 @@ ImageGS URgbToGrayscale(Image rgbImage);
 // David : Translate GrayScale Image to RGB Image
 Image UGrayscaleToRgb(ImageGS reference);
 
-// David : RGBImage to Binary Image
+// David : GrayImage to Binary Image
 ImageBN UGrayscaleToBinary(ImageGS ref);
+
+// Laurent : RGBImage to Binary Image
+ImageBN URgbToBinary(Image ref);
 
 // David : Binary to Rgb Image
 Image UBinaryToRgb(ImageBN ref);

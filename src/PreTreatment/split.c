@@ -68,7 +68,7 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
 	GetIterPrim(orient, secondHeight, secondWidth);
 }
 
-int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start)
+int isBlank(ImageBN img, Box b, Orientation orient, int start)
 {
 	int x1, x2, y1, y2;
 	int min, max;
@@ -80,11 +80,11 @@ int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start)
 	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
 
 	for (int i = min; i <= max && r; i ++)
-		r = img.intensity[start * x1 + i * x2][start * y1 + i * y2] > c;
+		r = img.data[start * x1 + i * x2][start * y1 + i * y2] ? 1 : 0;
 	return r;
 }
 
-int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
+int *GetSpaceArray(ImageBN img, Box b, Orientation orient, int *size)
 {
 	int x1, y1;
 	int *r;
@@ -100,7 +100,7 @@ int *GetSpaceArray(ImageGS img, Box b, guchar c, Orientation orient, int *size)
 		r[i] = 0;
 	for (int i = min; i <= max; i ++)
 	{
-		if (isBlank(img, b, c, orient, i))
+		if (isBlank(img, b, orient, i))
 			count ++;
 		else if (count > 1)
 		{
@@ -176,20 +176,20 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
 	return 1;
 }
 
-void CutMargin(ImageGS img, Box *b, guchar c)
+void CutMargin(ImageBN img, Box *b)
 {
 	int min = b->rectangle.x1;
 	int max = b->rectangle.x2;
 
 	for (int i = min; i <= max; i ++)
-		if(!isBlank(img, *b, c, VERTICAL, i))
+		if(!isBlank(img, *b, VERTICAL, i))
 		{
 			b->rectangle.x1 = i;
 			min = i;
 			break;
 		}
 	for (int i = max; i >= min; i --)
-		if(!isBlank(img, *b, c, VERTICAL, i))
+		if(!isBlank(img, *b, VERTICAL, i))
 		{
 			b->rectangle.x2 = i;
 			break;
@@ -198,21 +198,21 @@ void CutMargin(ImageGS img, Box *b, guchar c)
 	min = b->rectangle.y1;
 	max = b->rectangle.y2;
 	for (int i = min; i <= max; i ++)
-		if(!isBlank(img, *b, c, HORIZONTAL, i))
+		if(!isBlank(img, *b, HORIZONTAL, i))
 		{
 			b->rectangle.y1 = i;
 			min = i;
 			break;
 		}
 	for (int i = max; i >= min; i --)
-		if(!isBlank(img, *b, c, HORIZONTAL, i))
+		if(!isBlank(img, *b, HORIZONTAL, i))
 		{
 			b->rectangle.y2 = i;
 			break;
 		}
 }
 
-void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
+void Split(ImageBN img, Box *b, Orientation orient, int minBlank)
 {
 
 	int x1, y1, x2, y2;
@@ -229,7 +229,7 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 	prev = min;
 	for (int i = min; i <= max; i ++)
 	{
-		int isCurBlank = isBlank(img, *b, c, orient, i);
+		int isCurBlank = isBlank(img, *b, orient, i);
 		if (isCurBlank)
 			count ++;
 		if ((!isCurBlank && count >= minBlank))
@@ -242,7 +242,7 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 			tmp.nbSubBoxes = 0;
 			tmp.subBoxes = NULL;
 			prev = i;
-			CutMargin(img, &tmp, c);
+			CutMargin(img, &tmp);
 			list = AddInList(list, tmp);
 		}
 		else if (i == max)
@@ -255,7 +255,7 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 			tmp.nbSubBoxes = 0;
 			tmp.subBoxes = NULL;
 			prev = i;
-			CutMargin(img, &tmp, c);
+			CutMargin(img, &tmp);
 			list = AddInList(list, tmp);
 		}
 		if (!isCurBlank)
@@ -263,15 +263,15 @@ void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c)
 	}
 	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
-		DetectSplitOrientation(img, &b->subBoxes[i], c);
+		DetectSplitOrientation(img, &b->subBoxes[i]);
 }
 
-void DetectSplitOrientation(ImageGS img, Box *b, guchar c)
+void DetectSplitOrientation(ImageBN img, Box *b)
 {
 	int sizeH;
-	int *spacesH = GetSpaceArray(img, *b, c, HORIZONTAL, &sizeH);
+	int *spacesH = GetSpaceArray(img, *b, HORIZONTAL, &sizeH);
 	int sizeV;
-	int *spacesV = GetSpaceArray(img, *b, c, VERTICAL, &sizeV);
+	int *spacesV = GetSpaceArray(img, *b, VERTICAL, &sizeV);
 	int *spaces;
 	int set = 0;
 	int size;
@@ -304,24 +304,25 @@ void DetectSplitOrientation(ImageGS img, Box *b, guchar c)
 		set = ClassifySpace(spaces, size, &minBlank, &var);
 		free(spaces);
 		if (set && minBlank > 1 && var > 0.3)
-			Split(img, b, o, minBlank, c);
+			Split(img, b, o, minBlank);
 		else
-			Split(img, b, o, 1, c);
+			Split(img, b, o, 1);
 	}
 }
 
 Box GetBoxFromSplit(Image img)
 {
-	ImageGS imgGs = URgbToGrayscale(img);
-	Box b = {{0, 0, img.width - 1, img.height - 1}, 0, NULL};
+	ImageBN imgBn = URgbToBinary(img);
+	Box b = {{0, 0, imgBn.width - 1, imgBn.height - 1}, 0, NULL};
 	Box *sub = malloc(sizeof(Box));
 	b.nbSubBoxes = 1;
 	b.subBoxes = sub;
 	sub->rectangle = b.rectangle;
 	sub->nbSubBoxes = 0;
 	sub->subBoxes = NULL;
-	CutMargin(imgGs, sub, BLACKGS);
-	DetectSplitOrientation(imgGs, sub, BLACKGS);
+	CutMargin(imgBn, sub);
+	DetectSplitOrientation(imgBn, sub);
+	UFreeImageBinary(imgBn);
 	return b;
 }
 

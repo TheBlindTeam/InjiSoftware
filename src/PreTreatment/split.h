@@ -43,35 +43,24 @@ void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
-int isBlank(ImageGS img, Box b, guchar c, Orientation orient, int start);
+int isBlank(ImageBN img, Box b, Orientation orient, int start);
 
-int *GetSpaceArray(ImageGS, Box b, guchar c, Orientation orient, int *size);
-
-int *ArraySum(int *arrayA, int sizeA, int *arrayB, int sizeB, int *newSize);
+int *GetSpaceArray(ImageBN, Box b, Orientation orient, int *size);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
 int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
-
 
 //Interessant
 int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
 
 //Interessant
-void Split(ImageGS img, Box *b, Orientation orient, int minBlank, guchar c);
+void Split(ImageBN img, Box *b, Orientation orient, int minBlank);
 
-void CutMargin(ImageGS img, Box *b, guchar c);
+void CutMargin(ImageBN img, Box *b);
 
-void SplitChars(ImageGS img, Box *b, guchar c);
-
-void SplitWords(ImageGS img, Box *b, guchar c, int minBlank);
-
-void SplitLines(ImageGS img, Box *b, guchar c);
-
-void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank);
-
-void DetectSplitOrientation(ImageGS img, Box *b, guchar c);
+void DetectSplitOrientation(ImageBN img, Box *b);
 
 Box GetBoxFromSplit(Image img);
 

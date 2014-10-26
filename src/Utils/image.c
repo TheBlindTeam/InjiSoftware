@@ -128,7 +128,6 @@ Image UGrayscaleToRgb(ImageGS reference)
 			result.pixList[x][y].b = reference.intensity[x][y];
 			result.pixList[x][y].a = 255;
 		}
-	
 	}
 
 	return result;
@@ -150,7 +149,6 @@ ImageBN UGrayscaleToBinary(ImageGS ref)
 
 	for (int y = 0; y < result.height; y++)
 	{
-
 		for (int x = 0; x < result.width; x++)
 		{
 			result.data[x][y] =
@@ -160,7 +158,15 @@ ImageBN UGrayscaleToBinary(ImageGS ref)
 	return result;
 }
 
-Image BinaryToRgb(ImageBN ref)
+ImageBN URgbToBinary(Image ref)
+{
+	ImageGS tmp = URgbToGrayscale(ref);
+	ImageBN r = UGrayscaleToBinary(tmp);
+	UFreeImageGray(tmp);
+	return r;
+}
+
+Image UBinaryToRgb(ImageBN ref)
 {
 	Image result;
 	result.width = ref.width;
@@ -185,9 +191,7 @@ Image BinaryToRgb(ImageBN ref)
 			result.pixList[x][y].b = (ref.data[x][y]) ? 255 : 0;
 		}
 	}
-
 	return result;
-
 }
 
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,

@@ -1,12 +1,13 @@
 #include "hough.h"
 
-double FindInclinationAngle(ImageBN ref)
+double FindInclinationAngle(ImageBN *ref)
 {
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
-	int thetaMax = 2 * 90 + 1;
-	int rMax = (int)((ref.width * cos(M_PI / 4) + ref.height * sin(M_PI / 4))
+	const int thetaMax = 2 * 90 + 1;
+	int rMax = (int)((ref->width * cos(M_PI / 4) + ref->height * sin(M_PI / 4))
 		* 2 + 1);
+	printf("begin\n");
 	int **accu = malloc(thetaMax * sizeof(int *));
 
 	for(int i = 0; i < thetaMax; i++)
@@ -19,12 +20,12 @@ double FindInclinationAngle(ImageBN ref)
 
 	printf("RMAX is equal to %i\n", rMax);
 
-	for (int y = 0; y < ref.height; y++)
+	for (int y = 0; y < ref->height; y++)
 	{
-		for (int x = 0; x < ref.width; x++)
+		for (int x = 0; x < ref->width; x++)
 		{
 			// The pixel is black
-			if(ref.data[x][y] == 0)
+			if(ref->data[x][y] == 0)
 			{
 				for (int theta = -90; theta < 90; theta++)
 				{
@@ -38,13 +39,15 @@ double FindInclinationAngle(ImageBN ref)
 			}
 		}
 	}
-
+	printf("out\n");
 	maxAngleAccu = GetMaxIndex(accu, thetaMax, rMax);
+	printf("out\n");
 
 	for(int i = 0; i < thetaMax; i++)
 		free(accu[i]);
+	printf("out\n");
 	free(accu);
-
+	printf("end\n");
 	return ((maxAngleAccu * M_PI) / 180);
 }
 

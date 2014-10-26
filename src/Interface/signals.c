@@ -707,7 +707,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			double angle = FindInclinationAngle(
-				*URgbToBinary(data->img_rgb));
+				URgbToBinary(data->img_rgb));
 
 			gchar txt[20];
 			sprintf(txt, "%f", angle);

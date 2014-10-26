@@ -3,9 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/*Nota bene : 
-J'ai considéré l'image comme ayant un repère d'axe x VERTICAL orienté vers 
-le bas et d'axe y HORIZONTAL orienté vers la gauche*/
 const guchar BLACKGS = 200;
 
 BoxList AddInList(BoxList list, Box *b)
@@ -176,13 +173,15 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
 	for (int i = 1; i < nbSpaces - 1; i ++)
 		if (spaces[i] > 0)
 			if (SpacesVariance(spaces, i + 1, i, &tmpA) &&
-				SpacesVariance(&spaces[i + 1], nbSpaces - i - 1, i + 1, &tmpB)&&
+				SpacesVariance(&spaces[i + 1],
+					nbSpaces - i - 1, i + 1, &tmpB)&&
 				pow(tmpB, 2) + pow(tmpA, 2) < min)
 			{
 				min = pow(tmpB,2) + pow(tmpA, 2);
 				*r = i + 1;
 				SpacesExpectedValue(spaces, i + 1, i, &expA);
-				SpacesExpectedValue(spaces, nbSpaces - i - 1, i + 1, &expB);
+				SpacesExpectedValue(spaces, nbSpaces - i - 1,
+					i + 1, &expB);
 			}
 	*minVar = expA / expB;
 	return 1;
@@ -249,8 +248,10 @@ void Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 			Box *tmp = malloc(sizeof(Box));
 			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
 			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
-			tmp->rectangle.x2 = x1 * (i ? i - 1 : 0) + x2 * b->rectangle.x2;
-			tmp->rectangle.y2 = y1 * (i ? i - 1 : 0) + y2 * b->rectangle.y2;
+			tmp->rectangle.x2 = x1 *
+				(i ? i - 1 : 0) + x2 * b->rectangle.x2;
+			tmp->rectangle.y2 = y1 *
+				(i ? i - 1 : 0) + y2 * b->rectangle.y2;
 			tmp->nbSubBoxes = 0;
 			tmp->subBoxes = NULL;
 			prev = i;
@@ -387,7 +388,8 @@ void DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
 			if (rect[i][j])
-				img->pixList[i + b->rectangle.x1][j + b->rectangle.y1] = p;
+				img->pixList[i + b->rectangle.x1]
+					[j + b->rectangle.y1] = p;
 	for (int i = 0; i < width; i ++)
 		free(rect[i]);
 	free(rect);

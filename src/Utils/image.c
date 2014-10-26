@@ -39,25 +39,28 @@ Image* ULoadImage(char *str)
 	return tmp;
 }
 
-void UFreeImage(Image img)
+void UFreeImage(Image *img)
 {
-	for (int i = 0; i < img.width; i ++)
-		free(img.pixList[i]);
-	free(img.pixList);
+	for (int i = 0; i < img->width; i ++)
+		free(img->pixList[i]);
+	free(img->pixList);
+	free(img);
 }
 
-void UFreeImageGray(ImageGS img)
+void UFreeImageGray(ImageGS *img)
 {
-	for (int i = 0; i < img.width; i ++)
-		free(img.intensity[i]);
-	free(img.intensity);
+	for (int i = 0; i < img->width; i ++)
+		free(img->intensity[i]);
+	free(img->intensity);
+	free(img);
 }
 
-void UFreeImageBinary(ImageBN img)
+void UFreeImageBinary(ImageBN *img)
 {
-	for (int i = 0; i < img.width; i ++)
-		free(img.data[i]);
-	free(img.data);
+	for (int i = 0; i < img->width; i ++)
+		free(img->data[i]);
+	free(img->data);
+	free(img);
 }
 
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
@@ -79,103 +82,96 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
 	return pixel;
 }
 
-ImageGS URgbToGrayscale(Image rgbImage)
+ImageGS *URgbToGrayscale(Image *rgbImage)
 {
-	ImageGS result;
-	result.width = rgbImage.width;
-	result.height = rgbImage.height;
-	result.intensity = malloc(result.width*sizeof(guchar*));
+	ImageGS *result = malloc(sizeof(ImageGS));
+	result->width = rgbImage->width;
+	result->height = rgbImage->height;
+	result->intensity = malloc(result->width * sizeof(guchar*));
 
-	for(int x = 0; x < result.width; x++)
+	for(int x = 0; x < result->width; x++)
 	{
-		result.intensity[x] = malloc(result.height*sizeof(guchar));
-	}
-
-	for (int y = 0; y < result.height; y++)
-	{
-		for (int x = 0; x < result.width; x++)
+		result->intensity[x] = malloc(result->height * sizeof(guchar));
+		for (int y = 0; y < result->height; y ++)
 		{
-			result.intensity[x][y] = (
-				(0.3 * (double)rgbImage.pixList[x][y].r) +
-				(0.59 * (double)rgbImage.pixList[x][y].g) +
-				(0.11 * (double)rgbImage.pixList[x][y].b)) + 0.5;
+			result->intensity[x][y] = (
+				(0.3 * (double)rgbImage->pixList[x][y].r) +
+				(0.59 * (double)rgbImage->pixList[x][y].g) +
+				(0.11 * (double)rgbImage->pixList[x][y].b)) + 0.5;
 		}
 	}
 	return result;
 }
 
-Image UGrayscaleToRgb(ImageGS reference)
+Image *UGrayscaleToRgb(ImageGS *reference)
 {
-	Image result;
-	result.width = reference.width;
-	result.height = reference.height;
-	result.has_alpha = 0;
-	result.bits_per_sample = 8;
-	result.pixList = malloc(result.width * sizeof(Pixel*));
+	Image *result = malloc(sizeof(Image));
+	result->width = reference->width;
+	result->height = reference->height;
+	result->has_alpha = 1;
+	result->bits_per_sample = 8;
+	result->pixList = malloc(result->width * sizeof(Pixel*));
 
-	for (int i = 0; i < result.width; i++)
+	for (int x = 0; x < result->width; x++)
 	{
-		result.pixList[i] = malloc(result.height * sizeof(Pixel));
-	}
-
-	for (int y = 0; y < result.height; y++)
-		for(int x = 0; x < result.width; x++)
+		result->pixList[x] = malloc(result->height * sizeof(Pixel));
+		for(int y = 0; y < result->height; y++)
 		{
-			result.pixList[x][y].r = reference.intensity[x][y];
-			result.pixList[x][y].g = reference.intensity[x][y];
-			result.pixList[x][y].b = reference.intensity[x][y];
-			result.pixList[x][y].a = 255;
+			result->pixList[x][y].r = reference->intensity[x][y];
+			result->pixList[x][y].g = reference->intensity[x][y];
+			result->pixList[x][y].b = reference->intensity[x][y];
+			result->pixList[x][y].a = 255;
 		}
+	}
 	return result;
 }
 
-ImageBN UGrayscaleToBinary(ImageGS ref)
+ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
-	ImageBN result;
-	result.width = ref.width;
-	result.height = ref.height;
+	ImageBN *result = malloc(sizeof(ImageBN));
+	result->width = ref->width;
+	result->height = ref->height;
 
-	result.data = malloc(result.width * sizeof(int *));
-	
-	for (int i = 0; i < result.width; i++)
+	result->data = malloc(result->width * sizeof(int*));
+	for (int x = 0; x < result->width; x++)
 	{
-		result.data[i] = malloc(result.height * sizeof(int));
+		result->data[x] = malloc(result->height * sizeof(int));
+		for (int y = 0; y < result->height; y++)
+			result->data[x][y] = ref->intensity[x][y] / 127;
 	}
 
-	for (int y = 0; y < result.height; y++)
-		for (int x = 0; x < result.width; x++)
-			result.data[x][y] = ref.intensity[x][y] / 2;
 	return result;
 }
 
-ImageBN URgbToBinary(Image ref)
+ImageBN *URgbToBinary(Image *ref)
 {
-	ImageGS tmp = URgbToGrayscale(ref);
-	ImageBN r = UGrayscaleToBinary(tmp);
+	ImageGS *tmp = URgbToGrayscale(ref);
+	ImageBN *r = UGrayscaleToBinary(tmp);
 	UFreeImageGray(tmp);
 	return r;
 }
 
-Image UBinaryToRgb(ImageBN ref)
+Image *UBinaryToRgb(ImageBN *ref)
 {
-	Image result;
-	result.width = ref.width;
-	result.height = ref.height;
-	result.has_alpha = 0;
-	result.bits_per_sample = 8;
+	Image *result = malloc(sizeof(Image));
+	result->width = ref->width;
+	result->height = ref->height;
+	result->has_alpha = 1;
+	result->bits_per_sample = 8;
 
-	result.pixList = malloc(result.width * sizeof(Pixel *));
+	result->pixList = malloc(result->width * sizeof(Pixel *));
 	
-	for (int i = 0; i < result.width; i++)
-		result.pixList[i] = malloc(result.height * sizeof(Pixel));
-
-	for (int y = 0; y < result.height; y++)
-		for (int x = 0; x < result.width; x++)
+	for (int x = 0; x < result->width; x++)
+	{
+		result->pixList[x] = malloc(result->height * sizeof(Pixel));
+		for (int y = 0; y < result->height; y++)
 		{
-			result.pixList[x][y].r = ref.data[x][y] * 255;
-			result.pixList[x][y].g = ref.data[x][y] * 255;
-			result.pixList[x][y].b = ref.data[x][y] * 255;
+			result->pixList[x][y].r = ref->data[x][y] * 255;
+			result->pixList[x][y].g = ref->data[x][y] * 255;
+			result->pixList[x][y].b = ref->data[x][y] * 255;
+			result->pixList[x][y].a = 255;
 		}
+	}
 	return result;
 }
 
@@ -198,16 +194,16 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 	return tmp;
 }
 
-GdkPixbuf *UGetPixbufFromImage(Image img)
+GdkPixbuf *UGetPixbufFromImage(Image *img)
 {
 	return gdk_pixbuf_new_from_data(
-		UGetPixelDataFromPixelsStruct(img.pixList,
-			img.width, img.height, img.has_alpha ? 4 : 3),
+		UGetPixelDataFromPixelsStruct(img->pixList,
+			img->width, img->height, img->has_alpha ? 4 : 3),
 		GDK_COLORSPACE_RGB,
-		img.has_alpha,
-		img.bits_per_sample,
-		img.width, img.height,
-		(img.has_alpha ? 4 : 3) * img.width,
+		img->has_alpha,
+		img->bits_per_sample,
+		img->width, img->height,
+		(img->has_alpha ? 4 : 3) * img->width,
 		NULL, NULL);
 }
 

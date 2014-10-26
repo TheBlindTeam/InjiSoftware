@@ -43,9 +43,9 @@ void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
-int isBlank(ImageBN img, Box b, Orientation orient, int start);
+int isBlank(ImageBN *img, Box b, Orientation orient, int start);
 
-int *GetSpaceArray(ImageBN, Box b, Orientation orient, int *size);
+int *GetSpaceArray(ImageBN *img, Box b, Orientation orient, int *size);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
@@ -56,17 +56,17 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
 
 //Interessant
-void Split(ImageBN img, Box *b, Orientation orient, int minBlank);
+void Split(ImageBN *img, Box *b, Orientation orient, int minBlank);
 
-void CutMargin(ImageBN img, Box *b);
+void CutMargin(ImageBN *img, Box *b);
 
-void DetectSplitOrientation(ImageBN img, Box *b);
+void DetectSplitOrientation(ImageBN *img, Box *b);
 
-Box GetBoxFromSplit(Image img);
+Box GetBoxFromSplit(Image *img);
 
 Box *GetBreadthBoxArray(Box b, int *count);
 
 void GetBreadthBoxArrayAux(BoxList list);
 
-void DrawNotInSubBoxes(Image img, Box b, Pixel p);
+void DrawNotInSubBoxes(Image *img, Box b, Pixel p);
 #endif

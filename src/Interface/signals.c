@@ -204,7 +204,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				S_ISREG(statbuf.st_mode))
 			{
 				if (data->img_rgb != NULL)
-					UFreeImage(*data->img_rgb);
+					UFreeImage(data->img_rgb);
 				data->previewScale = 1;
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
@@ -213,7 +213,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
-					UGetPixbufFromImage(*data->img_rgb));
+					UGetPixbufFromImage(data->img_rgb));
 			}
 		}
 		g_free(filename);
@@ -625,12 +625,12 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 				}
 			}
 			Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
-			UFreeImage(*data->img_rgb);
+			UFreeImage(data->img_rgb);
 			data->img_rgb = &tmpImg;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				UGetPixbufFromImage(*data->img_rgb));
+				UGetPixbufFromImage(data->img_rgb));
 		}
 	}
 }
@@ -648,11 +648,11 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 		{
 			Image tmpImg = URotate(*data->img_rgb, amount);
 
-			UFreeImage(*data->img_rgb);
+			UFreeImage(data->img_rgb);
 
 			data->img_rgb = &tmpImg;
 
-			GdkPixbuf *pixbuf = UGetPixbufFromImage(*data->img_rgb);
+			GdkPixbuf *pixbuf = UGetPixbufFromImage(data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
 				pixbuf);
@@ -677,7 +677,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			if (data->segBoxArray == NULL)
 			{
 				int count;
-				Box box = GetBoxFromSplit(*data->img_rgb);
+				Box box = GetBoxFromSplit(data->img_rgb);
 				data->segBoxArray = GetBreadthBoxArray(box, &count);
 				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
 					data->builder, "BSegmentation")), "Detect");
@@ -687,14 +687,14 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			if (data->boxDetectIndex == data->boxCount)
 				return;
 			if (data->boxDetectIndex != 0)
-				DrawNotInSubBoxes(*data->img_rgb,
+				DrawNotInSubBoxes(data->img_rgb,
 					data->segBoxArray[data->boxDetectIndex - 1], BLUE);
-			DrawNotInSubBoxes(*data->img_rgb,
+			DrawNotInSubBoxes(data->img_rgb,
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
-				UGetPixbufFromImage(*data->img_rgb));
+				UGetPixbufFromImage(data->img_rgb));
 		}
 	}
 }
@@ -707,7 +707,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			double angle = FindInclinationAngle(
-				UGrayscaleToBinary(URgbToGrayscale(*data->img_rgb)));
+				*URgbToBinary(data->img_rgb));
 
 			gchar txt[20];
 			sprintf(txt, "%f", angle);
@@ -724,13 +724,13 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			Image tmpImg = UGrayscaleToRgb(URgbToGrayscale(*data->img_rgb));
+			Image *tmpImg = UGrayscaleToRgb(URgbToGrayscale(data->img_rgb));
 
-			UFreeImage(*data->img_rgb);
+			UFreeImage(data->img_rgb);
 
-			data->img_rgb = &tmpImg;
+			data->img_rgb = tmpImg;
 
-			GdkPixbuf *pixbuf = UGetPixbufFromImage(*data->img_rgb);
+			GdkPixbuf *pixbuf = UGetPixbufFromImage(data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
 				pixbuf);
@@ -750,7 +750,7 @@ void on_zoom_in(GtkWidget *widget, gpointer user_data)
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				gdk_pixbuf_scale_simple(UGetPixbufFromImage(*data->img_rgb),
+				gdk_pixbuf_scale_simple(UGetPixbufFromImage(data->img_rgb),
 					data->img_rgb->width * data->previewScale,
 					data->img_rgb->height * data->previewScale,
 					GDK_INTERP_BILINEAR));
@@ -769,7 +769,7 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data)
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				gdk_pixbuf_scale_simple(UGetPixbufFromImage(*data->img_rgb),
+				gdk_pixbuf_scale_simple(UGetPixbufFromImage(data->img_rgb),
 					data->img_rgb->width * data->previewScale,
 					data->img_rgb->height * data->previewScale,
 					GDK_INTERP_BILINEAR));

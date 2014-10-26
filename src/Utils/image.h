@@ -41,38 +41,38 @@ typedef struct
 Image* ULoadImage(char* str);
 
 // Laurent : Free the Pixels buffer of a RGB Image
-void UFreeImage(Image img);
+void UFreeImage(Image *img);
 
 // Laurent : Free the Pixels buffer of a Gray Scale Image
-void UFreeImageGray(ImageGS img);
+void UFreeImageGray(ImageGS *img);
 
 // Laurent : Free the Pixels buffer of a Binary Image
-void UFreeImageBinary(ImageBN img);
+void UFreeImageBinary(ImageBN *img);
 
 // David : Get Pixel at Coordinate
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);
 
 // David : Translate RGB Image to GrayScale Image
-ImageGS URgbToGrayscale(Image rgbImage);
+ImageGS *URgbToGrayscale(Image *rgbImage);
 
 // David : Translate GrayScale Image to RGB Image
-Image UGrayscaleToRgb(ImageGS reference);
+Image *UGrayscaleToRgb(ImageGS *reference);
 
 // David : GrayImage to Binary Image
-ImageBN UGrayscaleToBinary(ImageGS ref);
+ImageBN *UGrayscaleToBinary(ImageGS *ref);
 
 // Laurent : RGBImage to Binary Image
-ImageBN URgbToBinary(Image ref);
+ImageBN *URgbToBinary(Image *ref);
 
 // David : Binary to Rgb Image
-Image UBinaryToRgb(ImageBN ref);
+Image *UBinaryToRgb(ImageBN *ref);
 
 // Adrien: Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);
 
 // Adrien: Create pixbuf from Pixel struct
-GdkPixbuf *UGetPixbufFromImage(Image img);
+GdkPixbuf *UGetPixbufFromImage(Image *img);
 
 // Adrien: Rotate an image matrix left/right
 void URotateImage(Image *img);

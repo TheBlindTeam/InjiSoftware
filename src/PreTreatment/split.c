@@ -68,7 +68,7 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
 	GetIterPrim(orient, secondHeight, secondWidth);
 }
 
-int isBlank(ImageBN img, Box b, Orientation orient, int start)
+int isBlank(ImageBN *img, Box b, Orientation orient, int start)
 {
 	int x1, x2, y1, y2;
 	int min, max;
@@ -80,11 +80,11 @@ int isBlank(ImageBN img, Box b, Orientation orient, int start)
 	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
 
 	for (int i = min; i <= max && r; i ++)
-		r = img.data[start * x1 + i * x2][start * y1 + i * y2] ? 1 : 0;
+		r = img->data[start * x1 + i * x2][start * y1 + i * y2] ? 1 : 0;
 	return r;
 }
 
-int *GetSpaceArray(ImageBN img, Box b, Orientation orient, int *size)
+int *GetSpaceArray(ImageBN *img, Box b, Orientation orient, int *size)
 {
 	int x1, y1;
 	int *r;
@@ -176,7 +176,7 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
 	return 1;
 }
 
-void CutMargin(ImageBN img, Box *b)
+void CutMargin(ImageBN *img, Box *b)
 {
 	int min = b->rectangle.x1;
 	int max = b->rectangle.x2;
@@ -212,7 +212,7 @@ void CutMargin(ImageBN img, Box *b)
 		}
 }
 
-void Split(ImageBN img, Box *b, Orientation orient, int minBlank)
+void Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 {
 
 	int x1, y1, x2, y2;
@@ -266,7 +266,7 @@ void Split(ImageBN img, Box *b, Orientation orient, int minBlank)
 		DetectSplitOrientation(img, &b->subBoxes[i]);
 }
 
-void DetectSplitOrientation(ImageBN img, Box *b)
+void DetectSplitOrientation(ImageBN *img, Box *b)
 {
 	int sizeH;
 	int *spacesH = GetSpaceArray(img, *b, HORIZONTAL, &sizeH);
@@ -310,19 +310,27 @@ void DetectSplitOrientation(ImageBN img, Box *b)
 	}
 }
 
-Box GetBoxFromSplit(Image img)
+Box GetBoxFromSplit(Image *img)
 {
-	ImageBN imgBn = URgbToBinary(img);
-	Box b = {{0, 0, imgBn.width - 1, imgBn.height - 1}, 0, NULL};
+	printf("begin\n");
+	ImageBN *imgBn = URgbToBinary(img);
+	printf("convert\n");
+	printf("width height old %d %d new %d %d\n", img->width, img->height, imgBn->width, imgBn->height);
+	Box b = {{0, 0, imgBn->width - 1, imgBn->height - 1}, 0, NULL};
 	Box *sub = malloc(sizeof(Box));
 	b.nbSubBoxes = 1;
 	b.subBoxes = sub;
 	sub->rectangle = b.rectangle;
 	sub->nbSubBoxes = 0;
 	sub->subBoxes = NULL;
+	printf("init\n");
 	CutMargin(imgBn, sub);
+	printf("CutMargin\n");
 	DetectSplitOrientation(imgBn, sub);
+	printf("Detect\n");
 	UFreeImageBinary(imgBn);
+	printf("Free\n");
+	printf("end\n");
 	return b;
 }
 
@@ -343,7 +351,7 @@ void GetBreadthBoxArrayAux(BoxList list)
 		GetBreadthBoxArrayAux(list->next);
 }
 
-void DrawNotInSubBoxes(Image img, Box b, Pixel p)
+void DrawNotInSubBoxes(Image *img, Box b, Pixel p)
 {
 	int **rect = NULL;
 	int width = b.rectangle.x2 - b.rectangle.x1 + 1;
@@ -370,7 +378,7 @@ void DrawNotInSubBoxes(Image img, Box b, Pixel p)
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
 			if (rect[i][j])
-				img.pixList[i + b.rectangle.x1][j + b.rectangle.y1] = p;
+				img->pixList[i + b.rectangle.x1][j + b.rectangle.y1] = p;
 	for (int i = 0; i < width; i ++)
 		free(rect[i]);
 	free(rect);

@@ -5,7 +5,7 @@ double FindInclinationAngle(ImageBN *ref)
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
 	const int thetaMax = 2 * 90 + 1;
-	int rMax = (int)((ref->width * cos(M_PI / 4) + ref->height * sin(M_PI / 4))
+	const int rMax = (int)((ref->width * cos(M_PI / 4) + ref->height * sin(M_PI / 4))
 		* 2 + 1);
 	printf("begin\n");
 	int **accu = malloc(thetaMax * sizeof(int *));
@@ -27,7 +27,7 @@ double FindInclinationAngle(ImageBN *ref)
 			// The pixel is black
 			if(ref->data[x][y] == 0)
 			{
-				for (int theta = -90; theta < 90; theta++)
+				for (int theta = -90; theta <= 90; theta++)
 				{
 					double radian = (M_PI * theta) / 180;
 					int r = (int)(x * cos(radian) + y * sin(radian));

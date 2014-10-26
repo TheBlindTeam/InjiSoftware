@@ -470,6 +470,8 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 20);
 			cairo_show_text(cr, str2);
 		}
+		for (int l = 0; l < network.nbLayers; l++)
+			free(neuronPos[l]);
 		free(neuronPos);
 	}
 }
@@ -646,6 +648,11 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 				}
 			}
 			Image *tmpImg = UConvolution(data->img_rgb, matrix, 3);
+			
+			for(int x = 0; x < 3; x++)
+				free(matrix[x]);
+			free(matrix);
+
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(

@@ -14,12 +14,8 @@ int NDichotomicLearn(NetworkSet *nWorkSet)
 	NChangeLostNetwork(*nWon, wError, *nLost, lError);
 	wError = NComputeError(nWon, nWorkSet->exSet, 0, NULL, 0);
 	lError = NComputeError(nLost, nWorkSet->exSet, 0, NULL, 0);
-	printf("%lf %lf error\n", lError, wError);
 	if (lError < wError)
-	{
 		nWorkSet->nWork = nLost;
-		printf("CHANGE\n");
-	}
 	return 1;
 }
 
@@ -30,18 +26,17 @@ void NChangeLostNetwork(Network won, double wError, Network lost, double lError)
 		for (int j = 0; j < lost.layersSize[i]; j ++)
 			for (int k = 0; k < lost.neurons[i][j].nbConnections; k ++)
 			{
-				rdm = (double)rand() / (double)RAND_MAX;
-				printf("ok\n");
-				if (rdm >= wError)
+				rdm = (double)rand() / (double)RAND_MAX * 2;
+				if (rdm <= wError)
+				{
 					lost.neurons[i][j].connectList[k].weight = 
 						won.neurons[i][j].connectList[k].weight;
-				else
+				}
+				else if (rdm <= wError + lError)
 				{
-					printf("old weight%lf\n", lost.neurons[i][j].connectList[k].weight);
 					lost.neurons[i][j].connectList[k].weight += 
 						(double)rand() / (double)RAND_MAX *
 						(1 - lError) * 2 - (1 - lError);
-					printf("new weight%lf\n", lost.neurons[i][j].connectList[k].weight);
 				}
 			}
 }

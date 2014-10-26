@@ -71,6 +71,8 @@ void SplitLines(ImageGS img, Box *b, guchar c);
 
 void SplitBlocks(ImageGS img, Box *b, guchar c, int minBlank);
 
+void DetectSplitOrientation(ImageGS img, Box *b, guchar c);
+
 Box GetBoxFromSplit(Image img);
 
 Box *GetBreadthBoxArray(Box b, int *count);

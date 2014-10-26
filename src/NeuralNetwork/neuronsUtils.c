@@ -330,7 +330,6 @@ ExempleSet NGetXorExempleSet()
 NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 	int output, int others, int bias)
 {
-	printf("Begin init\n");
 	NetworkSet* r = malloc(sizeof(NetworkSet));
 
 	r->maxError = 0.000001;
@@ -366,10 +365,9 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 			r->nWork = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
 			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
 				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
-			//NComputeError(r->nWork, r->exSet, 0, NULL, 0);
+			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}
-	printf("End init\n");
 	return r;
 }
 
@@ -442,25 +440,3 @@ int getTotalNeuronsAmount(Network nWork)
 		count += nWork.layersSize[l];
 	return count;
 }
-
-/*int main()
-{
-	srand(time(NULL));
-	for(;;)
-	{
-		int count = 0;
-		NetworkSet nWorkSet = NDefaultNetworkSet();
-		while(nWorkSet.learn(&nWorkSet))
-		{
-			count ++;
-			if (count > 10000)
-				break;
-		}
-		NPrintNetwork(*nWorkSet.nWork);
-		NComputeError(nWorkSet.nWork, nWorkSet.exSet, specialPrint);
-		printf("iterations: %d\n", count);
-		getchar();
-	}
-	return 0;
-}*/
-

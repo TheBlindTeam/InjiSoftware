@@ -410,7 +410,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			int i = 0;
 			int u = 0;
 			char str[1000], tmp[100];
-			NComputeError(&networkSet->network, networkSet->exSet, 1, str, 1000);
+			NComputeError(networkSet->nWork, networkSet->exSet, 1, str, 1000);
 			while(str[i])
 			{
 				if (str[i] == '\n')

@@ -16,9 +16,9 @@ Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize)
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			sumR += matrix[x][y].r * convolution[x][y];
-			sumG += matrix[x][y].g * convolution[x][y];
-			sumB += matrix[x][y].b * convolution[x][y];
+			sumR += matrix[x][y].r * convolution[y][x];
+			sumG += matrix[x][y].g * convolution[y][x];
+			sumB += matrix[x][y].b * convolution[y][x];
 		}
 	}
 
@@ -58,24 +58,16 @@ Pixel** UExtract(Pixel **matrix, int wSize, int hSize, int extractSize,
 
 	tmp = malloc(extractSize * sizeof(Pixel *));
 	for (int i = 0; i < extractSize; i++)
-	{
 		tmp[i] = malloc(extractSize * sizeof(Pixel));
-	}
 
 	for (int i = 0; i < extractSize; i++)
-	{
 		for(int z = 0; z < extractSize; z++)
 			tmp[z][i] = defaultPix;
-	}
 
 	for (int y = yMin; y < pos_y + (extractSize/2); y++)
-	{
 		for (int x = xMin; x < pos_x + (extractSize/2); x++)
-		{
-			if((x >= 0 && x < wSize) && (y >= 0 && y < hSize))
+			if (x >= 0 && x < wSize && y >= 0 && y < hSize)
 				tmp[x-xMin][y-yMin] = matrix[x][y];
-		}
-	}
 
 	return tmp;
 }
@@ -93,12 +85,9 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 
 	result = malloc(ref->width * sizeof(Pixel *));
 	for (int i = 0; i < ref->width; i++)
-	{
 		result[i] = malloc(ref->height * sizeof(Pixel));
-	}
 	
 	for (int y = 0; y < ref->height; y++)
-	{
 		for (int x = 0; x < ref->width; x++)
 		{
 			subMatrix = UExtract(ref->pixList, ref->width,
@@ -116,7 +105,6 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 				free(subMatrix[j]);
 			free(subMatrix);
 		}
-	}
 
 	image->pixList = result;
 	return image;

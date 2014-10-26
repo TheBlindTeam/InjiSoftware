@@ -31,11 +31,16 @@ Network *NInitializeSimpleMLP(int input, int output, int middle, int bias)
 		for (int j = 0; j < r->layersSize[i]; j ++)
 			if (i < r->nbLayers - 1)
 			{
-				r->neurons[i][j].nbConnections = r->layersSize[i + 1]
-					- ((r->bias && i != r->nbLayers - 2) ? 1 : 0);
+				r->neurons[i][j].nbConnections =
+					r->layersSize[i + 1]
+					- ((r->bias && i != r->nbLayers - 2) ?
+						1 : 0);
 				r->neurons[i][j].connectList =
-					malloc(sizeof(Connection) * r->neurons[i][j].nbConnections);
-				for (int k = 0; k < r->neurons[i][j].nbConnections; k ++)
+					malloc(sizeof(Connection) *
+					r->neurons[i][j].nbConnections);
+				for (int k = 0;
+					k < r->neurons[i][j].nbConnections;
+						k++)
 					NInitEdge(r, i, j, i + 1, k, k);
 			}
 			else
@@ -82,21 +87,23 @@ void NInitThresHoldSimpleMLP(Network *nWork, FAndDifF input, FAndDifF output,
 		}
 }
 
-void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI,int k)
+void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI,
+	int k)
 {
 	nWork->neurons[startL][startI].connectList[k].layer = endL;
 	nWork->neurons[startL][startI].connectList[k].index = endI;
 	nWork->neurons[startL][startI].connectList[k].prevChange = 0.0;
-	nWork->neurons[startL][startI].connectList[k].weight =
-						(double)rand() / (double)RAND_MAX *
-						(RAND_UP - RAND_DOWN) + RAND_DOWN;
+	nWork->neurons[startL][startI].connectList[k]
+		.weight = (double)rand() / (double)RAND_MAX *
+			(RAND_UP - RAND_DOWN) + RAND_DOWN;
 }
 
 void NInitializeSumNetwork(Network *nWork)
 {
 	for (int i = 0; i < nWork->nbLayers; i ++)
 		for (int j = 0; j < nWork->layersSize[i]; j ++)
-			if(nWork->bias && nWork->layersSize[i]-1==j && nWork->nbLayers-1!=i)
+			if(nWork->bias && nWork->layersSize[i]-1==j
+					&& nWork->nbLayers-1!=i)
 				nWork->neurons[i][j].sum = 1;
 			else
 				nWork->neurons[i][j].sum = 0;
@@ -113,7 +120,8 @@ int NRun(Network *nWork, double *input, double **r)
 		for (int j = 0; j < nWork->layersSize[i] ; j ++)
 		{
 			Neuron *tmp = &nWork->neurons[i][j];
-			if (i == 0 && (!nWork->bias || j < nWork->layersSize[i] - 1))
+			if (i == 0 && (!nWork->bias ||
+					j < nWork->layersSize[i] - 1))
 				tmp->sum = input[j];
 			tmp->shock = tmp->shockFoo.f(tmp->sum);
 			for (int k = 0; k < tmp->nbConnections; k ++)
@@ -121,7 +129,8 @@ int NRun(Network *nWork, double *input, double **r)
 				nWork->neurons
 					[tmp->connectList[k].layer]
 					[tmp->connectList[k].index].sum +=
-					tmp->connectList[k].weight * tmp->shock;
+					tmp->connectList[k].weight *
+						tmp->shock;
 			}
 		}
 	rSize = nWork->layersSize[nWork->nbLayers - 1];
@@ -214,11 +223,15 @@ void NPrintNetwork(Network nWork)
 		{
 			printf("\t\tnumber: %d size: %d\n",
 				j, nWork.neurons[i][j].nbConnections);
-			for (int k = 0; k < nWork.neurons[i][j].nbConnections; k++)
+			for (int k = 0; k < nWork.neurons[i][j].nbConnections;
+					k++)
 				printf("\t\t\tlayer: %d index: %d weight: %f\n",
-					nWork.neurons[i][j].connectList[k].layer,
-					nWork.neurons[i][j].connectList[k].index,
-					nWork.neurons[i][j].connectList[k].weight);
+					nWork.neurons[i][j].connectList[k]
+						.layer,
+					nWork.neurons[i][j].connectList[k]
+						.index,
+					nWork.neurons[i][j].connectList[k]
+						.weight);
 		}
 		printf("\n");
 	}
@@ -254,7 +267,8 @@ ExempleSet NGetExempleSet(double *input[], int inputDim2,
 	r.targetSize = targetDim2;
 	r.exemple = NULL;
 	for (int i = 0; i < size; i ++)
-		addInExempleSet(&r, input[i], inputDim2, target[i], targetDim2);
+		addInExempleSet(&r, input[i], inputDim2, target[i],
+			targetDim2);
 	return r;
 }
 
@@ -343,13 +357,15 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 		r->exSet = NGetXorExempleSet();
 	if (learning == 0)
 	{
-		Network *N1 = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
-		Network *N2 = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
+		Network *N1 = NINIT[archi](r->exSet.inputSize,
+			r->exSet.targetSize);
+		Network *N2 = NINIT[archi](r->exSet.inputSize,
+			r->exSet.targetSize);
 
-		NInitThresHoldSimpleMLP(N1, FUNCTIONS[input], FUNCTIONS[output],
-			FUNCTIONS[bias], FUNCTIONS[others]);
-		NInitThresHoldSimpleMLP(N2, FUNCTIONS[input], FUNCTIONS[output],
-			FUNCTIONS[bias], FUNCTIONS[others]);
+		NInitThresHoldSimpleMLP(N1, FUNCTIONS[input],
+			FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
+		NInitThresHoldSimpleMLP(N2, FUNCTIONS[input],
+			FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
 		N1->sibling = N2;
 		N2->sibling = N1;
 		NComputeError(N1, r->exSet, 0, NULL, 0);
@@ -362,9 +378,11 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 	}
 	else
 	{
-			r->nWork = NINIT[archi](r->exSet.inputSize, r->exSet.targetSize);
-			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input]
-				, FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
+			r->nWork = NINIT[archi](r->exSet.inputSize,
+				r->exSet.targetSize);
+			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input],
+				FUNCTIONS[output], FUNCTIONS[bias],
+				FUNCTIONS[others]);
 			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}
@@ -380,7 +398,8 @@ NetworkSet* NDefaultNetworkSet()
 	r->lRate = 0.06;
 	r->momentum = 0.2;
 	r->exSet = NGetXorExempleSet();
-	NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, TAN_SIGMOID, TAN_SIGMOID);
+	NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, TAN_SIGMOID,
+		TAN_SIGMOID);
 	NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 	return r;
 }

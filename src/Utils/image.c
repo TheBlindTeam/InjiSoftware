@@ -97,7 +97,8 @@ ImageGS *URgbToGrayscale(Image *rgbImage)
 			result->intensity[x][y] = (
 				(0.3 * (double)rgbImage->pixList[x][y].r) +
 				(0.59 * (double)rgbImage->pixList[x][y].g) +
-				(0.11 * (double)rgbImage->pixList[x][y].b)) + 0.5;
+				(0.11 * (double)rgbImage->pixList[x][y].b))
+					+ 0.5;
 		}
 	}
 	return result;

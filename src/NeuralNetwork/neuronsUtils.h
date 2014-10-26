@@ -74,11 +74,13 @@ int NRun(Network *nWork, double *input, double **r);
 
 void addInStringAt(char *r, char *s2, int *at, int max);
 
-double NComputeError(Network *nWork, ExempleSet exSet, int print, char *r, int max);
+double NComputeError(Network *nWork, ExempleSet exSet, int print, char *r,
+	int max);
 
 void NPrintNetwork(Network nWork);
 
-void NInitEdge(Network *nWork, int startL, int startI, int endL,int endI,int k);
+void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI,
+	int k);
 
 void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
 	double *target, int targetSize);

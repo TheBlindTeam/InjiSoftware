@@ -101,13 +101,15 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 	{
 		for (int x = 0; x < ref->width; x++)
 		{
-			subMatrix = UExtract(ref->pixList, ref->width, ref->height,
-				matrixSize, x, y);
+			subMatrix = UExtract(ref->pixList, ref->width,
+				ref->height, matrixSize, x, y);
 
 			subMatrix[matrixSize / 2][matrixSize / 2]
-				= UConvolutionProduct(subMatrix, convolution, matrixSize);
+				= UConvolutionProduct(subMatrix, convolution,
+					matrixSize);
 
-			result[x][y] = subMatrix[matrixSize / 2][matrixSize / 2];
+			result[x][y] = subMatrix[matrixSize / 2]
+				[matrixSize / 2];
 
 			// free submatrix memory
 			for(int j = 0; j < matrixSize; j++)
@@ -170,9 +172,11 @@ Image *URotate(Image *ref, double angle)
 			tmp = ApplyVectorRot(tmp, radian);
 
 			if ((tmp.x - min.x>= 0 && tmp.x - min.x < newWidth)
-				&& (tmp.y - min.y>= 0 && tmp.y - min.y < newHeight))
+				&& (tmp.y - min.y>= 0
+					&& tmp.y - min.y < newHeight))
 			{
-				pix[tmp.x - min.x][tmp.y - min.y] = ref->pixList[x][y];
+				pix[tmp.x - min.x][tmp.y - min.y] =
+					ref->pixList[x][y];
 				
 			}
 		}
@@ -185,7 +189,8 @@ Image *URotate(Image *ref, double angle)
 
 Vector2 ApplyVectorRot(Vector2 origin, double radian)
 {
-	/*Vector2 result = {origin.x * cos(radian) + origin.y * sin(radian) + 0.5, 
+	/*Vector2 result = {origin.x * cos(radian) + origin.y
+	 * * sin(radian) + 0.5,
 		-origin.x * sin(radian) + origin.y * cos(radian) + 0.5};*/
 
 	// Shear rotation

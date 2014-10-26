@@ -4,7 +4,8 @@
 const FAndDifF SIGMOID = {&USigmoid, &UDSigmoid};
 const FAndDifF TAN_SIGMOID = {&UTanSigmoid, &UDTanSigmoid};
 const FAndDifF LINEAR = {&ULinear, &UDLinear};
-const FAndDifF FUNCTIONS[] = { {&ULinear, &UDLinear}, {&USigmoid, &UDSigmoid}, {&UTanSigmoid, &UDTanSigmoid} };
+const FAndDifF FUNCTIONS[] = { {&ULinear, &UDLinear}, {&USigmoid, &UDSigmoid},
+	{&UTanSigmoid, &UDTanSigmoid} };
 
 int UPow(int a, int b)
 {

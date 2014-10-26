@@ -19,24 +19,29 @@ int NDichotomicLearn(NetworkSet *nWorkSet)
 	return 1;
 }
 
-void NChangeLostNetwork(Network won, double wError, Network lost, double lError)
+void NChangeLostNetwork(Network won, double wError, Network lost,
+	double lError)
 {
 	double rdm;
 	for (int i = 0; i < lost.nbLayers; i ++)
 		for (int j = 0; j < lost.layersSize[i]; j ++)
-			for (int k = 0; k < lost.neurons[i][j].nbConnections; k ++)
+			for (int k = 0; k < lost.neurons[i][j].nbConnections;
+				k ++)
 			{
 				rdm = (double)rand() / (double)RAND_MAX * 2;
 				if (rdm <= wError)
 				{
-					lost.neurons[i][j].connectList[k].weight = 
-						won.neurons[i][j].connectList[k].weight;
+					lost.neurons[i][j].connectList[k]
+						.weight = won.neurons[i][j]
+							.connectList[k].weight;
 				}
 				else if (rdm <= wError + lError)
 				{
-					lost.neurons[i][j].connectList[k].weight += 
-						(double)rand() / (double)RAND_MAX *
-						(1 - lError) * 2 - (1 - lError);
+					lost.neurons[i][j].connectList[k]
+						.weight += (double)rand() /
+							(double)RAND_MAX *
+							(1 - lError) * 2 -
+							(1 - lError);
 				}
 			}
 }
@@ -54,7 +59,8 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 		for (int j = 0; j < nWorkSet->exSet.targetSize; j ++)
 		{
 			Neuron *tmp = &nWork->neurons[nWork->nbLayers - 1][j];
-			tmp->error =tmp->shockFoo.df(output[j])*(ex->target[j] - output[j]);
+			tmp->error =tmp->shockFoo.df(output[j])*(ex->target[j]
+					- output[j]);
 		}
 		for (int j = nWork->nbLayers - 2; j > 0; j --)
 			for (int k = 0; k < nWork->layersSize[j]; k++)
@@ -66,7 +72,8 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 						tmp->connectList[l].weight
 						* nWork->neurons
 						[tmp->connectList[l].layer]
-						[tmp->connectList[l].index].error;
+						[tmp->connectList[l].index]
+						.error;
 				tmp->error *= tmp->shockFoo.df(tmp->shock);
 			}
 		for (int j = 0; j < nWork->nbLayers; j ++)
@@ -77,13 +84,14 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 				{
 					tmp->connectList[l].weight +=
 						nWorkSet->momentum
-						* tmp->connectList[l].prevChange;
+						* tmp->connectList[l]
+						.prevChange;
 					tmp->connectList[l].prevChange =
 						nWorkSet->lRate
 						* nWork->neurons
 						[tmp->connectList[l].layer]
-						[tmp->connectList[l].index].error
-						* tmp->shock;
+						[tmp->connectList[l].index]
+						.error * tmp->shock;
 					tmp->connectList[l].weight +=
 						tmp->connectList[l].prevChange;
 				}

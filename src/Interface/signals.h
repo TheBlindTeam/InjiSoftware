@@ -6,11 +6,13 @@
 #include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include "unistd.h"
 
 #include "../NeuralNetwork/neuronsUtils.h"
 #include "../PreTreatment/matrixOperation.h"
 #include "../PreTreatment/split.h"
+#include "../PreTreatment/hough.h"
 #include "globalData.h"
 
 #define ZOOM_COEF 0.1
@@ -62,6 +64,7 @@ void on_detect_chars(GtkWidget *widget, gpointer user_data);
 void cr_draw_arrow(cairo_t*, double, double, double, double, int);
 
 void on_click_segmentation(GtkWidget *widget, gpointer user_data);
+void on_click_detect_orientation(GtkWidget *widget, gpointer user_data);
 
 void on_zoom_in(GtkWidget *widget, gpointer user_data);
 void on_zoom_out(GtkWidget *widget, gpointer user_data);

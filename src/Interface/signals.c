@@ -47,6 +47,12 @@ void connectSignals(SGlobalData *data)
 			"BSegmentation")),
 		"clicked",
 		G_CALLBACK(on_click_segmentation), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"BDetectOrientation")),
+		"clicked",
+		G_CALLBACK(on_click_detect_orientation), data);
 	/* Menu */
 
 	// File
@@ -251,22 +257,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		NetworkSet *networkSet = data->networkSet;
 		Network network = *networkSet->nWork;
 
-		// Parameters
-/*		gint p_archi = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNArchitecture")));
-		gint p_typelearn = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNTypeLearn")));
-		gint p_thrin = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrIn")));
-		gint p_throut = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrOut")));
-		gint p_thrhid = gtk_combo_box_get_active(
-			GTK_COMBO_BOX(gtk_builder_get_object(data->builder,
-				"NNThrHidLay")));*/
 		gint maxIter = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(
 			gtk_builder_get_object(data->builder, "SBMaxIter")));
 
@@ -288,7 +278,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
 			iterCalls++;
-
 
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
@@ -414,14 +403,28 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 			gtk_builder_get_object(data->builder, "ComputeErrorCB"))))
 		{
-			cairo_move_to(cr, NN_MARGIN_LEFT -
-					NN_NEURON_RADIUS,
-				NN_MARGIN_TOP+maxHeight + 30);
+			cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+				NN_MARGIN_TOP + maxHeight + 22);
 			data->neuronData->shouldErr = FALSE;
-			char str[1000];
+			int posx = 0;
+			int i = 0;
+			int u = 0;
+			char str[1000], tmp[100];
 			NComputeError(&network, networkSet->exSet, 1, str, 1000);
-			cairo_show_text(cr, str);
-			printf("%s\n", str);
+			while(str[i])
+			{
+				if (str[i] == '\n')
+				{
+					memcpy(tmp, str + u, i - u);
+					tmp[i - u] = 0;
+					u = i + 1;
+					cairo_show_text(cr, tmp);
+					posx += 11;
+					cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+						NN_MARGIN_TOP + maxHeight + 22 + posx);
+				}
+				i++;
+			}
 		}
 		if (selectedNeuronx != -1 && selectedNeurony != -1)
 		{
@@ -465,6 +468,8 @@ void on_click_reset(GtkWidget *widget, gpointer user_data)
 			data->builder, "InitButton")), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RenderButton")), FALSE);
 
 		char *paramsName[7] = {"NNGate", "NNArchitecture", "NNTypeLearn",
 			"NNThrIn", "NNThrOut", "NNThrHidLay", "NNThrBias"};
@@ -498,6 +503,8 @@ void on_click_initialize(GtkWidget *widget, gpointer user_data)
 			data->builder, "InitButton")), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NNResetButton")), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "RenderButton")), TRUE);
 	}
 }
 
@@ -594,18 +601,27 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-
-		double **matrix = malloc(sizeof(double*));
-		for(int x = 0; x < 3; x++)
+		if (data->img_rgb != NULL)
 		{
-			matrix[x] = malloc(sizeof(double));
-			for(int y = 0; y < 3; y++)
+			double **matrix = malloc(3 * sizeof(double*));
+			for(int x = 0; x < 3; x++)
 			{
-				char wname[19];
-				sprintf(wname, "FilterMatrixButton%d", 3*x+y);
+				matrix[x] = malloc(3 * sizeof(double));
+				for(int y = 0; y < 3; y++)
+				{
+					char wname[25];
+					sprintf(wname, "FilterMatrixButton%d", 3*x+y+1);
 					matrix[x][y] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
 						gtk_builder_get_object(data->builder, wname)));
+				}
 			}
+			Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
+			UFreeImage(*data->img_rgb);
+			data->img_rgb = &tmpImg;
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
 		}
 	}
 }
@@ -628,8 +644,7 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 			data->img_rgb = &tmpImg;
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
+				gtk_builder_get_object(data->builder, "PreviewImage")),
 				UGetPixbufFromImage(*data->img_rgb));
 			
 			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
@@ -681,6 +696,28 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 	}
 }
 
+void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			double angle = FindInclinationAngle(
+				UGrayscaleToBinary(URgbToGrayscale(*data->img_rgb)));
+			printf("angle: %f\n", angle);
+			Image tmpImg = URotate(*data->img_rgb, angle);
+
+			UFreeImage(*data->img_rgb);
+
+			data->img_rgb = &tmpImg;
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder, "PreviewImage")),
+				UGetPixbufFromImage(*data->img_rgb));
+		}
+	}
+}
 void on_zoom_in(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)

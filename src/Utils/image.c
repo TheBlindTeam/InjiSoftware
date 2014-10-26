@@ -94,7 +94,7 @@ ImageGS URgbToGrayscale(Image rgbImage)
 Image UGrayscaleToRgb(ImageGS reference)
 {
 	Image result;
-	result.width = reference.width;	
+	result.width = reference.width;
 	result.height = reference.height;
 
 	result.pixList = malloc(result.width * sizeof(Pixel*));
@@ -104,7 +104,7 @@ Image UGrayscaleToRgb(ImageGS reference)
 		result.pixList[i] = malloc(result.height * sizeof(Pixel));
 	}
 
-	for(int y = 0; y < result.height; y++)
+	for (int y = 0; y < result.height; y++)
 	{
 		for(int x = 0; x < result.width; x++)
 		{
@@ -117,6 +117,63 @@ Image UGrayscaleToRgb(ImageGS reference)
 	}
 
 	return result;
+}
+
+ImageBN UGrayscaleToBinary(ImageGS ref)
+{
+	ImageBN result;
+	int threshold = 255 / 127;
+	result.width = ref.width;
+	result.height = ref.height;
+
+	result.data = malloc(result.width * sizeof(int *));
+	
+	for (int i = 0; i < result.width; i++)
+	{
+		result.data[i] = malloc(result.height * sizeof(int));
+	}
+
+	for (int y = 0; y < result.height; y++)
+	{
+
+		for (int x = 0; x < result.width; x++)
+		{
+			result.data[x][y] =
+				(ref.intensity[x][y] >= threshold) ? 1 : 0;
+		}
+	}
+
+	return result;
+}
+
+Image BinaryToRgb(ImageBN ref)
+{
+	Image result;
+	result.width = ref.width;
+	result.height = ref.height;
+	result.has_alpha = 0;
+	result.bits_per_sample = 8;
+
+	result.pixList = malloc(result.width * sizeof(Pixel *));
+	
+	for (int i = 0; i < result.width; i++)
+	{
+		result.pixList[i] = malloc(result.height * sizeof(Pixel));
+	}
+
+	for (int y = 0; y < result.height; y++)
+	{
+
+		for (int x = 0; x < result.width; x++)
+		{
+			result.pixList[x][y].r = (ref.data[x][y]) ? 255 : 0;
+			result.pixList[x][y].g = (ref.data[x][y]) ? 255 : 0;
+			result.pixList[x][y].b = (ref.data[x][y]) ? 255 : 0;
+		}
+	}
+
+	return result;
+
 }
 
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,

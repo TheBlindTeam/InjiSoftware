@@ -30,6 +30,13 @@ typedef struct
 	guchar** intensity;
 } ImageGS;
 
+// David : Binary Image
+typedef struct
+{
+	int width, height;
+	int** data;
+}ImageBN;
+
 // Adrien: Creates an Image structure from the path str
 Image* ULoadImage(char* str);
 
@@ -44,6 +51,12 @@ ImageGS URgbToGrayscale(Image rgbImage);
 
 // David : Translate GrayScale Image to RGB Image
 Image UGrayscaleToRgb(ImageGS reference);
+
+// David : RGBImage to Binary Image
+ImageBN UGrayscaleToBinary(ImageGS ref);
+
+// David : Binary to Rgb Image
+Image UBinaryToRgb(ImageBN ref);
 
 // Adrien: Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,

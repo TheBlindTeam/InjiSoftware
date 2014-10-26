@@ -11,5 +11,5 @@
 int GetMaxIndex(int **array, int sizeX, int sizeY);
 
 // David : Allows us to find an angle to put the right image orientation
-double FindInclinationAngle(Image ref);
+double FindInclinationAngle(ImageBN ref);
 #endif

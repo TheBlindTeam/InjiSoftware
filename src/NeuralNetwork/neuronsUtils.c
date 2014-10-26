@@ -170,14 +170,14 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 				addInStringAt(r, tmp, &i, max);
 				addInStringAt(r, " ", &i, max);
 			}
-			addInStringAt(r, "output -> ", &i, max);
+			addInStringAt(r, "    output -> ", &i, max);
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", output[j]);
 				addInStringAt(r, tmp, &i, max);
 				addInStringAt(r, " ", &i, max);
 			}
-			addInStringAt(r, "target -> ", &i, max);
+			addInStringAt(r, "    target -> ", &i, max);
 			for (int j = 0; j < exSet.targetSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", ex->target[j]);
@@ -192,7 +192,7 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 	totalError /= count;
 	if (print)
 	{
-		addInStringAt(r, "average error: ", &i, max);
+		addInStringAt(r, "    average error: ", &i, max);
 		snprintf(tmp, 9, "%f", totalError);
 		addInStringAt(r, tmp, &i, max);
 		addInStringAt(r, "\n", &i, max);

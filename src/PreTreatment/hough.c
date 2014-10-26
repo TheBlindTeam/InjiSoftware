@@ -4,9 +4,10 @@ double FindInclinationAngle(ImageBN *ref)
 {
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
-	const int thetaMax = 2 * 90 + 1;
-	const int rMax = (int)((ref->width * cos(M_PI / 4) + ref->height * sin(M_PI / 4))
-		* 2 + 1);
+	const int thetaMax = 2 * 90;
+	const int rMax = (int)((ref->width * cos(M_PI / 4) +
+	ref->height * sin(M_PI / 4)) * 2);
+
 	printf("begin\n");
 	int **accu = malloc(thetaMax * sizeof(int *));
 
@@ -27,28 +28,24 @@ double FindInclinationAngle(ImageBN *ref)
 			// The pixel is black
 			if(ref->data[x][y] == 0)
 			{
-				for (int theta = -90; theta <= 90; theta++)
+				for (int theta = 0; theta < thetaMax; theta++)
 				{
 					double radian = (M_PI * theta) / 180;
 					int r = (int)(x * cos(radian) + y * sin(radian));
-					r = (r <= 0) ? r + rMax : r;
+
 					// Increase the accumulator
-					int thetaPos = theta + (thetaMax / 2);
-					accu[thetaPos][r]++;
+					accu[theta][r]++;
 				}
 			}
 		}
 	}
-	printf("out\n");
-	maxAngleAccu = GetMaxIndex(accu, thetaMax, rMax);
-	printf("out\n");
 
+	maxAngleAccu = GetMaxIndex(accu, thetaMax, rMax);
 	for(int i = 0; i < thetaMax; i++)
 		free(accu[i]);
-	printf("out\n");
 	free(accu);
-	printf("end\n");
-	return ((maxAngleAccu * M_PI) / 180);
+
+	return (maxAngleAccu * M_PI) / 180;
 }
 
 
@@ -56,6 +53,7 @@ int GetMaxIndex(int **array, int sizeX, int sizeY)
 {
 	int maxVal = array[0][0];
 	int xMaxIndex = 0;
+
 	for(int y = 0; y < sizeY; y++)
 	{
 		for(int x = 0; x < sizeX; x++)

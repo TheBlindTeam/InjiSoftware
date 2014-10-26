@@ -55,6 +55,9 @@ Image UGrayscaleToRgb(ImageGS reference);
 // David : RGBImage to Binary Image
 ImageBN UGrayscaleToBinary(ImageGS ref);
 
+// David : Binary to Rgb Image
+Image UBinaryToRgb(ImageBN ref);
+
 // Adrien: Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);

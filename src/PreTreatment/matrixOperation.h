@@ -26,7 +26,7 @@ void ExtremumVectorValues(Vector2 *tab, int arraySize,
 Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize);
 
 // David: Extract Submatrix From The Center
-Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
+Pixel** UExtract(Pixel **matrix, int wSize, int hSize, int extractSize, int pos_x,
 	int pos_y);
 
 // David: Apply A Convulution Matrix On Every Pixel

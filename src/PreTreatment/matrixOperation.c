@@ -8,27 +8,23 @@ Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize)
 	tmp.b = 0;
 	tmp.a = 0;
 	
-	guchar sumR = 0;
-	guchar sumG = 0;
-	guchar sumB = 0;
+	double sumR = 0;
+	double sumG = 0;
+	double sumB = 0;
 
 	for (int y = 0; y < matrixSize; y++)
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			sumR = sumR + matrix[x][y].r * (guchar)convolution[x][y];
-			sumG = sumG + matrix[x][y].g * (guchar)convolution[x][y];
-			sumB = sumB + matrix[x][y].b * (guchar)convolution[x][y];
-
+			sumR += matrix[x][y].r * convolution[x][y];
+			sumG += matrix[x][y].g * convolution[x][y];
+			sumB += matrix[x][y].b * convolution[x][y];
 		}
 	}
 
-
-	tmp.r = sumR;
-	tmp.g = sumG;
-	tmp.b = sumB;
-
-	//printf("Sum R = %i, Sum G = %i, Sum B = %i\n", sumR, sumG, sumB);
+	tmp.r = round(sumR);
+	tmp.g = round(sumG);
+	tmp.b = round(sumB);
 
 	// Clamp RGB values
 	ClampPixel(&tmp, 0, 255);
@@ -47,8 +43,8 @@ void ClampPixel(Pixel *pix, int min, int max)
 	pix->b = (pix->b >= max) ? max : pix->b;
 }
 
-Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
-	int pos_y)
+Pixel** UExtract(Pixel **matrix, int wSize, int hSize, int extractSize,
+ int pos_x, int pos_y)
 {
 	Pixel **tmp;
 	Pixel defaultPix;
@@ -56,6 +52,9 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	defaultPix.g = 255;
 	defaultPix.b = 255;
 	defaultPix.a = 255;
+
+	int xMin = pos_x - (extractSize / 2);
+	int yMin = pos_y - (extractSize / 2);
 
 	tmp = malloc(extractSize * sizeof(Pixel *));
 	for (int i = 0; i < extractSize; i++)
@@ -69,13 +68,12 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 			tmp[z][i] = defaultPix;
 	}
 
-	for (int y = pos_y - (extractSize/2); y < pos_y + (extractSize/2); y++)
+	for (int y = yMin; y < pos_y + (extractSize/2); y++)
 	{
-		for (int x = pos_x - (extractSize/2); x < pos_x + (extractSize/2); x++)
+		for (int x = xMin; x < pos_x + (extractSize/2); x++)
 		{
-			if ((x >= 0 && x < matrixSize) &&
-					(y >= 0 && y < matrixSize))
-				tmp[x][y] = matrix[x][y];
+			if((x >= 0 && x < wSize) && (y >= 0 && y < hSize))
+				tmp[x-xMin][y-yMin] = matrix[x][y];
 		}
 	}
 
@@ -103,12 +101,13 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 	{
 		for (int x = 0; x < ref->width; x++)
 		{
-			subMatrix = UExtract(ref->pixList, matrixSize, matrixSize, x, y);
+			subMatrix = UExtract(ref->pixList, ref->width, ref->height,
+				matrixSize, x, y);
+
 			subMatrix[matrixSize / 2][matrixSize / 2]
 				= UConvolutionProduct(subMatrix, convolution, matrixSize);
 
-			result[x][y] = subMatrix
-				[matrixSize / 2][matrixSize / 2];
+			result[x][y] = subMatrix[matrixSize / 2][matrixSize / 2];
 
 			// free submatrix memory
 			for(int j = 0; j < matrixSize; j++)

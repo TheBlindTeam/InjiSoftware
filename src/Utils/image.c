@@ -4,7 +4,7 @@
 
 const Pixel RED = {255, 0, 0, 255};
 const Pixel GREEN = {0, 255, 0, 255};
-const Pixel BLUE = {0, 0, 0, 255};
+const Pixel BLUE = {0, 0, 255, 255};
 
 Image* ULoadImage(char *str)
 {

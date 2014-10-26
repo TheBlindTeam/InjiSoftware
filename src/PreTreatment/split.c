@@ -8,7 +8,7 @@ J'ai considéré l'image comme ayant un repère d'axe x VERTICAL orienté vers
 le bas et d'axe y HORIZONTAL orienté vers la gauche*/
 const guchar BLACKGS = 200;
 
-BoxList AddInList(BoxList list, Box b)
+BoxList AddInList(BoxList list, Box *b)
 {
 	BoxElementList *elt = malloc(sizeof(BoxElementList));
 	elt->value = b;
@@ -33,18 +33,21 @@ int LengthBoxList(BoxList list)
 	return count;
 }
 
-Box *BoxListToArray(BoxList list, int *count)
+Box **BoxListToArray(BoxList list, int *count)
 {
-	Box *r;
+	Box **r = NULL;
 	BoxList tmp = list;
 	*count = LengthBoxList(list);
-	r = malloc(sizeof(Box) * *count);
-	for (int i = 0; i < *count; i ++)
+	if (*count > 0)
 	{
-		r[i] = tmp->value;
-		tmp = tmp->next;
+		r = malloc(sizeof(Box*) * *count);
+		for (int i = 0; i < *count; i ++)
+		{
+			r[i] = tmp->value;
+			tmp = tmp->next;
+		}
+		FreeBoxList(list);
 	}
-	FreeBoxList(list);
 	return r;
 }
 
@@ -55,6 +58,15 @@ void FreeBoxList(BoxList list)
 		FreeBoxList(list->next);
 		free(list);
 	}
+}
+
+void FreeBox(Box *b)
+{
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		FreeBox(b->subBoxes[i]);
+	if (b->nbSubBoxes)
+		free(b->subBoxes);
+	free(b);
 }
 
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight)
@@ -68,7 +80,7 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
 	GetIterPrim(orient, secondHeight, secondWidth);
 }
 
-int isBlank(ImageBN *img, Box b, Orientation orient, int start)
+int isBlank(ImageBN *img, Box *b, Orientation orient, int start)
 {
 	int x1, x2, y1, y2;
 	int min, max;
@@ -76,15 +88,15 @@ int isBlank(ImageBN *img, Box b, Orientation orient, int start)
 
 	GetIterPrim(orient, &x1, &y1);
 	GetIterSec(orient, &x2, &y2);
-	min = b.rectangle.x1 * x2 + b.rectangle.y1 * y2;
-	max = b.rectangle.x2 * x2 + b.rectangle.y2 * y2;
+	min = b->rectangle.x1 * x2 + b->rectangle.y1 * y2;
+	max = b->rectangle.x2 * x2 + b->rectangle.y2 * y2;
 
 	for (int i = min; i <= max && r; i ++)
 		r = img->data[start * x1 + i * x2][start * y1 + i * y2] ? 1 : 0;
 	return r;
 }
 
-int *GetSpaceArray(ImageBN *img, Box b, Orientation orient, int *size)
+int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size)
 {
 	int x1, y1;
 	int *r;
@@ -92,8 +104,8 @@ int *GetSpaceArray(ImageBN *img, Box b, Orientation orient, int *size)
 	int max;
 	int min;
 	GetIterPrim(orient, &x1, &y1);
-	min = b.rectangle.x1 * x1 + b.rectangle.y1 * y1;
-	max = b.rectangle.x2 * x1 + b.rectangle.y2 * y1;
+	min = b->rectangle.x1 * x1 + b->rectangle.y1 * y1;
+	max = b->rectangle.x2 * x1 + b->rectangle.y2 * y1;
 	*size = max - min + 1;
 	r = malloc(sizeof(int) * *size);
 	for (int i = 0; i < *size; i ++)
@@ -182,14 +194,14 @@ void CutMargin(ImageBN *img, Box *b)
 	int max = b->rectangle.x2;
 
 	for (int i = min; i <= max; i ++)
-		if(!isBlank(img, *b, VERTICAL, i))
+		if(!isBlank(img, b, VERTICAL, i))
 		{
 			b->rectangle.x1 = i;
 			min = i;
 			break;
 		}
 	for (int i = max; i >= min; i --)
-		if(!isBlank(img, *b, VERTICAL, i))
+		if(!isBlank(img, b, VERTICAL, i))
 		{
 			b->rectangle.x2 = i;
 			break;
@@ -198,14 +210,14 @@ void CutMargin(ImageBN *img, Box *b)
 	min = b->rectangle.y1;
 	max = b->rectangle.y2;
 	for (int i = min; i <= max; i ++)
-		if(!isBlank(img, *b, HORIZONTAL, i))
+		if(!isBlank(img, b, HORIZONTAL, i))
 		{
 			b->rectangle.y1 = i;
 			min = i;
 			break;
 		}
 	for (int i = max; i >= min; i --)
-		if(!isBlank(img, *b, HORIZONTAL, i))
+		if(!isBlank(img, b, HORIZONTAL, i))
 		{
 			b->rectangle.y2 = i;
 			break;
@@ -229,33 +241,33 @@ void Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 	prev = min;
 	for (int i = min; i <= max; i ++)
 	{
-		int isCurBlank = isBlank(img, *b, orient, i);
+		int isCurBlank = isBlank(img, b, orient, i);
 		if (isCurBlank)
 			count ++;
 		if ((!isCurBlank && count >= minBlank))
 		{
-			Box tmp;
-			tmp.rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
-			tmp.rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
-			tmp.rectangle.x2 = x1 * (i ? i - 1 : 0) + x2 * b->rectangle.x2;
-			tmp.rectangle.y2 = y1 * (i ? i - 1 : 0) + y2 * b->rectangle.y2;
-			tmp.nbSubBoxes = 0;
-			tmp.subBoxes = NULL;
+			Box *tmp = malloc(sizeof(Box));
+			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
+			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
+			tmp->rectangle.x2 = x1 * (i ? i - 1 : 0) + x2 * b->rectangle.x2;
+			tmp->rectangle.y2 = y1 * (i ? i - 1 : 0) + y2 * b->rectangle.y2;
+			tmp->nbSubBoxes = 0;
+			tmp->subBoxes = NULL;
 			prev = i;
-			CutMargin(img, &tmp);
+			CutMargin(img, tmp);
 			list = AddInList(list, tmp);
 		}
 		else if (i == max)
 		{
-			Box tmp;
-			tmp.rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
-			tmp.rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
-			tmp.rectangle.x2 = x1 * i + x2 * b->rectangle.x2;
-			tmp.rectangle.y2 = y1 * i + y2 * b->rectangle.y2;
-			tmp.nbSubBoxes = 0;
-			tmp.subBoxes = NULL;
+			Box *tmp = malloc(sizeof(Box));
+			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
+			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
+			tmp->rectangle.x2 = x1 * i + x2 * b->rectangle.x2;
+			tmp->rectangle.y2 = y1 * i + y2 * b->rectangle.y2;
+			tmp->nbSubBoxes = 0;
+			tmp->subBoxes = NULL;
 			prev = i;
-			CutMargin(img, &tmp);
+			CutMargin(img, tmp);
 			list = AddInList(list, tmp);
 		}
 		if (!isCurBlank)
@@ -263,15 +275,15 @@ void Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 	}
 	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
-		DetectSplitOrientation(img, &b->subBoxes[i]);
+		DetectSplitOrientation(img, b->subBoxes[i]);
 }
 
 void DetectSplitOrientation(ImageBN *img, Box *b)
 {
 	int sizeH;
-	int *spacesH = GetSpaceArray(img, *b, HORIZONTAL, &sizeH);
+	int *spacesH = GetSpaceArray(img, b, HORIZONTAL, &sizeH);
 	int sizeV;
-	int *spacesV = GetSpaceArray(img, *b, VERTICAL, &sizeV);
+	int *spacesV = GetSpaceArray(img, b, VERTICAL, &sizeV);
 	int *spaces;
 	int set = 0;
 	int size;
@@ -310,31 +322,28 @@ void DetectSplitOrientation(ImageBN *img, Box *b)
 	}
 }
 
-Box GetBoxFromSplit(Image *img)
+Box *GetBoxFromSplit(Image *img)
 {
-	printf("begin\n");
 	ImageBN *imgBn = URgbToBinary(img);
-	printf("convert\n");
-	printf("width height old %d %d new %d %d\n", img->width, img->height, imgBn->width, imgBn->height);
-	Box b = {{0, 0, imgBn->width - 1, imgBn->height - 1}, 0, NULL};
+	Box *b = malloc(sizeof(Box));
+	b->rectangle.x1 = 0;
+	b->rectangle.y1 = 0;
+	b->rectangle.x2 = imgBn->width - 1;
+	b->rectangle.y2 = imgBn->height - 1;
 	Box *sub = malloc(sizeof(Box));
-	b.nbSubBoxes = 1;
-	b.subBoxes = sub;
-	sub->rectangle = b.rectangle;
+	b->nbSubBoxes = 1;
+	b->subBoxes = malloc(sizeof(Box*));
+	*b->subBoxes = sub;
+	sub->rectangle = b->rectangle;
 	sub->nbSubBoxes = 0;
 	sub->subBoxes = NULL;
-	printf("init\n");
 	CutMargin(imgBn, sub);
-	printf("CutMargin\n");
 	DetectSplitOrientation(imgBn, sub);
-	printf("Detect\n");
 	UFreeImageBinary(imgBn);
-	printf("Free\n");
-	printf("end\n");
 	return b;
 }
 
-Box *GetBreadthBoxArray(Box b, int *count)
+Box **GetBreadthBoxArray(Box *b, int *count)
 {
 	BoxList list = NULL;
 	list = AddInList(list, b);
@@ -344,18 +353,18 @@ Box *GetBreadthBoxArray(Box b, int *count)
 
 void GetBreadthBoxArrayAux(BoxList list)
 {
-	for (int i = 0; i < list->value.nbSubBoxes; i ++)
-		if (list->value.subBoxes[i].nbSubBoxes)
-			list = AddInList(list, list->value.subBoxes[i]);
+	for (int i = 0; i < list->value->nbSubBoxes; i ++)
+		if (list->value->subBoxes[i]->nbSubBoxes)
+			list = AddInList(list, list->value->subBoxes[i]);
 	if (list->next)
 		GetBreadthBoxArrayAux(list->next);
 }
 
-void DrawNotInSubBoxes(Image *img, Box b, Pixel p)
+void DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 {
 	int **rect = NULL;
-	int width = b.rectangle.x2 - b.rectangle.x1 + 1;
-	int height = b.rectangle.y2 - b.rectangle.y1 + 1;
+	int width = b->rectangle.x2 - b->rectangle.x1 + 1;
+	int height = b->rectangle.y2 - b->rectangle.y1 + 1;
 	rect = malloc(sizeof(int*) * width);
 	for (int i = 0; i < width; i ++)
 	{
@@ -363,14 +372,14 @@ void DrawNotInSubBoxes(Image *img, Box b, Pixel p)
 		for (int j = 0; j < height; j ++)
 			rect[i][j] = 1;
 	}
-	for (int i = 0; i < b.nbSubBoxes; i ++)
+	for (int i = 0; i < b->nbSubBoxes; i ++)
 	{
-		int subWidth =  b.subBoxes[i].rectangle.x2
-			- b.subBoxes[i].rectangle.x1 + 1;
-		int subHeight =  b.subBoxes[i].rectangle.y2
-			- b.subBoxes[i].rectangle.y1 + 1;
-		int varX = b.subBoxes[i].rectangle.x1 - b.rectangle.x1;
-		int varY = b.subBoxes[i].rectangle.y1 - b.rectangle.y1;
+		int subWidth =  b->subBoxes[i]->rectangle.x2
+			- b->subBoxes[i]->rectangle.x1 + 1;
+		int subHeight =  b->subBoxes[i]->rectangle.y2
+			- b->subBoxes[i]->rectangle.y1 + 1;
+		int varX = b->subBoxes[i]->rectangle.x1 - b->rectangle.x1;
+		int varY = b->subBoxes[i]->rectangle.y1 - b->rectangle.y1;
 		for (int j = 0; j < subWidth; j++)
 			for (int k = 0; k < subHeight; k++)
 				rect[j + varX][k + varY] = 0;	
@@ -378,7 +387,7 @@ void DrawNotInSubBoxes(Image *img, Box b, Pixel p)
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
 			if (rect[i][j])
-				img->pixList[i + b.rectangle.x1][j + b.rectangle.y1] = p;
+				img->pixList[i + b->rectangle.x1][j + b->rectangle.y1] = p;
 	for (int i = 0; i < width; i ++)
 		free(rect[i]);
 	free(rect);

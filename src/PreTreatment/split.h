@@ -13,12 +13,12 @@ typedef struct Box
 {
 	Rectangle rectangle;
 	int nbSubBoxes;
-	struct Box * subBoxes;
+	struct Box **subBoxes;
 } Box;
 
 typedef struct BoxElementList
 {
-	Box value;
+	Box *value;
 	struct BoxElementList *next;
 } BoxElementList;
 
@@ -30,22 +30,24 @@ typedef enum
 	VERTICAL
 } Orientation;
 
-BoxList AddInList(BoxList list, Box b);
+BoxList AddInList(BoxList list, Box *b);
 
 int LengthBoxList(BoxList list);
 
-Box *BoxListToArray(BoxList list, int *count);
+Box **BoxListToArray(BoxList list, int *count);
 
 void FreeBoxList(BoxList list);
+
+void FreeBox(Box *b);
 
 //Interessant
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
-int isBlank(ImageBN *img, Box b, Orientation orient, int start);
+int isBlank(ImageBN *img, Box *b, Orientation orient, int start);
 
-int *GetSpaceArray(ImageBN *img, Box b, Orientation orient, int *size);
+int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size);
 
 int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
 
@@ -62,11 +64,11 @@ void CutMargin(ImageBN *img, Box *b);
 
 void DetectSplitOrientation(ImageBN *img, Box *b);
 
-Box GetBoxFromSplit(Image *img);
+Box *GetBoxFromSplit(Image *img);
 
-Box *GetBreadthBoxArray(Box b, int *count);
+Box **GetBreadthBoxArray(Box *b, int *count);
 
 void GetBreadthBoxArrayAux(BoxList list);
 
-void DrawNotInSubBoxes(Image *img, Box b, Pixel p);
+void DrawNotInSubBoxes(Image *img, Box *b, Pixel p);
 #endif

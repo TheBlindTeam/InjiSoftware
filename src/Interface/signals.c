@@ -677,8 +677,8 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			if (data->segBoxArray == NULL)
 			{
 				int count;
-				Box box = GetBoxFromSplit(data->img_rgb);
-				data->segBoxArray = GetBreadthBoxArray(box, &count);
+				data->firstBox = GetBoxFromSplit(data->img_rgb);
+				data->segBoxArray = GetBreadthBoxArray(data->firstBox, &count);
 				gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(
 					data->builder, "BSegmentation")), "Detect");
 				data->boxCount = count;

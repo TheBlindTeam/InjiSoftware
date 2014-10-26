@@ -22,6 +22,7 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 	data->neuronData->shouldDraw = FALSE;
 	data->neuronData->shouldErr = FALSE;
 	data->segBoxArray = NULL;
+	data->firstBox = NULL;
 	data->boxDetectIndex = 0;
 	data->boxCount = 0;
 	data->previewScale = 1;

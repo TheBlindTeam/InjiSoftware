@@ -65,6 +65,7 @@ void cr_draw_arrow(cairo_t*, double, double, double, double, int);
 
 void on_click_segmentation(GtkWidget *widget, gpointer user_data);
 void on_click_detect_orientation(GtkWidget *widget, gpointer user_data);
+void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data);
 
 void on_zoom_in(GtkWidget *widget, gpointer user_data);
 void on_zoom_out(GtkWidget *widget, gpointer user_data);

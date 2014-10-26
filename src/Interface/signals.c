@@ -53,6 +53,12 @@ void connectSignals(SGlobalData *data)
 			"BDetectOrientation")),
 		"clicked",
 		G_CALLBACK(on_click_detect_orientation), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"GrayscaleBtn")),
+		"clicked",
+		G_CALLBACK(on_click_transform_grayscale), data);
 	/* Menu */
 
 	// File
@@ -403,8 +409,9 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 			gtk_builder_get_object(data->builder, "ComputeErrorCB"))))
 		{
-			cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
-				NN_MARGIN_TOP + maxHeight + 22);
+			//cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+			//	NN_MARGIN_TOP + maxHeight + 22);
+			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 100);
 			data->neuronData->shouldErr = FALSE;
 			int posx = 0;
 			int i = 0;
@@ -420,8 +427,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 					u = i + 1;
 					cairo_show_text(cr, tmp);
 					posx += 11;
-					cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
-						NN_MARGIN_TOP + maxHeight + 22 + posx);
+					//cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
+					//	NN_MARGIN_TOP + maxHeight + 22 + posx);
+					cairo_move_to(cr, neuronPos[lastLayer][0].x + 120,
+						100 + posx);
 				}
 				i++;
 			}
@@ -712,19 +721,32 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			sprintf(txt, "%f", angle);
 			gtk_entry_set_text(GTK_ENTRY(
 				gtk_builder_get_object(data->builder, "DetectAngleVal")), txt);
-/*
-			Image tmpImg = URotate(*data->img_rgb, angle);
+		}
+	}
+}
+
+void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			Image tmpImg = UGrayscaleToRgb(URgbToGrayscale(*data->img_rgb));
 
 			UFreeImage(*data->img_rgb);
 
 			data->img_rgb = &tmpImg;
 
+			GdkPixbuf *pixbuf = UGetPixbufFromImage(*data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
-				UGetPixbufFromImage(*data->img_rgb));*/
+				pixbuf);
+			g_object_unref(pixbuf);
 		}
 	}
 }
+
 void on_zoom_in(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)

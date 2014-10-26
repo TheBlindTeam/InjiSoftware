@@ -160,7 +160,7 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 		totalError += error;
 		if(print)
 		{
-			addInStringAt(r, "    error: ", &i, max);
+			addInStringAt(r, "error: ", &i, max);
 			snprintf(tmp, 9, "%lf", error);
 			addInStringAt(r, tmp, &i, max);
 			addInStringAt(r, "    input -> ", &i, max);
@@ -192,7 +192,7 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 	totalError /= count;
 	if (print)
 	{
-		addInStringAt(r, "    average error: ", &i, max);
+		addInStringAt(r, "average error: ", &i, max);
 		snprintf(tmp, 9, "%f", totalError);
 		addInStringAt(r, tmp, &i, max);
 		addInStringAt(r, "\n", &i, max);

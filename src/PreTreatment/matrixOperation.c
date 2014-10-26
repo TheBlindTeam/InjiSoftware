@@ -60,17 +60,20 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	{
 		tmp[i] = malloc(extractSize * sizeof(Pixel));
 	}
-	
-	
+
+	for (int i = 0; i < extractSize; i++)
+	{
+		for(int z = 0; z < extractSize; z++)
+			tmp[z][i] = defaultPix;
+	}
+
 	for (int y = pos_y - (extractSize/2); y < pos_y + (extractSize/2); y++)
 	{
 		for (int x = pos_x - (extractSize/2); x < pos_x + (extractSize/2); x++)
 		{
-			if (x >= 0 && x < matrixSize &&
-					y >= 0 && y < matrixSize)
+			if ((x >= 0 && x < matrixSize) &&
+					(y >= 0 && y < matrixSize))
 				tmp[x][y] = matrix[x][y];
-			else
-				tmp[x][y] = defaultPix;
 		}
 	}
 

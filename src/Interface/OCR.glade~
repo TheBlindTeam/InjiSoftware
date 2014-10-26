@@ -378,6 +378,48 @@ Adrien NEVEU</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkGrid" id="grid3">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkLabel" id="label14">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_right">5</property>
+                        <property name="label" translatable="yes">Angle: </property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="DetectAngleVal">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="margin_top">3</property>
+                        <property name="editable">False</property>
+                        <property name="digits">3</property>
+                        <property name="numeric">True</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
+                        <property name="width">1</property>
+                        <property name="height">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="resize">False</property>
@@ -592,48 +634,57 @@ Adrien NEVEU</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix1">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix2">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix3">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix4">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix5">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix6">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix7">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix8">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustmentBasicMatrix9">
+    <property name="lower">-1000</property>
     <property name="upper">1000</property>
-    <property name="step_increment">1</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkDialog" id="FilterWindow">
@@ -715,7 +766,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix1</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -731,7 +782,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix5</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -747,7 +798,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix9</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -763,7 +814,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix3</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -779,7 +830,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix2</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -795,7 +846,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix7</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -811,7 +862,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix4</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -827,7 +878,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix8</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -843,7 +894,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix6</property>
-                    <property name="digits">1</property>
+                    <property name="digits">2</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>

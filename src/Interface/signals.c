@@ -624,9 +624,9 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 						gtk_builder_get_object(data->builder, wname)));
 				}
 			}
-			Image tmpImg = UConvolution(*data->img_rgb, matrix, 3);
+			Image *tmpImg = UConvolution(data->img_rgb, matrix, 3);
 			UFreeImage(data->img_rgb);
-			data->img_rgb = &tmpImg;
+			data->img_rgb = tmpImg;
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
@@ -646,11 +646,11 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			Image tmpImg = URotate(*data->img_rgb, amount);
+			Image *tmpImg = URotate(data->img_rgb, amount);
 
 			UFreeImage(data->img_rgb);
 
-			data->img_rgb = &tmpImg;
+			data->img_rgb = tmpImg;
 
 			GdkPixbuf *pixbuf = UGetPixbufFromImage(data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(

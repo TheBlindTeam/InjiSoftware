@@ -82,28 +82,28 @@ Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,
 	return tmp;
 }
 
-Image UConvolution(Image ref, double **convolution, int matrixSize)
+Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 {
-	Image image;
+	Image *image = malloc(sizeof(Image));
 	Pixel **result;
 	Pixel **subMatrix;
 
-	image.width = ref.width;
-	image.height = ref.height;
-	image.bits_per_sample = ref.bits_per_sample;
-	image.has_alpha = ref.has_alpha;
+	image->width = ref->width;
+	image->height = ref->height;
+	image->bits_per_sample = ref->bits_per_sample;
+	image->has_alpha = ref->has_alpha;
 
-	result = malloc(ref.width * sizeof(Pixel *));
-	for (int i = 0; i < ref.width; i++)
+	result = malloc(ref->width * sizeof(Pixel *));
+	for (int i = 0; i < ref->width; i++)
 	{
-		result[i] = malloc(ref.height * sizeof(Pixel));
+		result[i] = malloc(ref->height * sizeof(Pixel));
 	}
 	
-	for (int y = 0; y < ref.height; y++)
+	for (int y = 0; y < ref->height; y++)
 	{
-		for (int x = 0; x < ref.width; x++)
+		for (int x = 0; x < ref->width; x++)
 		{
-			subMatrix = UExtract(ref.pixList, matrixSize, matrixSize, x, y);
+			subMatrix = UExtract(ref->pixList, matrixSize, matrixSize, x, y);
 			subMatrix[matrixSize / 2][matrixSize / 2]
 				= UConvolutionProduct(subMatrix, convolution, matrixSize);
 
@@ -117,21 +117,21 @@ Image UConvolution(Image ref, double **convolution, int matrixSize)
 		}
 	}
 
-	image.pixList = result;
+	image->pixList = result;
 	return image;
 }
 
-Image URotate(Image ref, double angle)
+Image *URotate(Image *ref, double angle)
 {
-	Image image;
+	Image *image = malloc(sizeof(Image));
 	// Calculate Rotation 
 	double radian = (angle * M_PI) / 180;
 	int newWidth;
 	int newHeight;
 	Vector2 min, max;
 	// Calculate 4 obvious points to find the new size of the image
-	Vector2 p[] = {{0,0}, {ref.width, 0},
-		{0, ref.height}, {ref.width, ref.height}};
+	Vector2 p[] = {{0,0}, {ref->width, 0},
+		{0, ref->height}, {ref->width, ref->height}};
 	
 	for(int i = 0; i < 4; i++)
 	{
@@ -143,10 +143,10 @@ Image URotate(Image ref, double angle)
 
 	newHeight = max.y - min.y + 1;
 	
-	image.width = newWidth;
-	image.height = newHeight;
-	image.bits_per_sample = ref.bits_per_sample;
-	image.has_alpha = ref.has_alpha;
+	image->width = newWidth;
+	image->height = newHeight;
+	image->bits_per_sample = ref->bits_per_sample;
+	image->has_alpha = ref->has_alpha;
 
 	Pixel **pix;
 	pix = malloc(newWidth * sizeof(Pixel *));
@@ -163,9 +163,9 @@ Image URotate(Image ref, double angle)
 			pix[x][y].a = 0;
 		}
 
-	for (int y = ref.height - 1; y >= 0; y--)
+	for (int y = ref->height - 1; y >= 0; y--)
 	{
-		for (int x = 0; x < ref.width; x++)
+		for (int x = 0; x < ref->width; x++)
 		{
 			Vector2 tmp = {x, y};
 			tmp = ApplyVectorRot(tmp, radian);
@@ -173,13 +173,13 @@ Image URotate(Image ref, double angle)
 			if ((tmp.x - min.x>= 0 && tmp.x - min.x < newWidth)
 				&& (tmp.y - min.y>= 0 && tmp.y - min.y < newHeight))
 			{
-				pix[tmp.x - min.x][tmp.y - min.y] = ref.pixList[x][y];
+				pix[tmp.x - min.x][tmp.y - min.y] = ref->pixList[x][y];
 				
 			}
 		}
 	}
 
-	image.pixList = pix;
+	image->pixList = pix;
 	return image;
 
 }

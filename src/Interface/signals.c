@@ -253,7 +253,9 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "NetworkVisualizer"));
 
-		gtk_widget_show_all(window);
+		gtk_dialog_run(GTK_DIALOG(window));
+		gtk_widget_hide(window);
+		//gtk_widget_show_all(window);
 	}
 }
 

@@ -410,7 +410,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 			int i = 0;
 			int u = 0;
 			char str[1000], tmp[100];
-			NComputeError(&network, networkSet->exSet, 1, str, 1000);
+			NComputeError(&networkSet->network, networkSet->exSet, 1, str, 1000);
 			while(str[i])
 			{
 				if (str[i] == '\n')
@@ -643,9 +643,11 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 			data->img_rgb = &tmpImg;
 
+			GdkPixbuf *pixbuf = UGetPixbufFromImage(*data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
-				UGetPixbufFromImage(*data->img_rgb));
+				pixbuf);
+			g_object_unref(pixbuf);
 			
 			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
 				data->builder, "RotationSelect"));
@@ -705,7 +707,12 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		{
 			double angle = FindInclinationAngle(
 				UGrayscaleToBinary(URgbToGrayscale(*data->img_rgb)));
-			printf("angle: %f\n", angle);
+
+			gchar txt[20];
+			sprintf(txt, "%f", angle);
+			gtk_entry_set_text(GTK_ENTRY(
+				gtk_builder_get_object(data->builder, "DetectAngleVal")), txt);
+/*
 			Image tmpImg = URotate(*data->img_rgb, angle);
 
 			UFreeImage(*data->img_rgb);
@@ -714,7 +721,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder, "PreviewImage")),
-				UGetPixbufFromImage(*data->img_rgb));
+				UGetPixbufFromImage(*data->img_rgb));*/
 		}
 	}
 }

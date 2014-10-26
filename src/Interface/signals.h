@@ -32,25 +32,32 @@ typedef struct
 	double x,y;
 } NeuronPos;
 
+// Associates every events (signals) to a function
 void connectSignals(SGlobalData* data);
 
+// Called when the main interface window gets closed
 void on_window_destroy(GtkWidget *widget, gpointer user_data);
 
+// Called when top menu buttons are clicked
 void on_load_button_clicked(GtkWidget *widget, gpointer user_data);
 void on_about_button_clicked(GtkWidget *widget, gpointer user_data);
 
+// File loader window signals
 void file_chooser_select_file_from_button(GtkWidget *widget,
 	gpointer user_data);
 void file_chooser_cancel(GtkWidget *widget, gpointer user_data);
 void file_chooser_selection_changed(GtkWidget *widget, gpointer user_data);
 
+// Rotation window signals
 void on_rotate_img_open(GtkWidget *widget, gpointer user_data);
 void on_apply_rotation(GtkWidget *widget, gpointer user_data);
 
+// Filter window signals
 void on_filter_img_open(GtkWidget *widget, gpointer user_data);
 void filter_window_cancel(GtkWidget *widget, gpointer user_data);
 void filter_click_apply(GtkWidget *widget, gpointer user_data);
 
+// Network Neuron Visualizer signals
 void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data);
 void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data);
 void on_click_on_network(GtkWidget *widget, GdkEventButton *event,
@@ -59,13 +66,17 @@ void on_click_render_network(GtkWidget *widget, gpointer user_data);
 void on_click_reset(GtkWidget *widget, gpointer user_data);
 void on_click_initialize(GtkWidget *widget, gpointer user_data);
 
+// Called when the detect char button is pressed (deprecated)
 void on_detect_chars(GtkWidget *widget, gpointer user_data);
 
+// Used to draw an arrow on a GtkDrawable (NNV)
 void cr_draw_arrow(cairo_t*, double, double, double, double, int);
 
+// Segmentation, Detect Orientation & Transform Grayscale buttons clicks events
 void on_click_segmentation(GtkWidget *widget, gpointer user_data);
 void on_click_detect_orientation(GtkWidget *widget, gpointer user_data);
 void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data);
 
+// Called when the "zoom in" or "zoom out" button is pressed
 void on_zoom_in(GtkWidget *widget, gpointer user_data);
 void on_zoom_out(GtkWidget *widget, gpointer user_data);

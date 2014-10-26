@@ -96,7 +96,8 @@ Image UGrayscaleToRgb(ImageGS reference)
 	Image result;
 	result.width = reference.width;
 	result.height = reference.height;
-
+	result.has_alpha = 0;
+	result.bits_per_sample = 8;
 	result.pixList = malloc(result.width * sizeof(Pixel*));
 
 	for (int i = 0; i < result.width; i++)

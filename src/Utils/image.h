@@ -40,8 +40,14 @@ typedef struct
 // Adrien: Creates an Image structure from the path str
 Image* ULoadImage(char* str);
 
-// Laurent : Free the Pixels buffer of an Image
+// Laurent : Free the Pixels buffer of a RGB Image
 void UFreeImage(Image img);
+
+// Laurent : Free the Pixels buffer of a Gray Scale Image
+void UFreeImageGray(ImageGS img);
+
+// Laurent : Free the Pixels buffer of a Binary Image
+void UFreeImageBinary(ImageBN img);
 
 // David : Get Pixel at Coordinate
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);

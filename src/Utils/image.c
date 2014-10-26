@@ -46,6 +46,20 @@ void UFreeImage(Image img)
 	free(img.pixList);
 }
 
+void UFreeImageGray(ImageGS img)
+{
+	for (int i = 0; i < img.width; i ++)
+		free(img.intensity[i]);
+	free(img.intensity);
+}
+
+void UFreeImageBinary(ImageBN img)
+{
+	for (int i = 0; i < img.width; i ++)
+		free(img.data[i]);
+	free(img.data);
+}
+
 Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y)
 {
 	Pixel pixel;
@@ -143,7 +157,6 @@ ImageBN UGrayscaleToBinary(ImageGS ref)
 				(ref.intensity[x][y] >= threshold) ? 1 : 0;
 		}
 	}
-
 	return result;
 }
 
@@ -226,6 +239,4 @@ void URotateImage(Image *img)
 	int c = img->width;
 	img->width = img->height;
 	img->height = c;
-
-	//img->rowstride = img->rowstride / img->height * img->width;
 }

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	}
 
 	Gtk_Initialize(argc, argv, img);
-	gtk_main();
+	gtk_main();	
 
 	return 0;
 }

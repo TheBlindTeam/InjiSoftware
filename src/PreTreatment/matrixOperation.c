@@ -1,35 +1,37 @@
 #include "matrixOperation.h"
 
-Pixel** UMultiply(Pixel **matrix, double **convolution, int matrixSize)
+Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize)
 {
-	Pixel **tmp;
-
-	tmp = malloc(matrixSize * sizeof(Pixel *));
-
-	for (int i = 0; i < matrixSize; i++)
-	{
-		tmp[i] = malloc(matrixSize * sizeof(Pixel));
-	}	
+	Pixel tmp;
+	tmp.r = 0;
+	tmp.g = 0;
+	tmp.b = 0;
+	tmp.a = 0;
+	
+	guchar sumR = 0;
+	guchar sumG = 0;
+	guchar sumB = 0;
 
 	for (int y = 0; y < matrixSize; y++)
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			for(int i = 0; i < x; i++)
-			{
-				tmp[x][y].r += (matrix[i][y].r *
-					(guchar)convolution[x][i]);
-				tmp[x][y].g += (matrix[x][y].g *
-					(guchar)convolution[y][x]);
-				tmp[x][y].b += (matrix[x][y].b *
-					(guchar)convolution[y][x]);
-			}
+			sumR = sumR + matrix[x][y].r * (guchar)convolution[x][y];
+			sumG = sumG + matrix[x][y].g * (guchar)convolution[x][y];
+			sumB = sumB + matrix[x][y].b * (guchar)convolution[x][y];
 
-			// Clamp RGB values
-			ClampPixel(&tmp[x][y], 0, 255);
 		}
 	}
 
+
+	tmp.r = sumR;
+	tmp.g = sumG;
+	tmp.b = sumB;
+
+	//printf("Sum R = %i, Sum G = %i, Sum B = %i\n", sumR, sumG, sumB);
+
+	// Clamp RGB values
+	ClampPixel(&tmp, 0, 255);
 	return tmp;
 }
 
@@ -97,16 +99,21 @@ Image UConvolution(Image ref, double **convolution, int matrixSize)
 		result[i] = malloc(ref.height * sizeof(Pixel));
 	}
 	
-	for (int y = 0; y < matrixSize; y++)
+	for (int y = 0; y < ref.height; y++)
 	{
-		for (int x = 0; x < matrixSize; x++)
+		for (int x = 0; x < ref.width; x++)
 		{
 			subMatrix = UExtract(ref.pixList, matrixSize, matrixSize, x, y);
-			subMatrix = UMultiply(subMatrix, convolution,
-				matrixSize);
+			subMatrix[matrixSize / 2][matrixSize / 2]
+				= UConvolutionProduct(subMatrix, convolution, matrixSize);
 
 			result[x][y] = subMatrix
 				[matrixSize / 2][matrixSize / 2];
+
+			// free submatrix memory
+			for(int j = 0; j < matrixSize; j++)
+				free(subMatrix[j]);
+			free(subMatrix);
 		}
 	}
 

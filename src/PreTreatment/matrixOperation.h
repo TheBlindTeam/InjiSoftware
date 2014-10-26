@@ -22,8 +22,8 @@ Vector2 ApplyVectorRot(Vector2 origin, double radian);
 void ExtremumVectorValues(Vector2 *tab, int arraySize, 
 	Vector2 *min, Vector2 *max);
 
-// David: Multiply Pixel Matrix By Convolution Matrix
-Pixel** UMultiply(Pixel **matrix, double **convolution, int matrixSize);
+// David: Multiply Pixel Matrix By Convolution Matrix and return the middle pixel
+Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize);
 
 // David: Extract Submatrix From The Center
 Pixel** UExtract(Pixel **matrix, int matrixSize, int extractSize, int pos_x,

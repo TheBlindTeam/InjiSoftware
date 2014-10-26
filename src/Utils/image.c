@@ -96,12 +96,11 @@ ImageGS URgbToGrayscale(Image rgbImage)
 		for (int x = 0; x < result.width; x++)
 		{
 			result.intensity[x][y] = (
-				(0.3 * rgbImage.pixList[x][y].r) +
-				(0.59 * rgbImage.pixList[x][y].g) +
-				(0.11 * rgbImage.pixList[x][y].b)) + 0.5;
+				(0.3 * (double)rgbImage.pixList[x][y].r) +
+				(0.59 * (double)rgbImage.pixList[x][y].g) +
+				(0.11 * (double)rgbImage.pixList[x][y].b)) + 0.5;
 		}
 	}
-	
 	return result;
 }
 
@@ -120,7 +119,6 @@ Image UGrayscaleToRgb(ImageGS reference)
 	}
 
 	for (int y = 0; y < result.height; y++)
-	{
 		for(int x = 0; x < result.width; x++)
 		{
 			result.pixList[x][y].r = reference.intensity[x][y];
@@ -128,15 +126,12 @@ Image UGrayscaleToRgb(ImageGS reference)
 			result.pixList[x][y].b = reference.intensity[x][y];
 			result.pixList[x][y].a = 255;
 		}
-	}
-
 	return result;
 }
 
 ImageBN UGrayscaleToBinary(ImageGS ref)
 {
 	ImageBN result;
-	int threshold = 255 / 127;
 	result.width = ref.width;
 	result.height = ref.height;
 
@@ -148,13 +143,8 @@ ImageBN UGrayscaleToBinary(ImageGS ref)
 	}
 
 	for (int y = 0; y < result.height; y++)
-	{
 		for (int x = 0; x < result.width; x++)
-		{
-			result.data[x][y] =
-				(ref.intensity[x][y] >= threshold) ? 1 : 0;
-		}
-	}
+			result.data[x][y] = ref.intensity[x][y] / 2;
 	return result;
 }
 
@@ -177,20 +167,15 @@ Image UBinaryToRgb(ImageBN ref)
 	result.pixList = malloc(result.width * sizeof(Pixel *));
 	
 	for (int i = 0; i < result.width; i++)
-	{
 		result.pixList[i] = malloc(result.height * sizeof(Pixel));
-	}
 
 	for (int y = 0; y < result.height; y++)
-	{
-
 		for (int x = 0; x < result.width; x++)
 		{
-			result.pixList[x][y].r = (ref.data[x][y]) ? 255 : 0;
-			result.pixList[x][y].g = (ref.data[x][y]) ? 255 : 0;
-			result.pixList[x][y].b = (ref.data[x][y]) ? 255 : 0;
+			result.pixList[x][y].r = ref.data[x][y] * 255;
+			result.pixList[x][y].g = ref.data[x][y] * 255;
+			result.pixList[x][y].b = ref.data[x][y] * 255;
 		}
-	}
 	return result;
 }
 

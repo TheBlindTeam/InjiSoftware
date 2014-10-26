@@ -409,8 +409,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(
 			gtk_builder_get_object(data->builder, "ComputeErrorCB"))))
 		{
-			//cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
-			//	NN_MARGIN_TOP + maxHeight + 22);
+			cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
 			cairo_move_to(cr, neuronPos[lastLayer][0].x + 120, 100);
 			data->neuronData->shouldErr = FALSE;
 			int posx = 0;
@@ -427,8 +426,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 					u = i + 1;
 					cairo_show_text(cr, tmp);
 					posx += 11;
-					//cairo_move_to(cr, NN_MARGIN_LEFT - NN_NEURON_RADIUS,
-					//	NN_MARGIN_TOP + maxHeight + 22 + posx);
 					cairo_move_to(cr, neuronPos[lastLayer][0].x + 120,
 						100 + posx);
 				}

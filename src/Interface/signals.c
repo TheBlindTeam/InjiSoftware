@@ -645,6 +645,18 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 							wname)));
 				}
 			}
+			for (int z = 1; z < 10; z++)
+			{
+				char wname[25];
+					sprintf(wname, "FilterMatrixButton%d",
+						z);
+				printf("%f\n", 
+						gtk_spin_button_get_value(
+							GTK_SPIN_BUTTON(
+						gtk_builder_get_object(
+							data->builder,
+							wname))));
+			}
 			Image *tmpImg = UConvolution(data->img_rgb, matrix, 3);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;

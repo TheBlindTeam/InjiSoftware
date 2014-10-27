@@ -192,15 +192,14 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 				tmp[x*channel + y*width*channel + 3] =
 					pixList[x][y].a;
 		}
-
 	return tmp;
 }
 
-GdkPixbuf *UGetPixbufFromImage(Image *img, guchar *tmpPixels)
+GdkPixbuf *UGetPixbufFromImage(Image *img, guchar **tmpPixels)
 {
-	tmpPixels = UGetPixelDataFromPixelsStruct(img->pixList,
+	*tmpPixels = UGetPixelDataFromPixelsStruct(img->pixList,
 			img->width, img->height, img->has_alpha ? 4 : 3);
-	GdkPixbuf *r = gdk_pixbuf_new_from_data(tmpPixels,
+	GdkPixbuf *r = gdk_pixbuf_new_from_data(*tmpPixels,
 		GDK_COLORSPACE_RGB,
 		img->has_alpha,
 		img->bits_per_sample,

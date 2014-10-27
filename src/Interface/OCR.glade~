@@ -379,6 +379,20 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkButton" id="GrayscaleBtn">
+                    <property name="label" translatable="yes">Grayscale</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkGrid" id="grid3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -425,21 +439,21 @@ Adrien NEVEU</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="GrayscaleBtn">
-                    <property name="label" translatable="yes">Grayscale</property>
+                  <object class="GtkButton" id="BinarizeBtn">
+                    <property name="label" translatable="yes">Binarize</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -833,7 +847,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton3">
+                  <object class="GtkSpinButton" id="FilterMatrixButton7">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
@@ -849,7 +863,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton2">
+                  <object class="GtkSpinButton" id="FilterMatrixButton4">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
@@ -865,7 +879,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton7">
+                  <object class="GtkSpinButton" id="FilterMatrixButton3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
@@ -881,7 +895,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton4">
+                  <object class="GtkSpinButton" id="FilterMatrixButton2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
@@ -897,7 +911,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton8">
+                  <object class="GtkSpinButton" id="FilterMatrixButton6">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
@@ -913,7 +927,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="FilterMatrixButton6">
+                  <object class="GtkSpinButton" id="FilterMatrixButton8">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>

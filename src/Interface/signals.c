@@ -59,6 +59,11 @@ void connectSignals(SGlobalData *data)
 			"GrayscaleBtn")),
 		"clicked",
 		G_CALLBACK(on_click_transform_grayscale), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"BinarizeBtn")),
+		"clicked",
+		G_CALLBACK(on_click_transform_binary), data);
 	/* Menu */
 
 	// File
@@ -798,6 +803,30 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 			ImageGS *tmpGs = URgbToGrayscale(data->img_rgb);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
 			free(tmpGs);
+
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmpImg;
+
+			GdkPixbuf* pixbuf = UGetPixbufFromImage(data->img_rgb);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				pixbuf);
+			g_object_unref(pixbuf);
+		}
+	}
+}
+
+void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			ImageBN *tmpBn = URgbToBinary(data->img_rgb);
+			Image *tmpImg = UBinaryToRgb(tmpBn);
+			free(tmpBn);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;

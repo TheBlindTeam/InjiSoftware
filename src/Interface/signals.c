@@ -225,7 +225,9 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				if (data->segBoxArray != NULL)
 				{
 					free(data->segBoxArray);
+					data->segBoxArray = NULL;
 					FreeBox(data->firstBox);
+					data->firstBox = NULL;
 					data->boxDetectIndex = 0;
 					data->boxCount = 0;
 					gtk_button_set_label(GTK_BUTTON(

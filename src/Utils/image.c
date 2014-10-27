@@ -36,6 +36,7 @@ Image* ULoadImage(char *str)
 				tmp->pixList[i][j] = UGetPixel(pixbuf, i, j);
 		}
 	}
+	g_object_unref(pixbuf);
 	return tmp;
 }
 

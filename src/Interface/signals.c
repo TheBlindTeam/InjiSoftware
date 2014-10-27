@@ -150,7 +150,18 @@ void connectSignals(SGlobalData *data)
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+			UFreeImage(data->img_rgb);
+		if (data->networkSet != NULL)
+			NFreeNetworkSet(data->networkSet);
+		if (data->firstBox != NULL)
+			free(data->firstBox);
+		if (data->segBoxArray != NULL)
+			free(data->segBoxArray);
 		gtk_main_quit();
+	}
 }
 
 void on_load_button_clicked(GtkWidget *widget, gpointer user_data)
@@ -215,10 +226,14 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
 				data->img_rgb = ULoadImage(filename);
+
+				GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
+					data->img_rgb);
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
-					UGetPixbufFromImage(data->img_rgb));
+					tmpPixbuf);
+				g_object_unref(tmpPixbuf);
 			}
 		}
 		g_free(filename);
@@ -255,7 +270,6 @@ void on_load_neuron_network_visualizer(GtkWidget *widget, gpointer user_data)
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
-		//gtk_widget_show_all(window);
 	}
 }
 
@@ -655,10 +669,13 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
+			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
+				data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				UGetPixbufFromImage(data->img_rgb));
+				tmpPixbuf);
+			g_object_unref(tmpPixbuf);
 		}
 	}
 }
@@ -724,10 +741,14 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			DrawNotInSubBoxes(data->img_rgb,
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
+
+			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
+				data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 				"PreviewImage")),
-				UGetPixbufFromImage(data->img_rgb));
+				tmpPixbuf);
+			g_object_unref(tmpPixbuf);
 		}
 	}
 }
@@ -739,8 +760,9 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			double angle = FindInclinationAngle(
-				URgbToBinary(data->img_rgb));
+			ImageBN* tmpBn = URgbToBinary(data->img_rgb);
+			double angle = FindInclinationAngle(tmpBn);
+			free(tmpBn);
 
 			gchar txt[20];
 			sprintf(txt, "%f", angle);
@@ -758,14 +780,14 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			Image *tmpImg = UGrayscaleToRgb(
-					URgbToGrayscale(data->img_rgb));
+			ImageGS *tmpGs = URgbToGrayscale(data->img_rgb);
+			Image *tmpImg = UGrayscaleToRgb(tmpGs);
+			free(tmpGs);
 
 			UFreeImage(data->img_rgb);
-
 			data->img_rgb = tmpImg;
 
-			GdkPixbuf *pixbuf = UGetPixbufFromImage(data->img_rgb);
+			GdkPixbuf* pixbuf = UGetPixbufFromImage(data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
@@ -783,16 +805,19 @@ void on_zoom_in(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			data->previewScale += ZOOM_COEF;
+			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
+				data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
 				gdk_pixbuf_scale_simple(
-					UGetPixbufFromImage(data->img_rgb),
+					tmpPixbuf,
 					data->img_rgb->width *
 						data->previewScale,
 					data->img_rgb->height *
 						data->previewScale,
 					GDK_INTERP_BILINEAR));
+			g_object_unref(tmpPixbuf);
 		}
 	}
 }
@@ -806,16 +831,19 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data)
 			data->previewScale > 2 *ZOOM_COEF)
 		{
 			data->previewScale -= ZOOM_COEF;
+			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
+				data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				gdk_pixbuf_scale_simple(UGetPixbufFromImage(
-						data->img_rgb),
+
+				gdk_pixbuf_scale_simple(tmpPixbuf,
 					data->img_rgb->width *
 						data->previewScale,
 					data->img_rgb->height *
 						data->previewScale,
 					GDK_INTERP_BILINEAR));
+			g_object_unref(tmpPixbuf);
 		}
 	}
 }

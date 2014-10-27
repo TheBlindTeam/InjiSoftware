@@ -221,6 +221,20 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 			{
 				if (data->img_rgb != NULL)
 					UFreeImage(data->img_rgb);
+
+				if (data->segBoxArray != NULL)
+				{
+					free(data->segBoxArray);
+					FreeBox(data->firstBox);
+					data->boxDetectIndex = 0;
+					data->boxCount = 0;
+					gtk_button_set_label(GTK_BUTTON(
+						gtk_builder_get_object(
+							data->builder,
+							"BSegmentation")),
+						"Segmentation");
+				}
+
 				data->previewScale = 1;
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,

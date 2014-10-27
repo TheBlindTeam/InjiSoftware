@@ -693,7 +693,7 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 			data->img_rgb = tmpImg;
 			guchar* tmp = NULL;
 			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-				data->img_rgb);
+				data->img_rgb, tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),

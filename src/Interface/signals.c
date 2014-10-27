@@ -769,7 +769,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
 
-
 			guchar* tmp = NULL;
 			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
 				data->img_rgb, tmp);

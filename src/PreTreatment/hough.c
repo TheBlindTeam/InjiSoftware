@@ -4,11 +4,10 @@ double FindInclinationAngle(ImageBN *ref)
 {
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
-	const int thetaMax = 2 * 90;
-	const int rMax = (int)((ref->width * cos(M_PI / 4) +
-	ref->height * sin(M_PI / 4)) * 2);
+	const int thetaMax = 2 * 90 + 1;
+	const int rMax = round(sqrt(pow(ref->width, 2) +
+		pow(ref->height, 2)) * 2 + 1);
 
-	printf("begin\n");
 	int **accu = malloc(thetaMax * sizeof(int *));
 
 	for(int i = 0; i < thetaMax; i++)
@@ -19,8 +18,6 @@ double FindInclinationAngle(ImageBN *ref)
 		for (int r = 0; r < rMax; r++)
 			accu[theta][r] = 0;
 
-	printf("RMAX is equal to %i\n", rMax);
-
 	for (int y = 0; y < ref->height; y++)
 	{
 		for (int x = 0; x < ref->width; x++)
@@ -30,8 +27,8 @@ double FindInclinationAngle(ImageBN *ref)
 			{
 				for (int theta = 0; theta < thetaMax; theta++)
 				{
-					double radian = (M_PI * theta) / 180;
-					int r = (int)(x * cos(radian) + y * sin(radian));
+					double radian = (M_PI * (theta - 90)) / 180;
+					int r = round(x * cos(radian) + y * sin(radian));
 
 					r+= rMax / 2;
 					// Increase the accumulator
@@ -46,7 +43,7 @@ double FindInclinationAngle(ImageBN *ref)
 		free(accu[i]);
 	free(accu);
 
-	return maxAngleAccu;
+	return thetaMax - maxAngleAccu - 1;
 }
 
 

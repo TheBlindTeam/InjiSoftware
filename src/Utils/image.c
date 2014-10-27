@@ -196,17 +196,19 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,
 	return tmp;
 }
 
-GdkPixbuf *UGetPixbufFromImage(Image *img)
+GdkPixbuf *UGetPixbufFromImage(Image *img, guchar *tmpPixels)
 {
-	return gdk_pixbuf_new_from_data(
-		UGetPixelDataFromPixelsStruct(img->pixList,
-			img->width, img->height, img->has_alpha ? 4 : 3),
+	guchar *tmp = UGetPixelDataFromPixelsStruct(img->pixList,
+			img->width, img->height, img->has_alpha ? 4 : 3);
+	GdkPixbuf *r = gdk_pixbuf_new_from_data(tmp,
 		GDK_COLORSPACE_RGB,
 		img->has_alpha,
 		img->bits_per_sample,
 		img->width, img->height,
 		(img->has_alpha ? 4 : 3) * img->width,
 		NULL, NULL);
+	free(tmp);
+	return r;
 }
 
 void URotateImage(Image *img)

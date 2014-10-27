@@ -757,7 +757,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			DrawNotInSubBoxes(data->img_rgb,
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
-
 			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
 				data->img_rgb);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(

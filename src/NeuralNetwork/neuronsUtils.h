@@ -15,7 +15,7 @@ typedef struct
 {
 	double sum;
 	double shock;
-	FAndDifF shockFoo;
+	FunctionId shockFoo;
 	int nbConnections;
 	double error;
 	Connection *connectList;
@@ -65,8 +65,8 @@ Network *NInitializeLinearBias(int input, int output);
 
 Network *NInitializeLinearNBias(int input, int output);
 
-void NInitThresHoldSimpleMLP(Network *nWork, FAndDifF input, FAndDifF output,
-	FAndDifF bias, FAndDifF others);
+void NInitThresHoldSimpleMLP(Network *nWork, FunctionId input,FunctionId output,
+	FunctionId bias, FunctionId others);
 
 void NInitializeSumNetwork(Network *nWork);
 
@@ -95,8 +95,8 @@ ExempleSet NGetOrExempleSet();
 
 ExempleSet NGetXorExempleSet();
 
-NetworkSet *NInitNetworkSet(int gate, int archi, int learning, int input,
-	int output, int others, int bias);
+NetworkSet *NInitNetworkSet(int gate, int archi, int learning,
+	FunctionId input, FunctionId output, FunctionId others, FunctionId bias);
 
 NetworkSet *NDefaultNetworkSet();
 

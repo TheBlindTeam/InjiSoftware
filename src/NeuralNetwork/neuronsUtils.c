@@ -71,8 +71,8 @@ Network *NInitializeLinearNBias(int input, int output)
 	return NInitializeSimpleMLP(input, output, input, 0);
 }
 
-void NInitThresHoldSimpleMLP(Network *nWork, FAndDifF input, FAndDifF output,
-	FAndDifF bias, FAndDifF others)
+void NInitThresHoldSimpleMLP(Network *nWork, FunctionId input, FunctionId output,
+	FunctionId bias, FunctionId others)
 {
 	for (int i = 0; i < nWork->nbLayers; i ++)
 		for (int j = 0; j < nWork->layersSize[i]; j ++)
@@ -123,7 +123,7 @@ int NRun(Network *nWork, double *input, double **r)
 			if (i == 0 && (!nWork->bias ||
 					j < nWork->layersSize[i] - 1))
 				tmp->sum = input[j];
-			tmp->shock = tmp->shockFoo.f(tmp->sum);
+			tmp->shock = FUNCTIONS[tmp->shockFoo].f(tmp->sum);
 			for (int k = 0; k < tmp->nbConnections; k ++)
 			{
 				nWork->neurons
@@ -305,7 +305,7 @@ ExempleSet NGetOrExempleSet()
 		target[i] = malloc (sizeof(double));
 		input[i][0] = i % 2;
 		input[i][1] = i / 2;
-		target[i][0] = i > 1 ? 1 : 0;
+		target[i][0] = i ? 1 : 0;
 	}
 	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
 	for (int i = 0; i < 4; i ++)
@@ -341,8 +341,8 @@ ExempleSet NGetXorExempleSet()
 	return r;
 }
 
-NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
-	int output, int others, int bias)
+NetworkSet* NInitNetworkSet(int gate, int archi, int learning, FunctionId input,
+	FunctionId output, FunctionId others, FunctionId bias)
 {
 	NetworkSet* r = malloc(sizeof(NetworkSet));
 
@@ -362,10 +362,10 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 		Network *N2 = NINIT[archi](r->exSet.inputSize,
 			r->exSet.targetSize);
 
-		NInitThresHoldSimpleMLP(N1, FUNCTIONS[input],
-			FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
-		NInitThresHoldSimpleMLP(N2, FUNCTIONS[input],
-			FUNCTIONS[output], FUNCTIONS[bias], FUNCTIONS[others]);
+		NInitThresHoldSimpleMLP(N1, input,
+			output, bias, others);
+		NInitThresHoldSimpleMLP(N2, input,
+			output, bias, others);
 		N1->sibling = N2;
 		N2->sibling = N1;
 		NComputeError(N1, r->exSet, 0, NULL, 0);
@@ -380,9 +380,8 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, int input,
 	{
 			r->nWork = NINIT[archi](r->exSet.inputSize,
 				r->exSet.targetSize);
-			NInitThresHoldSimpleMLP(r->nWork, FUNCTIONS[input],
-				FUNCTIONS[output], FUNCTIONS[bias],
-				FUNCTIONS[others]);
+			NInitThresHoldSimpleMLP(r->nWork, input,
+				output, bias, others);
 			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}

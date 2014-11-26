@@ -1,6 +1,12 @@
 #include <math.h>
 #ifndef _MATHUTILS
 #define _MATHUTILS
+typedef enum
+{
+	LINEAR = 0,
+	SIGMOID = 1,
+	TAN_SIGMOID = 2
+} FunctionId;
 
 typedef struct
 {
@@ -19,9 +25,5 @@ double UDLinear(double sum);
 double UTanSigmoid(double sum);
 double UDTanSigmoid(double sum);
 
-
-extern const FAndDifF SIGMOID;
-extern const FAndDifF TAN_SIGMOID;
-extern const FAndDifF LINEAR;
 extern const FAndDifF FUNCTIONS[];
 #endif

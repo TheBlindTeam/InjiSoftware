@@ -247,16 +247,23 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
 				data->img_rgb = ULoadImage(filename);
-				guchar** tmp = malloc(sizeof(guchar*));
-				GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-					data->img_rgb, tmp);
+				if(data->tmp)
+				{
+					if(*data->tmp)
+						free(*data->tmp);
+					free(data->tmp);
+					data->tmp = NULL;
+				}
+				if(data->pixbuf)
+					g_object_unref(data->pixbuf);
+				data->pixbuf = NULL;
+				data->tmp = malloc(sizeof(guchar*));
+				data->pixbuf = UGetPixbufFromImage(
+					data->img_rgb, data->tmp);
 				gtk_image_set_from_pixbuf(GTK_IMAGE(
 					gtk_builder_get_object(data->builder,
 						"PreviewImage")),
-					tmpPixbuf);
-				free(*tmp);
-				free(tmp);
-				g_object_unref(tmpPixbuf);
+					data->pixbuf);
 			}
 		}
 		g_free(filename);
@@ -692,16 +699,23 @@ void filter_click_apply(GtkWidget *widget, gpointer user_data)
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-				data->img_rgb, tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(
+				data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				tmpPixbuf);
-			free(*tmp);
-			free(tmp);
-			g_object_unref(tmpPixbuf);
+				data->pixbuf);
 		}
 	}
 }
@@ -721,18 +735,24 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 			UFreeImage(data->img_rgb);
 
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
 			data->img_rgb = tmpImg;
-			
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf *pixbuf = UGetPixbufFromImage(data->img_rgb,
-				tmp);
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+				data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
-				"PreviewImage")), pixbuf);
-			free(*tmp);
-			free(tmp);
-			g_object_unref(pixbuf);
-			
+				"PreviewImage")), data->pixbuf);
+
 			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(
 				data->builder, "RotationSelect"));
 
@@ -772,15 +792,23 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				data->segBoxArray[data->boxDetectIndex], RED);
 			data->boxDetectIndex++;
 
-			guchar **tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-				data->img_rgb, tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(
+				data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 				"PreviewImage")),
-				tmpPixbuf);
-			free(*tmp);
-			g_object_unref(tmpPixbuf);
+				data->pixbuf);
 		}
 	}
 }
@@ -819,16 +847,23 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
 
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* pixbuf = UGetPixbufFromImage(data->img_rgb,
-				tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+				data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				pixbuf);
-			free(*tmp);
-			free(tmp);
-			g_object_unref(pixbuf);
+				data->pixbuf);
 		}
 	}
 }
@@ -847,16 +882,23 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
 
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* pixbuf = UGetPixbufFromImage(data->img_rgb,
-				tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+				data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
-				pixbuf);
-			free(*tmp);
-			free(tmp);
-			g_object_unref(pixbuf);
+				data->pixbuf);
 		}
 	}
 }
@@ -869,22 +911,29 @@ void on_zoom_in(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			data->previewScale += ZOOM_COEF;
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-				data->img_rgb, tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(
+				data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
 				gdk_pixbuf_scale_simple(
-					tmpPixbuf,
+					data->pixbuf,
 					data->img_rgb->width *
 						data->previewScale,
 					data->img_rgb->height *
 						data->previewScale,
 					GDK_INTERP_BILINEAR));
-			free(*tmp);
-			free(tmp);
-			g_object_unref(tmpPixbuf);
 		}
 	}
 }
@@ -898,22 +947,29 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data)
 			data->previewScale > 2 *ZOOM_COEF)
 		{
 			data->previewScale -= ZOOM_COEF;
-			guchar** tmp = malloc(sizeof(guchar*));
-			GdkPixbuf* tmpPixbuf = UGetPixbufFromImage(
-				data->img_rgb, tmp);
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(
+				data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
 
-				gdk_pixbuf_scale_simple(tmpPixbuf,
+				gdk_pixbuf_scale_simple(data->pixbuf,
 					data->img_rgb->width *
 						data->previewScale,
 					data->img_rgb->height *
 						data->previewScale,
 					GDK_INTERP_BILINEAR));
-			free(*tmp);
-			free(tmp);
-			g_object_unref(tmpPixbuf);
 		}
 	}
 }

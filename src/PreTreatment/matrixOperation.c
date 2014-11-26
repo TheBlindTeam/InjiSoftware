@@ -16,12 +16,22 @@ Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize)
 	{
 		for (int x = 0; x < matrixSize; x++)
 		{
-			sumR += matrix[x][y].r * convolution[y][x];
-			sumG += matrix[x][y].g * convolution[y][x];
-			sumB += matrix[x][y].b * convolution[y][x];
+			printf("%lf ", convolution[x][y]);
 		}
+		printf("\n");
 	}
-
+	for (int y = 0; y < matrixSize; y++)
+	{
+		for (int x = 0; x < matrixSize; x++)
+		{
+			sumR += matrix[x][y].r * convolution[x][y];
+			sumG += matrix[x][y].g * convolution[x][y];
+			sumB += matrix[x][y].b * convolution[x][y];
+			printf("s %d %d %d ", matrix[x][y].r, matrix[x][y].g, matrix[x][y].b);
+		}
+		printf("\n");
+	}
+	getchar();
 	tmp.r = round(sumR);
 	tmp.g = round(sumG);
 	tmp.b = round(sumB);
@@ -93,12 +103,8 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 			subMatrix = UExtract(ref->pixList, ref->width,
 				ref->height, matrixSize, x, y);
 
-			subMatrix[matrixSize / 2][matrixSize / 2]
-				= UConvolutionProduct(subMatrix, convolution,
+			result[x][y] = UConvolutionProduct(subMatrix, convolution,
 					matrixSize);
-
-			result[x][y] = subMatrix[matrixSize / 2]
-				[matrixSize / 2];
 
 			// free submatrix memory
 			for(int j = 0; j < matrixSize; j++)

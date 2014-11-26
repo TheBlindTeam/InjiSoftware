@@ -18,4 +18,6 @@ typedef struct
 	Box* firstBox;
 	int boxDetectIndex, boxCount;
 	double previewScale;
+	GdkPixbuf *pixbuf;
+	guchar **tmp;
 } SGlobalData;

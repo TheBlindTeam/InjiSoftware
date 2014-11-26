@@ -59,7 +59,7 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 		for (int j = 0; j < nWorkSet->exSet.targetSize; j ++)
 		{
 			Neuron *tmp = &nWork->neurons[nWork->nbLayers - 1][j];
-			tmp->error =tmp->shockFoo.df(output[j])*(ex->target[j]
+			tmp->error = FUNCTIONS[tmp->shockFoo].df(output[j])*(ex->target[j]
 					- output[j]);
 		}
 		for (int j = nWork->nbLayers - 2; j > 0; j --)
@@ -74,7 +74,7 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 						[tmp->connectList[l].layer]
 						[tmp->connectList[l].index]
 						.error;
-				tmp->error *= tmp->shockFoo.df(tmp->shock);
+				tmp->error *= FUNCTIONS[tmp->shockFoo].df(tmp->shock);
 			}
 		for (int j = 0; j < nWork->nbLayers; j ++)
 			for (int k = 0; k < nWork->layersSize[j]; k++)

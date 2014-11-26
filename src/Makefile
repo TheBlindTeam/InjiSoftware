@@ -10,7 +10,6 @@ SRC=main.c Interface/*.c PreTreatment/*.c Utils/*.c NeuralNetwork/*.c
 
 all:
 	$(CC) $(CFL) $(LDFLAGS) $(SRC) $(LDLIBS) -o Inji
-debug:
-	$(CC) -std=c99 $(LDFLAGS) $(SRC) $(LDLIBS) -o Inji
+
 clean:
 	rm -f Inji

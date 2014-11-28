@@ -1,46 +1,5 @@
 #include "matrixOperation.h"
 
-Pixel UConvolutionProduct(Pixel **matrix, double **convolution, int matrixSize)
-{
-	Pixel tmp;
-	tmp.r = 0;
-	tmp.g = 0;
-	tmp.b = 0;
-	tmp.a = 0;
-	
-	double sumR = 0;
-	double sumG = 0;
-	double sumB = 0;
-
-	for (int y = 0; y < matrixSize; y++)
-	{
-		for (int x = 0; x < matrixSize; x++)
-		{
-			printf("%lf ", convolution[x][y]);
-		}
-		printf("\n");
-	}
-	for (int y = 0; y < matrixSize; y++)
-	{
-		for (int x = 0; x < matrixSize; x++)
-		{
-			sumR += matrix[x][y].r * convolution[x][y];
-			sumG += matrix[x][y].g * convolution[x][y];
-			sumB += matrix[x][y].b * convolution[x][y];
-			printf("s %d %d %d ", matrix[x][y].r, matrix[x][y].g, matrix[x][y].b);
-		}
-		printf("\n");
-	}
-	getchar();
-	tmp.r = round(sumR);
-	tmp.g = round(sumG);
-	tmp.b = round(sumB);
-
-	// Clamp RGB values
-	ClampPixel(&tmp, 0, 255);
-	return tmp;
-}
-
 void ClampPixel(Pixel *pix, int min, int max)
 {
 	pix->r = (pix->r <= min) ? min : pix->r;
@@ -53,66 +12,47 @@ void ClampPixel(Pixel *pix, int min, int max)
 	pix->b = (pix->b >= max) ? max : pix->b;
 }
 
-Pixel** UExtract(Pixel **matrix, int wSize, int hSize, int extractSize,
- int pos_x, int pos_y)
+int ClampDouble(double a, int min, int max)
 {
-	Pixel **tmp;
-	Pixel defaultPix;
-	defaultPix.r = 255;
-	defaultPix.g = 255;
-	defaultPix.b = 255;
-	defaultPix.a = 255;
-
-	int xMin = pos_x - (extractSize / 2);
-	int yMin = pos_y - (extractSize / 2);
-
-	tmp = malloc(extractSize * sizeof(Pixel *));
-	for (int i = 0; i < extractSize; i++)
-		tmp[i] = malloc(extractSize * sizeof(Pixel));
-
-	for (int i = 0; i < extractSize; i++)
-		for(int z = 0; z < extractSize; z++)
-			tmp[z][i] = defaultPix;
-
-	for (int y = yMin; y < pos_y + (extractSize/2); y++)
-		for (int x = xMin; x < pos_x + (extractSize/2); x++)
-			if (x >= 0 && x < wSize && y >= 0 && y < hSize)
-				tmp[x-xMin][y-yMin] = matrix[x][y];
-
-	return tmp;
+	int r = round(a);
+	return r < min ? min : (r > max ? max : r);
 }
 
 Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 {
 	Image *image = malloc(sizeof(Image));
-	Pixel **result;
-	Pixel **subMatrix;
-
 	image->width = ref->width;
 	image->height = ref->height;
 	image->bits_per_sample = ref->bits_per_sample;
 	image->has_alpha = ref->has_alpha;
+	int half = matrixSize / 2;
+	image->pixList = malloc(image->width * sizeof(Pixel*));
+	for (int i = 0; i < image->width; i++)
+		image->pixList[i] = malloc(image->height * sizeof(Pixel));
 
-	result = malloc(ref->width * sizeof(Pixel *));
-	for (int i = 0; i < ref->width; i++)
-		result[i] = malloc(ref->height * sizeof(Pixel));
-	
-	for (int y = 0; y < ref->height; y++)
-		for (int x = 0; x < ref->width; x++)
+	for (int x = 0; x < image->width; x ++)
+		for (int y = 0; y < image->height; y ++)
 		{
-			subMatrix = UExtract(ref->pixList, ref->width,
-				ref->height, matrixSize, x, y);
-
-			result[x][y] = UConvolutionProduct(subMatrix, convolution,
-					matrixSize);
-
-			// free submatrix memory
-			for(int j = 0; j < matrixSize; j++)
-				free(subMatrix[j]);
-			free(subMatrix);
+			double R, G, B;
+			R = G = B = 0;
+			for (int k = -half; k <= half; k ++)
+				for (int l = -half; l <= half; l ++)
+				{
+					if (x + k >= 0 && x + k < image->width &&
+						y + l >= 0 && y + l < image->height)
+					{
+						R += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
+						G += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
+						B += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
+					}
+				}
+			Pixel tmp;
+			image->pixList[x][y] = tmp;
+			image->pixList[x][y].r = ClampDouble(R, 0, 255);
+			image->pixList[x][y].g = ClampDouble(G, 0, 255);
+			image->pixList[x][y].b = ClampDouble(B, 0, 255);
+			image->pixList[x][y].a = ref->pixList[x][y].a;
 		}
-
-	image->pixList = result;
 	return image;
 }
 

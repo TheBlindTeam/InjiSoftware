@@ -6,7 +6,7 @@ LDFLAGS= `pkg-config gtk+-3.0 --cflags`
 
 LDLIBS=`pkg-config gtk+-3.0 --libs`-lm
 
-SRC=main.c Interface/*.c PreTreatment/*.c Utils/*.c NeuralNetwork/*.c
+SRC= */*.c *.c
 
 all:
 	$(CC) $(CFL) $(LDFLAGS) $(SRC) $(LDLIBS) -o Inji

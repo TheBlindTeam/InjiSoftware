@@ -1,3 +1,7 @@
 src/Inji
 *.swp
 *.swo
+*/*.swp
+*/*.swo
+*/*/*.swp
+*/*/*.swo

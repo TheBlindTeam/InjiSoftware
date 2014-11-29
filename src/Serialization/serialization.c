@@ -13,16 +13,7 @@ int writeLink(Connection ct, FILE *file)
 
 int writeNeuron(Neuron neuron, FILE *file)
 {
-	fprintf(file, "\t\t\tFOO: WIP\n");/*
-	if (neuron.shockFoo == SIGMOID)
-		fprintf(file, "SIGMOID");
-	else if (neuron.shockFoo == TAN_SIGMOID)
-		fprintf(file, "TAN_SIGMOID");
-	else if (neuron.shockFoo == LINEAR)
-		fprintf(file, "LINEAR");
-	else
-		fprintf(file, "FUNCTIONS[]");
-	fprintf(file, "\n");*/
+	fprintf(file, "\t\t\tFOO: %d\n", neuron.shockFoo);
 	fprintf(file, "\t\t\tNBC: %d\n", neuron.nbConnections);
 	for (int i = 0; i < neuron.nbConnections; i++)
 	{
@@ -111,7 +102,14 @@ int readNeuron(FILE *file, Neuron *n)
 {
 	int error = 1;
 	fseek(file, 7, ftell(file));
-	//scan the foo (WIP);
+	if (error != EOF)
+	{
+		int fooID;
+		error = fscanf(file, "\t\t\tFOO: %d\n", &fooID);
+		n->shockFoo = fooID;
+	}
+	else
+		return error;
 	fseek(file, 9, ftell(file));//remove later
 	if (error != EOF)
 		error = fscanf(file, "\t\t\tNBC: %d\n", &(n->nbConnections));

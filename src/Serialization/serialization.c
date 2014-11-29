@@ -73,7 +73,9 @@ int readNetwork(FILE *file, Network *n)
 	for (int i = 0; i < n->nbLayers; i++)
 	{
 		if (error != EOF)
-			error =fscanf(file, "\t\tLA0: %d\n", &(n->layersSize[i]));
+		{
+			error =fscanf(file, "\t\tLA%d: %d\n", &i, &(n->layersSize[i]));
+		}
 		else
 			return error;
 	}
@@ -84,11 +86,12 @@ int readNetwork(FILE *file, Network *n)
 	n->neurons = malloc(sizeof(Neuron*));
 	for (int i = 0; i < n->nbLayers; i++)
 	{
-		//get pos
-		fseek(file, 6, ftell(file));
+		error = fscanf(file, "\tLA%d:\n", &i);
+//		fseek(file, 6, ftell(file));
 		n->neurons[i] = malloc(sizeof(Neuron)*(n->layersSize[i]));
 		for (int j = 0; j < n->layersSize[i]; j++)
 		{
+			error = fscanf(file, "\t\tNE%d:\n", &j);
 			if (error != EOF)
 				error = readNeuron(file, &(n->neurons[i][j]));
 			else
@@ -101,7 +104,6 @@ int readNetwork(FILE *file, Network *n)
 int readNeuron(FILE *file, Neuron *n)
 {
 	int error = 1;
-	fseek(file, 7, ftell(file));
 	if (error != EOF)
 	{
 		int fooID;
@@ -110,7 +112,6 @@ int readNeuron(FILE *file, Neuron *n)
 	}
 	else
 		return error;
-	fseek(file, 9, ftell(file));//remove later
 	if (error != EOF)
 		error = fscanf(file, "\t\t\tNBC: %d\n", &(n->nbConnections));
 	else
@@ -118,8 +119,8 @@ int readNeuron(FILE *file, Neuron *n)
 	n->connectList = malloc(sizeof(Connection)*(n->nbConnections));
 	for(int i = 0; i < n->nbConnections; i++)
 	{
+		error = fscanf(file, "\t\t\tCO%d:\n", &i);
 		error = readConnection(file, &(n->connectList[i]));
-		fseek(file, 1, ftell(file));
 	}
 	return error;
 }
@@ -127,7 +128,6 @@ int readNeuron(FILE *file, Neuron *n)
 int readConnection(FILE *file, Connection *c)
 {
 	int error = 1;
-	fseek(file, 8, ftell(file));
 	if (error != EOF)
 	error = fscanf(file, "\t\t\t\tLAY: %d\n", &(c->layer));
 	else
@@ -137,7 +137,7 @@ int readConnection(FILE *file, Connection *c)
 	else
 		return error;
 	if (error != EOF)
-		error = fscanf(file, "\t\t\t\tWEI: %lf", &(c->weight));
+		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
 	else
 		return error;
 	return error;

@@ -1,0 +1,52 @@
+NET:
+	NBL: 3
+		LA0: 3
+		LA1: 5
+		LA2: 1
+	BIA: 1
+	LA0:
+		NE0:
+			FOO: 0
+			NBC: 4
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: 2.000000
+			CO1:
+				LAY: 0
+				IND: 0
+				WEI: 0.000000
+			CO2:
+				LAY: 0
+				IND: 0
+				WEI: 0.000000
+			CO3:
+				LAY: 0
+				IND: 0
+				WEI: 0.000000
+		NE1:
+			FOO: 4
+			NBC: 0
+		NE2:
+			FOO: 0
+			NBC: 0
+	LA1:
+		NE0:
+			FOO: 0
+			NBC: 0
+		NE1:
+			FOO: 0
+			NBC: 0
+		NE2:
+			FOO: 0
+			NBC: 0
+		NE3:
+			FOO: 0
+			NBC: 0
+		NE4:
+			FOO: 0
+			NBC: 0
+	LA2:
+		NE0:
+			FOO: 0
+			NBC: 0

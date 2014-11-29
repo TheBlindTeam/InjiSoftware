@@ -1,4 +1,5 @@
 #include "signals.h"
+#include "../Serialization/serialization.h"
 
 void connectSignals(SGlobalData *data)
 {
@@ -334,6 +335,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		data->networkSet->lRate = val[0];
 		data->networkSet->momentum = val[1];
 		data->networkSet->maxError = val[2];
+		SWrite(network, "test.inji");
 
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)

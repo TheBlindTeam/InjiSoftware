@@ -11,94 +11,94 @@ NET:
 			CO0:
 				LAY: 1
 				IND: 0
-				WEI: 2,991112
+				WEI: -4,823060
 			CO1:
 				LAY: 1
 				IND: 1
-				WEI: 2,392581
+				WEI: -2,859937
 			CO2:
 				LAY: 1
 				IND: 2
-				WEI: 1,692324
+				WEI: -0,448377
 			CO3:
 				LAY: 1
 				IND: 3
-				WEI: -1,126128
+				WEI: 3,760623
 		NE1:
 			FOO: 0
 			NBC: 4
 			CO0:
 				LAY: 1
 				IND: 0
-				WEI: -2,050495
+				WEI: 2,966644
 			CO1:
 				LAY: 1
 				IND: 1
-				WEI: 2,520876
+				WEI: 0,357699
 			CO2:
 				LAY: 1
 				IND: 2
-				WEI: -1,692525
+				WEI: 1,522489
 			CO3:
 				LAY: 1
 				IND: 3
-				WEI: 0,222933
+				WEI: -1,338302
 		NE2:
 			FOO: 0
 			NBC: 4
 			CO0:
 				LAY: 1
 				IND: 0
-				WEI: 0,785563
+				WEI: -1,727853
 			CO1:
 				LAY: 1
 				IND: 1
-				WEI: -4,463947
+				WEI: -2,158402
 			CO2:
 				LAY: 1
 				IND: 2
-				WEI: -2,868126
+				WEI: 2,956415
 			CO3:
 				LAY: 1
 				IND: 3
-				WEI: -1,424054
+				WEI: -3,397556
 	LA1:
 		NE0:
-			FOO: 1
+			FOO: 0
 			NBC: 1
 			CO0:
 				LAY: 2
 				IND: 0
-				WEI: -2,119784
+				WEI: -4,471136
 		NE1:
-			FOO: 1
+			FOO: 0
 			NBC: 1
 			CO0:
 				LAY: 2
 				IND: 0
-				WEI: -2,318944
+				WEI: -4,172335
 		NE2:
-			FOO: 1
+			FOO: 0
 			NBC: 1
 			CO0:
 				LAY: 2
 				IND: 0
-				WEI: 2,988954
+				WEI: -4,859599
 		NE3:
-			FOO: 1
+			FOO: 0
 			NBC: 1
 			CO0:
 				LAY: 2
 				IND: 0
-				WEI: 0,105383
+				WEI: -4,172976
 		NE4:
 			FOO: 0
 			NBC: 1
 			CO0:
 				LAY: 2
 				IND: 0
-				WEI: 0,539181
+				WEI: -1,912346
 	LA2:
 		NE0:
-			FOO: 2
+			FOO: 0
 			NBC: 0

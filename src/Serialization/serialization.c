@@ -7,7 +7,7 @@ int writeLink(Connection ct, FILE *file)
 {
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
-	fprintf(file, "\t\t\t\tWEI: %f", ct.weight);
+	fprintf(file, "\t\t\t\tWEI: %.6f\n", ct.weight);
 	return 1;
 }
 
@@ -19,7 +19,6 @@ int writeNeuron(Neuron neuron, FILE *file)
 	{
 			fprintf(file, "\t\t\tCO%d:\n", i);
 			writeLink(neuron.connectList[i], file);
-			fprintf(file, "\n");
 	}
 	return 1;
 }

@@ -1,0 +1,104 @@
+NET:
+	NBL: 3
+		LA0: 3
+		LA1: 5
+		LA2: 1
+	BIA: 1
+	LA0:
+		NE0:
+			FOO: 0
+			NBC: 4
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: 2.128188
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: 2.860894
+			CO2:
+				LAY: 1
+				IND: 2
+				WEI: -1.326524
+			CO3:
+				LAY: 1
+				IND: 3
+				WEI: -3.717532
+		NE1:
+			FOO: 0
+			NBC: 4
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: 2.227099
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: -4.99825
+			CO2:
+				LAY: 1
+				IND: 2
+				WEI: -3.102252
+			CO3:
+				LAY: 1
+				IND: 3
+				WEI: -4.364449
+		NE2:
+			FOO: 0
+			NBC: 4
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: -3.633924
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: 2.582115
+			CO2:
+				LAY: 1
+				IND: 2
+				WEI: 1.665815
+			CO3:
+				LAY: 1
+				IND: 3
+				WEI: 3.541185
+	LA1:
+		NE0:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: 1.901163
+		NE1:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: -2.386428
+		NE2:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: -3.664461
+		NE3:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: 4.224742
+		NE4:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: 3.600553
+	LA2:
+		NE0:
+			FOO: 0
+			NBC: 0

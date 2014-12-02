@@ -324,10 +324,10 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int neuronSpaceY = (maxHeight - 2 * NN_NEURON_RADIUS
 			* maxNeuron) / (maxNeuron - 1);
 
-		char *paramsName[3] = {"SBLearningRate", "SBMomentum",
-			"SBMaxErr"};
-		gdouble val[3];
-		for (int i = 0; i < 3; i ++)
+		char *paramsName[4] = {"SBLearningRate", "SBMomentum",
+			"SBMaxErr", "SBOverfitCoef"};
+		gdouble val[4];
+		for (int i = 0; i < 4; i ++)
 			val[i] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
 				gtk_builder_get_object(data->builder,
 					paramsName[i])));
@@ -335,6 +335,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		data->networkSet->lRate = val[0];
 		data->networkSet->momentum = val[1];
 		data->networkSet->maxError = val[2];
+		data->networkSet->overfitCoef = val[3];
 		SWrite(network, "test.inji");
 
 		int iterCalls = 0;

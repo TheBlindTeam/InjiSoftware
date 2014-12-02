@@ -67,10 +67,10 @@ int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
 /**/
-void Split(ImageBN *img, Box *b, Orientation orient, int minBlank);
+void Split(ImageBN *img, Box *b, Orientation orient, int minBlank, int state);
 
 /*Removes the margins froms the image*/
-void CutMargin(ImageBN *img, Box *b);
+void CutMargin(ImageBN *img, Box *b, int V, int H);
 
 /**/
 void DetectSplitOrientation(ImageBN *img, Box *b);

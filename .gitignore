@@ -5,3 +5,7 @@ src/Inji
 */*.swo
 */*/*.swp
 */*/*.swo
+*/*.jpg
+*/*.jpeg
+*/*.bmp
+*/*.png

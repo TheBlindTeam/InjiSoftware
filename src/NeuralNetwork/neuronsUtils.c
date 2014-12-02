@@ -61,6 +61,16 @@ Network *NInitializeCompleteNBias(int input, int output)
 	return NInitializeSimpleMLP(input, output, UPow(2, input), 0);
 }
 
+Network *NInitializeDoubleBias(int input, int output)
+{
+	return NInitializeSimpleMLP(input, output, 2 * input, 1);
+}
+
+Network *NInitializeDoubleNBias(int input, int output)
+{
+	return NInitializeSimpleMLP(input, output, 2 * input, 0);
+}
+
 Network *NInitializeLinearBias(int input, int output)
 {
 	return NInitializeSimpleMLP(input, output, input, 1);
@@ -150,7 +160,7 @@ void addInStringAt(char *r, char *s2, int *at, int max)
 	r[*at] = 0;
 }
 
-double NComputeError(Network *nWork, ExempleSet exSet,
+double NComputeError(Network *nWork, ExempleSet *exSet,
 	int print, char *r, int max)
 {
 	int count = 0;
@@ -158,14 +168,14 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 	double error;
 	double *output = NULL;
 	char tmp[10];
-	Exemple *ex = exSet.exemple;
 	int i = 0;
 	if (print)
 		r[0] = 0;
-	while (ex)
+	for (int index = 0; index < exSet->size; index ++)
 	{
+		Exemple *ex = exSet->exemple[index];
 		NRun(nWork, ex->input, &output);
-		error = USquarredError(ex->target, output, exSet.targetSize);
+		error = USquarredError(ex->target, output, exSet->targetSize);
 		totalError += error;
 		if(print)
 		{
@@ -173,21 +183,21 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 			snprintf(tmp, 9, "%lf", error);
 			addInStringAt(r, tmp, &i, max);
 			addInStringAt(r, "    input -> ", &i, max);
-			for (int j = 0; j < exSet.inputSize; j ++)
+			for (int j = 0; j < exSet->inputSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", ex->input[j]);
 				addInStringAt(r, tmp, &i, max);
 				addInStringAt(r, " ", &i, max);
 			}
 			addInStringAt(r, "    output -> ", &i, max);
-			for (int j = 0; j < exSet.targetSize; j ++)
+			for (int j = 0; j < exSet->targetSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", output[j]);
 				addInStringAt(r, tmp, &i, max);
 				addInStringAt(r, " ", &i, max);
 			}
 			addInStringAt(r, "    target -> ", &i, max);
-			for (int j = 0; j < exSet.targetSize; j ++)
+			for (int j = 0; j < exSet->targetSize; j ++)
 			{
 				snprintf(tmp, 9, "%lf", ex->target[j]);
 				addInStringAt(r, tmp, &i, max);
@@ -195,7 +205,6 @@ double NComputeError(Network *nWork, ExempleSet exSet,
 			}
 			addInStringAt(r, "\n", &i, max);
 		}
-		ex = ex->next;
 		count++;
 	}
 	totalError /= count;
@@ -237,42 +246,44 @@ void NPrintNetwork(Network nWork)
 	}
 }
 
-void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
-	double *target, int targetSize)
+void addInExempleSet(ExempleSet *exSet, double *input, double *target)
 {
-	Exemple *ex = malloc(sizeof(Exemple));
-	ex->next = NULL;
-	ex->input = malloc(sizeof(double) * inputSize);
-	ex->target = malloc(sizeof(double) * targetSize);
-	for (int i = 0; i < inputSize; i ++)
-		ex->input[i] = input[i];
-	for (int i = 0; i < targetSize; i ++)
-		ex->target[i] = target[i];
-	if (!exSet->exemple)
-		exSet->exemple = ex;
-	else
+	printf("addInExempleSet 1\n");
+	if (exSet->size == exSet->capacity)
 	{
-		Exemple *tmp = exSet->exemple;
-		while (tmp->next)
-			tmp = tmp->next;
-		tmp->next = ex;
+		exSet->exemple = realloc(exSet->exemple, 2 * exSet->capacity * sizeof(Exemple));
+		exSet->capacity *= 2;
 	}
+	printf("addInExempleSet 2\n");
+	Exemple *ex = malloc(sizeof(Exemple));
+	ex->input = malloc(sizeof(double) * exSet->inputSize);
+	ex->target = malloc(sizeof(double) * exSet->targetSize);
+	printf("addInExempleSet 3\n");
+	for (int i = 0; i < exSet->inputSize; i ++)
+		ex->input[i] = input[i];
+	printf("addInExempleSet 4\n");
+	for (int i = 0; i < exSet->targetSize; i ++)
+		ex->target[i] = target[i];
+	printf("addInExempleSet 5\n");
+	exSet->exemple[exSet->size] = ex;
+	exSet->size++;
 }
 
-ExempleSet NGetExempleSet(double *input[], int inputDim2,
+ExempleSet *NGetExempleSet(double *input[], int inputDim2,
 	double *target[], int targetDim2, int size)
 {
-	ExempleSet r;
-	r.inputSize = inputDim2;
-	r.targetSize = targetDim2;
-	r.exemple = NULL;
+	ExempleSet *r = malloc(sizeof(ExempleSet));
+	r->inputSize = inputDim2;
+	r->targetSize = targetDim2;
+	r->exemple = malloc(sizeof(Exemple));
+	r->size = 0;
+	r->capacity = 1;
 	for (int i = 0; i < size; i ++)
-		addInExempleSet(&r, input[i], inputDim2, target[i],
-			targetDim2);
+		addInExempleSet(r, input[i], target[i]);
 	return r;
 }
 
-ExempleSet NGetAndExempleSet()
+ExempleSet *NGetAndExempleSet()
 {
 	double **input = malloc(sizeof(double) * 4);
 	double **target = malloc(sizeof(double) * 4);
@@ -284,7 +295,7 @@ ExempleSet NGetAndExempleSet()
 		input[i][1] = i / 2;
 		target[i][0] = i == 3 ? 1 : 0;
 	}
-	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	ExempleSet *r = NGetExempleSet(input, 2, target, 1, 4);
 	for (int i = 0; i < 4; i ++)
 	{
 		free(input[i]);
@@ -295,7 +306,7 @@ ExempleSet NGetAndExempleSet()
 	return r;
 }
 
-ExempleSet NGetOrExempleSet()
+ExempleSet *NGetOrExempleSet()
 {
 	double **input = malloc(sizeof(double) * 4);
 	double **target = malloc(sizeof(double) * 4);
@@ -307,7 +318,7 @@ ExempleSet NGetOrExempleSet()
 		input[i][1] = i / 2;
 		target[i][0] = i ? 1 : 0;
 	}
-	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	ExempleSet *r = NGetExempleSet(input, 2, target, 1, 4);
 	for (int i = 0; i < 4; i ++)
 	{
 		free(input[i]);
@@ -318,7 +329,7 @@ ExempleSet NGetOrExempleSet()
 	return r;
 }
 
-ExempleSet NGetXorExempleSet()
+ExempleSet *NGetXorExempleSet()
 {
 	double **input = malloc(sizeof(double) * 4);
 	double **target = malloc(sizeof(double) * 4);
@@ -330,7 +341,7 @@ ExempleSet NGetXorExempleSet()
 		input[i][1] = i / 2;
 		target[i][0] = i == 1 || i == 2 ? 1 : 0;
 	}
-	ExempleSet r = NGetExempleSet(input, 2, target, 1, 4);
+	ExempleSet *r = NGetExempleSet(input, 2, target, 1, 4);
 	for (int i = 0; i < 4; i ++)
 	{
 		free(input[i]);
@@ -349,6 +360,8 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, FunctionId input,
 	r->maxError = 0.000001;
 	r->lRate = 0.06;
 	r->momentum = 0.2;
+	r->overfitCoef = 0.1;
+	printf("hey1\n");
 	if (gate == 0)
 		r->exSet = NGetAndExempleSet();
 	else if (gate == 1)
@@ -357,10 +370,10 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, FunctionId input,
 		r->exSet = NGetXorExempleSet();
 	if (learning == 0)
 	{
-		Network *N1 = NINIT[archi](r->exSet.inputSize,
-			r->exSet.targetSize);
-		Network *N2 = NINIT[archi](r->exSet.inputSize,
-			r->exSet.targetSize);
+		Network *N1 = NINIT[archi](r->exSet->inputSize,
+			r->exSet->targetSize);
+		Network *N2 = NINIT[archi](r->exSet->inputSize,
+			r->exSet->targetSize);
 
 		NInitThresHoldSimpleMLP(N1, input,
 			output, bias, others);
@@ -378,13 +391,14 @@ NetworkSet* NInitNetworkSet(int gate, int archi, int learning, FunctionId input,
 	}
 	else
 	{
-			r->nWork = NINIT[archi](r->exSet.inputSize,
-				r->exSet.targetSize);
+			r->nWork = NINIT[archi](r->exSet->inputSize,
+				r->exSet->targetSize);
 			NInitThresHoldSimpleMLP(r->nWork, input,
 				output, bias, others);
 			NComputeError(r->nWork, r->exSet, 0, NULL, 0);
 			r->learn = &NBackPropLearn;
 	}
+	printf("hey2\n");
 	return r;
 }
 
@@ -396,6 +410,7 @@ NetworkSet* NDefaultNetworkSet()
 	r->maxError = 0.000001;
 	r->lRate = 0.06;
 	r->momentum = 0.2;
+	r->overfitCoef = 0.1;
 	r->exSet = NGetXorExempleSet();
 	NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, TAN_SIGMOID,
 		TAN_SIGMOID);
@@ -419,27 +434,29 @@ void NFreeNetwork(Network *nWork)
 
 void NFreeExemple(Exemple *exemple)
 {
-	if(exemple)
-	{
-		NFreeExemple(exemple->next);
 		free(exemple->input);
 		free(exemple->target);
 		free(exemple);
-	}
 }
 
-void NFreeExempleSet(ExempleSet exSet)
+void NFreeExempleSet(ExempleSet *exSet)
 {
-	NFreeExemple(exSet.exemple);
+	printf("NFreeExempleSet 1\n");
+	for (int i = 0; i < exSet->size; i ++)
+		NFreeExemple(exSet->exemple[i]);
+	printf("NFreeExempleSet 2\n");
 }
 
 void NFreeNetworkSet(NetworkSet* nWorkset)
 {
+	printf("NFreeNetworkSet 1\n");
 	if(nWorkset->nWork->sibling)
 		NFreeNetwork(nWorkset->nWork->sibling);
 	NFreeNetwork(nWorkset->nWork);
 	NFreeExempleSet(nWorkset->exSet);
+	printf("NFreeNetworkSet 2\n");
 	free(nWorkset);
+	printf("NFreeNetworkSet 3\n");
 }
 
 int getMaxNeuronsLayer(Network nWork)

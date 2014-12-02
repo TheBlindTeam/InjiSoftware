@@ -35,14 +35,15 @@ typedef struct Exemple
 {
 	double *input;
 	double *target;
-	struct Exemple *next;
 } Exemple;
 
 typedef struct
 {
 	int inputSize;
 	int targetSize;
-	Exemple *exemple;
+	int size;
+	int capacity;
+	Exemple **exemple;
 } ExempleSet;
 
 typedef struct NetworkSet
@@ -52,7 +53,8 @@ typedef struct NetworkSet
 	double maxError;
 	double lRate;
 	double momentum;
-	ExempleSet exSet;
+	double overfitCoef;
+	ExempleSet *exSet;
 } NetworkSet;
 
 Network *NInitializeSimpleMLP(int input, int output, int middle, int bias);
@@ -60,6 +62,10 @@ Network *NInitializeSimpleMLP(int input, int output, int middle, int bias);
 Network *NInitializeCompleteBias(int input, int output);
 
 Network *NInitializeCompleteNBias(int input, int output);
+
+Network *NInitializeDoubleBias(int input, int output);
+
+Network *NInitializeDoubleNBias(int input, int output);
 
 Network *NInitializeLinearBias(int input, int output);
 
@@ -74,7 +80,7 @@ int NRun(Network *nWork, double *input, double **r);
 
 void addInStringAt(char *r, char *s2, int *at, int max);
 
-double NComputeError(Network *nWork, ExempleSet exSet, int print, char *r,
+double NComputeError(Network *nWork, ExempleSet *exSet, int print, char *r,
 	int max);
 
 void NPrintNetwork(Network nWork);
@@ -82,18 +88,17 @@ void NPrintNetwork(Network nWork);
 void NInitEdge(Network *nWork, int startL, int startI, int endL, int endI,
 	int k);
 
-void addInExempleSet(ExempleSet *exSet, double *input, int inputSize,
-	double *target, int targetSize);
+void addInExempleSet(ExempleSet *exSet, double *input, double *target);
 
 
-ExempleSet NGetExempleSet(double **input, int inputDim2,
+ExempleSet *NGetExempleSet(double **input, int inputDim2,
 	double **target, int targetDim2, int size);
 
-ExempleSet NGetAndExempleSet();
+ExempleSet *NGetAndExempleSet();
 
-ExempleSet NGetOrExempleSet();
+ExempleSet *NGetOrExempleSet();
 
-ExempleSet NGetXorExempleSet();
+ExempleSet *NGetXorExempleSet();
 
 NetworkSet *NInitNetworkSet(int gate, int archi, int learning,
 	FunctionId input, FunctionId output, FunctionId others, FunctionId bias);
@@ -106,7 +111,7 @@ void NFreeNetwork(Network *nWork);
 
 void NFreeExemple(Exemple *exemple);
 
-void NFreeExempleSet(ExempleSet exSet);
+void NFreeExempleSet(ExempleSet *exSet);
 
 void NFreeNetworkSet(NetworkSet *nWorkset);
 

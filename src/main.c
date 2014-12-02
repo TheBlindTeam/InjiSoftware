@@ -7,6 +7,7 @@
 #include "Interface/interface.h"
 #include "PreTreatment/split.h"
 #include "Utils/image.h"
+#include "Serialization/serialization.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,7 +17,6 @@ int main(int argc, char *argv[])
 		img = ULoadImage(argv[1]);
 
 	Gtk_Initialize(argc, argv, img);
-	gtk_main();	
-
+	gtk_main();
 	return 0;
 }

@@ -1,34 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "serialization.h"
 #include "../Utils/math.h"
 
-int writeLink(Connection ct, FILE *file)
+int writeConnection(Connection ct, FILE *file)
 {
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
-	fprintf(file, "\t\t\t\tWEI: %f", ct.weight);
+	fprintf(file, "\t\t\t\tWEI: ");
+	if (ct.weight < 0)
+	{
+		fprintf(file, "-");
+		ct.weight *= -1;
+	}
+	fprintf(file, "%d.%d\n", (int)ct.weight,
+	(int)((ct.weight - (int)(ct.weight))*1000000));
+	//fprintf(file, "\t\t\t\tWEI: %.6lf\n", ct.weight);
 	return 1;
 }
 
 int writeNeuron(Neuron neuron, FILE *file)
 {
-	fprintf(file, "\t\t\tFOO: WIP\n");/*
-	if (neuron.shockFoo == SIGMOID)
-		fprintf(file, "SIGMOID");
-	else if (neuron.shockFoo == TAN_SIGMOID)
-		fprintf(file, "TAN_SIGMOID");
-	else if (neuron.shockFoo == LINEAR)
-		fprintf(file, "LINEAR");
-	else
-		fprintf(file, "FUNCTIONS[]");
-	fprintf(file, "\n");*/
+	fprintf(file, "\t\t\tFOO: %d\n", neuron.shockFoo);
 	fprintf(file, "\t\t\tNBC: %d\n", neuron.nbConnections);
 	for (int i = 0; i < neuron.nbConnections; i++)
 	{
 			fprintf(file, "\t\t\tCO%d:\n", i);
-			writeLink(neuron.connectList[i], file);
-			fprintf(file, "\n");
+			writeConnection(neuron.connectList[i], file);
 	}
 	return 1;
 }
@@ -82,7 +81,9 @@ int readNetwork(FILE *file, Network *n)
 	for (int i = 0; i < n->nbLayers; i++)
 	{
 		if (error != EOF)
-			error =fscanf(file, "\t\tLA0: %d\n", &(n->layersSize[i]));
+		{
+			error =fscanf(file, "\t\tLA%d: %d\n", &i, &(n->layersSize[i]));
+		}
 		else
 			return error;
 	}
@@ -93,11 +94,12 @@ int readNetwork(FILE *file, Network *n)
 	n->neurons = malloc(sizeof(Neuron*));
 	for (int i = 0; i < n->nbLayers; i++)
 	{
-		//get pos
-		fseek(file, 6, ftell(file));
+		error = fscanf(file, "\tLA%d:\n", &i);
+//		fseek(file, 6, ftell(file));
 		n->neurons[i] = malloc(sizeof(Neuron)*(n->layersSize[i]));
 		for (int j = 0; j < n->layersSize[i]; j++)
 		{
+			error = fscanf(file, "\t\tNE%d:\n", &j);
 			if (error != EOF)
 				error = readNeuron(file, &(n->neurons[i][j]));
 			else
@@ -110,9 +112,14 @@ int readNetwork(FILE *file, Network *n)
 int readNeuron(FILE *file, Neuron *n)
 {
 	int error = 1;
-	fseek(file, 7, ftell(file));
-	//scan the foo (WIP);
-	fseek(file, 9, ftell(file));//remove later
+	if (error != EOF)
+	{
+		int fooID;
+		error = fscanf(file, "\t\t\tFOO: %d\n", &fooID);
+		n->shockFoo = fooID;
+	}
+	else
+		return error;
 	if (error != EOF)
 		error = fscanf(file, "\t\t\tNBC: %d\n", &(n->nbConnections));
 	else
@@ -120,8 +127,8 @@ int readNeuron(FILE *file, Neuron *n)
 	n->connectList = malloc(sizeof(Connection)*(n->nbConnections));
 	for(int i = 0; i < n->nbConnections; i++)
 	{
+		error = fscanf(file, "\t\t\tCO%d:\n", &i);
 		error = readConnection(file, &(n->connectList[i]));
-		fseek(file, 1, ftell(file));
 	}
 	return error;
 }
@@ -129,7 +136,6 @@ int readNeuron(FILE *file, Neuron *n)
 int readConnection(FILE *file, Connection *c)
 {
 	int error = 1;
-	fseek(file, 8, ftell(file));
 	if (error != EOF)
 	error = fscanf(file, "\t\t\t\tLAY: %d\n", &(c->layer));
 	else
@@ -139,7 +145,10 @@ int readConnection(FILE *file, Connection *c)
 	else
 		return error;
 	if (error != EOF)
-		error = fscanf(file, "\t\t\t\tWEI: %lf", &(c->weight));
+	{
+		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
+		printf("saved %lf\n", c->weight);
+	}
 	else
 		return error;
 	return error;

@@ -81,7 +81,7 @@ Network *NInitializeLinearNBias(int input, int output)
 	return NInitializeSimpleMLP(input, output, input, 0);
 }
 
-void NInitThresHoldSimpleMLP(Network *nWork, FunctionId input, FunctionId output,
+void NInitThresHoldSimpleMLP(Network *nWork, FunctionId input,FunctionId output,
 	FunctionId bias, FunctionId others)
 {
 	for (int i = 0; i < nWork->nbLayers; i ++)
@@ -248,23 +248,18 @@ void NPrintNetwork(Network nWork)
 
 void addInExempleSet(ExempleSet *exSet, double *input, double *target)
 {
-	printf("addInExempleSet 1\n");
 	if (exSet->size == exSet->capacity)
 	{
 		exSet->exemple = realloc(exSet->exemple, 2 * exSet->capacity * sizeof(Exemple));
 		exSet->capacity *= 2;
 	}
-	printf("addInExempleSet 2\n");
 	Exemple *ex = malloc(sizeof(Exemple));
 	ex->input = malloc(sizeof(double) * exSet->inputSize);
 	ex->target = malloc(sizeof(double) * exSet->targetSize);
-	printf("addInExempleSet 3\n");
 	for (int i = 0; i < exSet->inputSize; i ++)
 		ex->input[i] = input[i];
-	printf("addInExempleSet 4\n");
 	for (int i = 0; i < exSet->targetSize; i ++)
 		ex->target[i] = target[i];
-	printf("addInExempleSet 5\n");
 	exSet->exemple[exSet->size] = ex;
 	exSet->size++;
 }
@@ -275,9 +270,9 @@ ExempleSet *NGetExempleSet(double *input[], int inputDim2,
 	ExempleSet *r = malloc(sizeof(ExempleSet));
 	r->inputSize = inputDim2;
 	r->targetSize = targetDim2;
-	r->exemple = malloc(sizeof(Exemple));
+	r->exemple = malloc(sizeof(Exemple) * size);
 	r->size = 0;
-	r->capacity = 1;
+	r->capacity = size;
 	for (int i = 0; i < size; i ++)
 		addInExempleSet(r, input[i], target[i]);
 	return r;

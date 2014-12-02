@@ -4,7 +4,7 @@
 
 int writeNetwork(Network network, FILE *file);
 int writeNeuron(Neuron neuron, FILE *file);
-int writeLink(Connection ct, FILE *file);
+int writeConnection(Connection ct, FILE *file);
 
 /*Ecrit dans un .inji les informations sur le réseau
 de neurones et retourne le nom de fichier*/

@@ -11,7 +11,6 @@
 
 int main(int argc, char *argv[])
 {
-	SWrite(SRead("test.inji"), "testRead.inji");
 	Image *img = NULL;
 	srand(time(NULL));
 	if(argc > 1)

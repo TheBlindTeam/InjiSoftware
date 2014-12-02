@@ -1,13 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "serialization.h"
 #include "../Utils/math.h"
 
-int writeLink(Connection ct, FILE *file)
+int writeConnection(Connection ct, FILE *file)
 {
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
-	fprintf(file, "\t\t\t\tWEI: %.6f\n", ct.weight);
+	fprintf(file, "\t\t\t\tWEI: ");
+	if (ct.weight < 0)
+	{
+		fprintf(file, "-");
+		ct.weight *= -1;
+	}
+	fprintf(file, "%d.%d\n", (int)ct.weight,
+	(int)((ct.weight - (int)(ct.weight))*1000000));
+	//fprintf(file, "\t\t\t\tWEI: %.6lf\n", ct.weight);
 	return 1;
 }
 
@@ -18,7 +27,7 @@ int writeNeuron(Neuron neuron, FILE *file)
 	for (int i = 0; i < neuron.nbConnections; i++)
 	{
 			fprintf(file, "\t\t\tCO%d:\n", i);
-			writeLink(neuron.connectList[i], file);
+			writeConnection(neuron.connectList[i], file);
 	}
 	return 1;
 }
@@ -136,7 +145,10 @@ int readConnection(FILE *file, Connection *c)
 	else
 		return error;
 	if (error != EOF)
+	{
 		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
+		printf("saved %lf\n", c->weight);
+	}
 	else
 		return error;
 	return error;

@@ -64,6 +64,11 @@ void connectSignals(SGlobalData *data)
 			"BinarizeBtn")),
 		"clicked",
 		G_CALLBACK(on_click_transform_binary), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearningBtn")),
+		"clicked",
+		G_CALLBACK(on_click_open_learning), data);
 	/* Menu */
 
 	// File
@@ -963,5 +968,27 @@ void apply_zoom(SGlobalData *data)
 			data->img_rgb->height *
 				data->previewScale,
 			GDK_INTERP_BILINEAR));
+	gtk_image_set_from_pixbuf(GTK_IMAGE(
+		gtk_builder_get_object(data->builder,
+			"ImgLearning")),
+		gdk_pixbuf_scale_simple(
+			data->pixbuf,
+			data->img_rgb->width *
+				data->previewScale,
+			data->img_rgb->height *
+				data->previewScale,
+			GDK_INTERP_BILINEAR));
+}
+void on_click_open_learning(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearningWindow"));
+		apply_zoom(data);
+		gtk_dialog_run(GTK_DIALOG(window));
+		gtk_widget_hide(window);
 
+	}
 }

@@ -67,6 +67,8 @@ ImageBN *URgbToBinary(Image *ref);
 // Binary to Rgb Image
 Image *UBinaryToRgb(ImageBN *ref);
 
+Image *ImageCopy(Image *img);
+
 // Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);

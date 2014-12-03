@@ -10,9 +10,11 @@
 #include "unistd.h"
 
 #include "../NeuralNetwork/neuronsUtils.h"
+#include "../NeuralNetwork/gates.h"
 #include "../PreTreatment/matrixOperation.h"
-#include "../PreTreatment/split.h"
+#include "../PreTreatment/segmentation.h"
 #include "../PreTreatment/hough.h"
+#include "../Serialization/serialization.h"
 #include "globalData.h"
 
 #define ZOOM_COEF 0.1

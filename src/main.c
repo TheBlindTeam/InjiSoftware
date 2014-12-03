@@ -5,7 +5,6 @@
 #include <gtk/gtk.h>
 #include <glib/gstdio.h>
 #include "Interface/interface.h"
-#include "PreTreatment/split.h"
 #include "Utils/image.h"
 #include "Serialization/serialization.h"
 

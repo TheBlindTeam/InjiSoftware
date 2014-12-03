@@ -139,7 +139,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
 	{
 		result->data[x] = malloc(result->height * sizeof(int));
 		for (int y = 0; y < result->height; y++)
-			result->data[x][y] = ref->intensity[x][y] / 127;
+			result->data[x][y] = ref->intensity[x][y] > 127 ? 1 : 0;
 	}
 
 	return result;
@@ -175,6 +175,21 @@ Image *UBinaryToRgb(ImageBN *ref)
 		}
 	}
 	return result;
+}
+
+Image *ImageCopy(Image *img)
+{
+	Image *r = malloc(sizeof(Image));
+	r->width = img->width;
+	r->height = img->height;
+	r->pixList = malloc(sizeof(Pixel *) * r->width);
+	for (int i = 0; i < r->width; i ++)
+	{
+		r->pixList[i] = malloc(sizeof(Pixel) * r->height);
+		for (int j = 0; j < r->height; j ++)
+			r->pixList[i][j] = img->pixList[i][j];
+	}
+	return r;
 }
 
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixList, int width, int height,

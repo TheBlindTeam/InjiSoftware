@@ -94,17 +94,6 @@ void addInExempleSet(ExempleSet *exSet, double *input, double *target);
 ExempleSet *NGetExempleSet(double **input, int inputDim2,
 	double **target, int targetDim2, int size);
 
-ExempleSet *NGetAndExempleSet();
-
-ExempleSet *NGetOrExempleSet();
-
-ExempleSet *NGetXorExempleSet();
-
-NetworkSet *NInitNetworkSet(int gate, int archi, int learning,
-	FunctionId input, FunctionId output, FunctionId others, FunctionId bias);
-
-NetworkSet *NDefaultNetworkSet();
-
 void NFreeNeuron(Neuron *neuron);
 
 void NFreeNetwork(Network *nWork);

@@ -1,5 +1,4 @@
 #include "signals.h"
-#include "../Serialization/serialization.h"
 
 void connectSignals(SGlobalData *data)
 {
@@ -569,7 +568,7 @@ void on_click_initialize(GtkWidget *widget, gpointer user_data)
 			val[i] = gtk_combo_box_get_active(
 				GTK_COMBO_BOX(object));
 		}
-		data->networkSet = NInitNetworkSet(val[0], val[1], val[2],
+		data->networkSet = NInitGatesNetworkSet(val[0], val[1], val[2],
 			val[3], val[4], val[5], val[6]);
 
 		// Disable buttons

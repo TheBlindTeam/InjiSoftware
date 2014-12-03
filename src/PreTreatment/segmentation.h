@@ -9,7 +9,8 @@ typedef enum
 	BLOCK = 1,
 	LINE = 2,
 	WORD = 3,
-	CHARACTER = 4
+	CHARACTER = 4,
+	MAIN = 5
 }SegmentationLevel;
 
 typedef struct
@@ -21,6 +22,8 @@ typedef struct Box
 {
 	Rectangle rectangle;
 	SegmentationLevel lvl;
+	int nbChars;
+	unsigned char *c;
 	int nbSubBoxes;
 	struct Box **subBoxes;
 } Box;
@@ -68,7 +71,7 @@ BoxList Split(ImageBN *img, Box *b, Orientation orient, int minBlank);
 void CutMargin(ImageBN *img, Box *b, int V, int H);
 
 /**/
-Box *GetBoxFromSplit(Image *img);
+Box *GetBoxFromSplit(ImageBN *img);
 
 /**/
 Box **GetBreadthBoxArray(Box *b, int *count);
@@ -79,5 +82,5 @@ void GetBreadthBoxArrayAux(BoxList list);
 /*Draws coloured rectangles in all spaces that are not text*/
 Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p);
 
-Image *DrawBoxes(Image *img, Box *b, Pixel p);
+Image *DrawBox(Image *img, Box *b, Pixel p);
 #endif

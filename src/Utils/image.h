@@ -69,6 +69,8 @@ Image *UBinaryToRgb(ImageBN *ref);
 
 Image *ImageCopy(Image *img);
 
+ImageBN *NegativeBinaryImage(ImageBN *img);
+
 // Get packed pixels data from Pixels structure
 guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 	int height, int channel);

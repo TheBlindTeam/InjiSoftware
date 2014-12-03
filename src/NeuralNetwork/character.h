@@ -4,14 +4,14 @@
 
 extern const int charInputSize;
 
-unsigned char ConvertToOrderedChar(unsigned char c);
+unsigned char ConvertToOrderedChar(wchar_t c);
 
-unsigned char ConvertToUtf8(unsigned char c);
+unsigned char ConvertToUtf8(wchar_t c);
 
-double *ConvertCharToTargetArray(unsigned char c);
+double *ConvertCharToTargetArray(wchar_t c);
 
-ImageBN *ToSquareChar(ImageBN *img, Box *b);
+ImageBN *ToSquareImage(ImageBN *img, Box *b);
 
-ImageBN *ResizeChar(ImageBN *img);
+ImageBN *ResizeImage(ImageBN *img);
 
 double *ConvertImageToInput(ImageBN *img);

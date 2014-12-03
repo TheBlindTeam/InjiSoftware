@@ -242,3 +242,18 @@ void URotateImage(Image *img)
 	img->width = img->height;
 	img->height = c;
 }
+
+ImageBN *NegativeBinaryImage(ImageBN *img)
+{
+	ImageBN *r = malloc(sizeof(Image));
+	r->width = img->width;
+	r->height = img->height;
+	r->data = malloc(sizeof(int*) * img->width);
+	for (int i = 0; i < img->width; i ++)
+	{
+		r->data[i] = malloc(sizeof(int) * img->height);
+		for (int j = 0; j < img->height; j ++)
+			r->data[i][j] = img->data[i][j] ? 0 : 1;
+	}
+	return r;
+}

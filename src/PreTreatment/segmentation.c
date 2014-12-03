@@ -173,32 +173,34 @@ BoxList Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 	return list;
 }
 
-
-/*Box *GetBlocksFromImage
+void GetCharsFromImage(ImageBN *img, Box *b)
 {
-	
-}*/
+	BoxList list = Split(img, b, VERTICAL, 1);
+	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
+}
 
-
-Box *GetBoxFromSplit(Image *img)
+void GetWordsFromImage(ImageBN *img, Box *b)
 {
-	ImageBN *imgBn = URgbToBinary(img);
-	Box *b = malloc(sizeof(Box));
-	b->rectangle.x1 = 0;
-	b->rectangle.y1 = 0;
-	b->rectangle.x2 = imgBn->width - 1;
-	b->rectangle.y2 = imgBn->height - 1;
-	Box *sub = malloc(sizeof(Box));
-	b->nbSubBoxes = 1;
-	b->subBoxes = malloc(sizeof(Box*));
-	*b->subBoxes = sub;
-	sub->rectangle = b->rectangle;
-	sub->nbSubBoxes = 0;
-	sub->subBoxes = NULL;
-	CutMargin(imgBn, sub, 1, 1);
-	//DetectSplitOrientation(imgBn, sub);
-	UFreeImageBinary(imgBn);
-	return b;
+	img = img;
+	b = b;
+}
+
+void GetLinesFromImage(ImageBN *img, Box *b)
+{
+	img = img;
+	b = b;
+}
+
+void GetBlocksFromImage(ImageBN *img, Box *b)
+{
+	img = img;
+	b = b;
+}
+
+Box *GetBoxFromSplit(ImageBN *img)
+{
+	img = img;
+	return NULL;
 }
 
 Box **GetBreadthBoxArray(Box *b, int *count)
@@ -254,7 +256,7 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 	return r;
 }
 
-Image *DrawBoxes(Image *img, Box *b, Pixel p)
+Image *DrawBox(Image *img, Box *b, Pixel p)
 {
 	Image *r = ImageCopy(img);
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)

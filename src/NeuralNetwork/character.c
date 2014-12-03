@@ -2,7 +2,7 @@
 
 const int charInputSize = 16;
 
-unsigned char ConvertToOrderedChar(unsigned char c)
+unsigned char ConvertToOrderedChar(wchar_t c)
 {
 	if (c >= 0x21 && c <= 0x7e)
 		return c - 0x21;
@@ -13,7 +13,7 @@ unsigned char ConvertToOrderedChar(unsigned char c)
 	return 255;
 }
 
-unsigned char ConvertToUtf8(unsigned char c)
+unsigned char ConvertToUtf8(wchar_t c)
 {
 	if (c <= 0x7e - 0x21)
 		return c + 0x21;
@@ -22,7 +22,7 @@ unsigned char ConvertToUtf8(unsigned char c)
 	return c + 0xae - (0xac - 0xa1 + 1) - (0x7e + 0x21 + 1);
 }
 
-double *ConvertCharToTargetArray(unsigned char c)
+double *ConvertCharToTargetArray(wchar_t c)
 {
 	int tmp = ConvertToOrderedChar(c);
 	if (tmp < 255)
@@ -37,16 +37,20 @@ double *ConvertCharToTargetArray(unsigned char c)
 	return NULL;
 }
 
-ImageBN *ToSquareChar(ImageBN *img, Box *b)
+ImageBN *ToSquareImage(ImageBN *img, Box *b)
 {
 	ImageBN *r = malloc(sizeof(ImageBN));
 	int size_y = b->rectangle.y2 - b->rectangle.y1 + 1;
 	int size_x = b->rectangle.x2 - b->rectangle.x1 + 1;
 	r->width = size_y > size_x ? size_y : size_x;
 	r->height = r->width;
+	r->data = malloc(sizeof(int*) * r->width);
 	for (int i = 0; i < r->width; i++)
+	{
+		r->data[i] = malloc(sizeof(int) * r->height);
 		for (int j = 0; j < r->height; j++)
 			r->data[i][j] = 0;
+	}
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
 		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
 			r->data[i + (r->width - size_x) / 2 - b->rectangle.x1]
@@ -54,7 +58,7 @@ ImageBN *ToSquareChar(ImageBN *img, Box *b)
 	return r;
 }
 
-ImageBN *ResizeChar(ImageBN *img)
+ImageBN *ResizeImage(ImageBN *img)
 {
 	//FIXME
 	img = img;

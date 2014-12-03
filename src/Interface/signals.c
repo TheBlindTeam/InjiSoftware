@@ -812,6 +812,8 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder,
 				"PreviewImage")),
 				data->pixbuf);
+
+			apply_zoom(data);
 		}
 	}
 }
@@ -867,6 +869,8 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
 				data->pixbuf);
+
+			apply_zoom(data);
 		}
 	}
 }
@@ -902,6 +906,8 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder,
 					"PreviewImage")),
 				data->pixbuf);
+
+			apply_zoom(data);
 		}
 	}
 }
@@ -914,29 +920,7 @@ void on_zoom_in(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			data->previewScale += ZOOM_COEF;
-			if(data->tmp)
-			{
-				if(*data->tmp)
-					free(*data->tmp);
-				free(data->tmp);
-				data->tmp = NULL;
-			}
-			if(data->pixbuf)
-				g_object_unref(data->pixbuf);
-			data->pixbuf = NULL;
-			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(
-				data->img_rgb, data->tmp);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
-				gdk_pixbuf_scale_simple(
-					data->pixbuf,
-					data->img_rgb->width *
-						data->previewScale,
-					data->img_rgb->height *
-						data->previewScale,
-					GDK_INTERP_BILINEAR));
+			apply_zoom(data);
 		}
 	}
 }
@@ -950,29 +934,35 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data)
 			data->previewScale > 2 *ZOOM_COEF)
 		{
 			data->previewScale -= ZOOM_COEF;
-			if(data->tmp)
-			{
-				if(*data->tmp)
-					free(*data->tmp);
-				free(data->tmp);
-				data->tmp = NULL;
-			}
-			if(data->pixbuf)
-				g_object_unref(data->pixbuf);
-			data->pixbuf = NULL;
-			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(
-				data->img_rgb, data->tmp);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
-
-				gdk_pixbuf_scale_simple(data->pixbuf,
-					data->img_rgb->width *
-						data->previewScale,
-					data->img_rgb->height *
-						data->previewScale,
-					GDK_INTERP_BILINEAR));
+			apply_zoom(data);
 		}
 	}
+}
+
+void apply_zoom(SGlobalData *data)
+{
+	if(data->tmp)
+	{
+		if(*data->tmp)
+			free(*data->tmp);
+		free(data->tmp);
+		data->tmp = NULL;
+	}
+	if(data->pixbuf)
+		g_object_unref(data->pixbuf);
+	data->pixbuf = NULL;
+	data->tmp = malloc(sizeof(guchar*));
+	data->pixbuf = UGetPixbufFromImage(
+		data->img_rgb, data->tmp);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(
+		gtk_builder_get_object(data->builder,
+			"PreviewImage")),
+		gdk_pixbuf_scale_simple(
+			data->pixbuf,
+			data->img_rgb->width *
+				data->previewScale,
+			data->img_rgb->height *
+				data->previewScale,
+			GDK_INTERP_BILINEAR));
+
 }

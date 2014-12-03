@@ -81,3 +81,4 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data);
 // Called when the "zoom in" or "zoom out" button is pressed
 void on_zoom_in(GtkWidget *widget, gpointer user_data);
 void on_zoom_out(GtkWidget *widget, gpointer user_data);
+void apply_zoom(SGlobalData *data);

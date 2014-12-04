@@ -3,6 +3,13 @@
 #include "../Utils/image.h"
 #include <math.h>
 
+typedef struct
+{
+	int nb_chars;
+	gchar *c;
+	double prob;
+}CharOutput;
+
 typedef enum
 {
 	NOTEXT = 0,
@@ -22,8 +29,8 @@ typedef struct Box
 {
 	Rectangle rectangle;
 	SegmentationLevel lvl;
-	int nbChars;
-	unsigned char *c;
+	int nbOutput;
+	CharOutput *output;
 	double *input;
 	int capacity;
 	int nbSubBoxes;
@@ -72,7 +79,7 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int SpaceColor);
 /**/
 
-void Split(ImageBN *img, Box *b, Orientation orient, int minSpace, int spaceColor);
+int Split(ImageBN *img, Box *b, Box *parent, Orientation orient, int minSpace, int spaceColor);
 
 /*Removes the margins froms the image*/
 void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor);
@@ -83,7 +90,7 @@ void GetWordsFromImage(ImageBN *img, Box *b);
 
 void GetLinesFromImage(ImageBN *img, Box *b);
 
-void GetBlocksFromImage(ImageBN *img, ImageBN *mask,Box *b);
+void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b);
 /**/
 Box *GetBoxFromSplit(Image *img);
 
@@ -101,4 +108,6 @@ Image *DrawBox(Image *img, Box *b, Pixel p);
 Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p);
 
 Image *DrawBlackPixels(Image *img, ImageBN *mask, Box *b, Pixel p);
+
+ImageBN *DilatationOnBinary(ImageBN *img, int coef);
 #endif

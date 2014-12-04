@@ -61,7 +61,7 @@ Box *InitBox()
 	r->capacity = 1;
 	r->nbSubBoxes = 0;
 	r->subBoxes = malloc(sizeof(Box*) * r->capacity);
-	r->c = NULL;
+	r->output = NULL;
 	r->input = NULL;
 	return r;
 }
@@ -83,8 +83,11 @@ void FreeBox(Box *b)
 	if (b->capacity)
 		free(b->subBoxes);
 	b->capacity = 0;
-	if (b->c)
-		free(b->c);
+	if (b->output)
+	{
+		free(b->output->c);
+		free(b->output);
+	}
 	if (b->input)
 		free(b->input);
 	free(b);
@@ -159,7 +162,7 @@ void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor)
 	}
 }
 
-void Split(ImageBN *img, Box *b, Orientation orient,
+int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 	int minSpace, int spaceColor)
 {
 	int x1, y1, x2, y2;
@@ -167,6 +170,7 @@ void Split(ImageBN *img, Box *b, Orientation orient,
 	int prev;
 	int min;
 	int max;
+	int r = 0;
 
 	GetIterPrim(orient, &x1, &y1);
 	GetIterSec(orient, &x2, &y2);
@@ -192,41 +196,108 @@ void Split(ImageBN *img, Box *b, Orientation orient,
 			tmp->nbSubBoxes = 0;
 			tmp->subBoxes = NULL;
 			prev = i;
-			AddInSubBoxes(b, tmp);
+			AddInSubBoxes(parent, tmp);
+			r++;
 		}
 		if (!isCurBlank)
 			count = 0;
 	}
+	return r;
 }
 
 void GetCharsFromImage(ImageBN *img, Box *b)
 {
-	Split(img, b, VERTICAL, 1, 0);
+	Split(img, b, b, VERTICAL, 1, 0);
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		CutMargin(img, b->subBoxes[i], 1, 0, 0);
 }
 
 void GetWordsFromImage(ImageBN *img, Box *b)
 {
-	img = img;
-	b = b;
+	Split(img, b, b, VERTICAL, 10, 0);
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+	{
+		CutMargin(img, b->subBoxes[i], 1, 0, 0);
+		GetCharsFromImage(img, b->subBoxes[i]);
+	}
 }
 
 void GetLinesFromImage(ImageBN *img, Box *b)
 {
-	img = img;
-	b = b;
+	Split(img, b, b, HORIZONTAL, 1, 0);
+	for (int i = 0; i < b->nbSubBoxes; i++)
+	{
+		CutMargin(img, b->subBoxes[i], 1, 1, 0);
+		GetWordsFromImage(img, b->subBoxes[i]);
+	}
 }
 
-void GetBlocksFromImage(ImageBN *img, ImageBN *mask,Box *b)
+void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 {
-	mask = mask;
-	img = img;
-	b = b;
+	int r = 0;
+	int max = b->nbSubBoxes;
+	int prev = max;
+	for (int i = 0; i < max; i++)
+	{
+		if (Split(mask, b->subBoxes[i], b, HORIZONTAL, 1, 0) > 1)
+			r = 1;
+		while (prev <= b->nbSubBoxes)
+			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
+		FreeBox(b->subBoxes[i]);
+		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+	}
+	max = b->nbSubBoxes;
+	prev = max;
+	for (int i = 0; i < max; i ++)
+	{
+		if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
+			r = 1;
+		while (prev <= b->nbSubBoxes)
+			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
+		FreeBox(b->subBoxes[i]);
+		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+	}
+	if (r)
+		GetBlocksFromImage(img, mask, b);
+	else
+		for (int i = 0; i < b->nbSubBoxes; i ++)
+			GetLinesFromImage(img, b->subBoxes[i]);
 }
 
 Box *GetBoxFromSplit(Image *img)
 {
-	img = img;
-	return NULL;
+	printf("GetBox1\n");
+	ImageBN *tmp = URgbToBinary(img);
+	printf("GetBox2\n");
+	ImageBN *bn = NegativeBinaryImage(tmp);
+	printf("GetBox3\n");
+	UFreeImageBinary(bn);
+	printf("GetBox4\n");
+	ImageBN *dilated = DilatationOnBinary(bn, (img->width + img->height) / 200);
+	printf("GetBox5\n");
+	Box *r = InitBox();
+	printf("GetBox6\n");
+	r->rectangle.x1 = 0;
+	r->rectangle.y1 = 0;
+	r->rectangle.x2 = bn->width - 1;
+	r->rectangle.y2 = bn->height - 1;
+	printf("GetBox7\n");
+	r->lvl = NOTEXT;
+	printf("GetBox8\n");
+	CutMargin(dilated, r, 1, 1, 0);
+	printf("GetBox9\n");
+	Split(dilated, r, r, HORIZONTAL, 1, 0);
+	printf("GetBox10\n");
+	for (int i = 0; i < r->nbSubBoxes; i ++)
+		CutMargin(dilated, r, 1, 1, 0);
+	printf("GetBox11\n");
+	GetBlocksFromImage(bn, dilated, r);
+	printf("GetBox12\n");
+	UFreeImageBinary(bn);
+	printf("GetBox13\n");
+	UFreeImageBinary(dilated);
+	printf("GetBox14\n");
+	return r;
 }
 
 Box **GetBreadthBoxArray(Box *b, int *count)

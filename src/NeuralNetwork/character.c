@@ -2,27 +2,19 @@
 
 const int charInputSize = 16;
 
-unsigned char ConvertToOrderedChar(wchar_t c)
+gchar ConvertToOrderedChar(gchar c)
 {
-	if (c >= 0x21 && c <= 0x7e)
-		return c - 0x21;
-	if (c >= 0xa1 && c <= 0xac)
-		return c - 0xa1 + (0x7e - 0x21 + 1);
-	if (c >= 0xae)
-		return c - 0xae + (0xac - 0xa1 + 1) + (0x7e - 0x21 + 1);
-	return 255;
+	return c;
+	//FIXME
 }
 
-unsigned char ConvertToUtf8(wchar_t c)
+gchar ConvertToRegularChar(gchar c)
 {
-	if (c <= 0x7e - 0x21)
-		return c + 0x21;
-	if (c <= 0xac - 0xa1 + (0x7e - 0x21 + 1))
-		return c + 0xa1 - (0x7e -0x21 + 1);
-	return c + 0xae - (0xac - 0xa1 + 1) - (0x7e + 0x21 + 1);
+	//FIXME
+	return c;
 }
 
-double *ConvertCharToTargetArray(wchar_t c)
+double *ConvertCharToTargetArray(gchar c)
 {
 	int tmp = ConvertToOrderedChar(c);
 	if (tmp < 255)

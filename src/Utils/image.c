@@ -333,13 +333,13 @@ ImageBN *DilatationOnBinary(ImageBN *img, int coef)
 {
 	ImageBN *r = malloc(sizeof(ImageBN));
 	r->width = img->width;
-	r->height = r->height;
+	r->height = img->height;
 	r->data = malloc(sizeof(int*) * r->width);
 	for (int i = 0; i < r->width; i ++)
 	{
 		r->data[i] = malloc(sizeof(int) * r->height);
 		for (int j = 0; j < r->height; j ++)
-			r->data[i] = 0;
+			r->data[i][j] = 0;
 		int tmp = coef + 1;
 		for (int j = 0; j < r->height; j++)
 		{

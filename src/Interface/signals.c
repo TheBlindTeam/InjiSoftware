@@ -1074,9 +1074,9 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "LearningWindow"));
-		apply_zoom(data);
+		if(data->img_rgb)
+			apply_zoom(data);
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
-
 	}
 }

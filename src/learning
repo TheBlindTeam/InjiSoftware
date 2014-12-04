@@ -1,0 +1,28 @@
+GetBoxFromSPlit > segmentation.c > return *Box (seg...h)
+Box = (Rectangle, level segmentation, nb subboxes, tab de pointer sur box)
+
+if(lvl = Char)
+	nboutput & *output, defined
+	*input (size charInputSize * charInputSize)
+
+GetBreadthBoxArray(param= result au dessus, pointeur int),
+return ArrayBox avec pointer int = size de celle ci
+
+traverse de tout le tableau, if lvl = char, drawBLackPixels(img, imgBN, Box, bleu)
+while (button pressed)
+	if(next pressed) continue;
+	traverse de tout le atableau, if lvl = char, drawBlackPixels(img..., rouge)
+	input de la box <===> nth premier char de la text box
+	Enlever les nth premier char
+	Effacer les espaces aussi
+
+if save
+	save dans un file toutes les associations
+	save dans un autre fichiers toutes les lettres existantes sans doublons
+
+
+-------
+ConvertTOOrderedChar
+character.c
+
+

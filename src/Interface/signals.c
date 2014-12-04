@@ -69,6 +69,16 @@ void connectSignals(SGlobalData *data)
 			"LearningBtn")),
 		"clicked",
 		G_CALLBACK(on_click_open_learning), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"NoiseEraserBtn")),
+		"clicked",
+		G_CALLBACK(on_click_transform_noiseeraser), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"DilatationBtn")),
+		"clicked",
+		G_CALLBACK(on_click_transform_dilatation), data);
 	/* Menu */
 
 	// File
@@ -850,6 +860,85 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 		{
 			ImageGS *tmpGs = URgbToGrayscale(data->img_rgb);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
+			free(tmpGs);
+
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmpImg;
+
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+				data->tmp);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				data->pixbuf);
+
+			apply_zoom(data);
+		}
+	}
+}
+
+void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			ImageBN *tmpBn = URgbToBinary(data->img_rgb);
+			ImageBN *tmpGs = DilatationOnBinary(tmpBn,
+				(data->img_rgb->width + data->img_rgb->height)/200);
+			Image *tmpImg = UBinaryToRgb(tmpGs);
+			free(tmpBn);
+			free(tmpGs);
+
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmpImg;
+
+			if(data->tmp)
+			{
+				if(*data->tmp)
+					free(*data->tmp);
+				free(data->tmp);
+				data->tmp = NULL;
+			}
+			if(data->pixbuf)
+				g_object_unref(data->pixbuf);
+			data->pixbuf = NULL;
+			data->tmp = malloc(sizeof(guchar*));
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+				data->tmp);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+				gtk_builder_get_object(data->builder,
+					"PreviewImage")),
+				data->pixbuf);
+
+			apply_zoom(data);
+		}
+	}
+}
+
+void on_click_transform_noiseeraser(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
+			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
+			Image *tmpImg = UGrayscaleToRgb(tmpGs);
+			free(tmpBn);
 			free(tmpGs);
 
 			UFreeImage(data->img_rgb);

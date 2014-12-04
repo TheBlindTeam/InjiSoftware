@@ -79,6 +79,8 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data);
 void on_click_detect_orientation(GtkWidget *widget, gpointer user_data);
 void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data);
 void on_click_transform_binary(GtkWidget *widget, gpointer user_data);
+void on_click_transform_noiseeraser(GtkWidget *widget, gpointer user_data);
+void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data);
 void on_click_open_learning(GtkWidget *widget, gpointer user_data);
 
 // Called when the "zoom in" or "zoom out" button is pressed

@@ -41,9 +41,12 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 					if (x + k >= 0 && x + k < image->width &&
 						y + l >= 0 && y + l < image->height)
 					{
-						R += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
-						G += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
-						B += ref->pixList[x + k][y + l].r * convolution[k + half][l + half];
+						R += ref->pixList[x + k][y + l].r 
+                                                    * convolution[k + half][l + half];
+						G += ref->pixList[x + k][y + l].r 
+                                                    * convolution[k + half][l + half];
+						B += ref->pixList[x + k][y + l].r
+                                                    * convolution[k + half][l + half];
 					}
 				}
 			Pixel tmp;
@@ -54,6 +57,38 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 			image->pixList[x][y].a = ref->pixList[x][y].a;
 		}
 	return image;
+}
+
+ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
+{
+    ImageGS *result = malloc(sizeof(ImageGS));
+    // Size of the Filter Matrix
+    int arraySize = filterSize;// This value will be updated with ExtractNeighbors
+    guchar *neighbors;
+
+    // Image Initialization
+    result->width = ref->width;
+    result->height = ref->height;
+
+    result->intensity = malloc(result->width * sizeof(guchar *));
+    for(int y = 0; y < result->width; y++)
+        result->intensity[y] = malloc(result->height * sizeof(guchar));
+
+    for(int y = 0; y < result->height; y++)
+        for(int x = 0; x < result->width; x++)
+        {
+            // Extract the 8 neighbors to a 1-D array
+            neighbors = ExtractNeighbors(ref, x, y, &arraySize);
+            // Sort neighbors' array
+            BubbleSort(neighbors, arraySize);
+            result->intensity[x][y] =
+                neighbors[arraySize / 2]; // Replace (x,y) pixel by median val
+
+            // Free previous neighbors allocation
+            free(neighbors);
+        }
+
+    return result;
 }
 
 Image *URotate(Image *ref, double angle)
@@ -148,4 +183,41 @@ void ExtremumVectorValues(Vector2 *tab, int arraySize, Vector2 *min,
 		max->x = (max->x >= tab[i].x) ? max->x : tab[i].x;
 		max->y = (max->y >= tab[i].y) ? max->y : tab[i].y;
 	}
+}
+
+guchar *ExtractNeighbors(ImageGS *ref, int posX, int posY, int *size)
+{
+
+    int matrixSize = *size;
+    guchar *neighbors;
+
+    *size = 0;
+    // Find the size of the return's array
+    for(int y = (posY - matrixSize / 2); y < (posY + matrixSize / 2); y++)
+        for(int x = (posX - matrixSize / 2); x < (posX + matrixSize / 2); x++)
+        {
+            if((x >= 0 && x < ref->width) &&
+                    (y >= 0 && y < ref->height))
+            {
+                (*size)++;
+            }
+        }
+
+    // Allocate the memory
+    neighbors = malloc(*size * sizeof(guchar));
+
+    int index = 0;
+    for(int y = (posY - matrixSize / 2); y < (posY + matrixSize / 2); y++)
+        for(int x = (posX - matrixSize / 2); x < (posX + matrixSize / 2); x++)
+        {
+            if((y >= 0 && y < ref->height) &&
+                    (x >= 0 && x < ref->width))
+            {
+                neighbors[index] =
+                    ref->intensity[x][y]; // Save each neighbors
+                index++;
+            }
+        }
+
+    return neighbors;
 }

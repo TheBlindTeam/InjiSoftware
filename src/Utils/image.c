@@ -145,6 +145,77 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
 	return result;
 }
 
+guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
+        size_t width, size_t height)
+{
+    float local_threshold = 0;
+    int maxNbr = width * height; // Save the number of elements
+    float mean = 0; // Pixel mean value
+    float variance = 0; // Use to calculate the Standard deviation
+    float standard_deviation = 0; // Used in the Sauvola's formula
+    float k = 0.37; // Fixed constant
+    float R = 128; // Fixed range of standar deviation
+
+    // Used to compute the mean
+    for(size_t y2 = y; y2  < y + height; y2++)
+        for(size_t x2 = x; x2 < x + width; x2++)
+        {
+            mean += ref->intensity[x2][y2];
+        }
+    mean /= maxNbr; // Compute mean pixel value
+
+    // Used to compute the variance
+    for(size_t y2 = y; y2  < y + height; y2++)
+        for(size_t x2 = x; x2 < x + width; x2++)
+        {
+            variance += (ref->intensity[x][y] - mean) 
+                * (ref->intensity[x][y] - mean);
+        }
+
+    variance /= maxNbr;
+    standard_deviation = sqrt(variance);
+
+    // Finally : compute the threshold
+    local_threshold = mean * (1 + k * (standard_deviation / R - 1));
+
+    return (guchar)round(local_threshold);
+
+}
+
+ImageBN *USauvolaBinarization(ImageGS *ref)
+{
+    ImageBN *image = malloc(sizeof(ImageBN));
+    int tileSize = 30; // 30 * 30 pixels by Tile
+
+    // Image Intialization
+    image->width = ref->width;
+    image->height = ref->height;
+    image->data = malloc(image->width * sizeof(int *));
+    for(int x = 0; x < ref->width; x++)
+    {
+        image->data[x] = malloc(image->height * sizeof(int));
+    }
+
+    // Loop among all tiles
+    for(int tileY = 0; tileY < (ref->height + tileSize);
+            tileY = tileY + tileSize)
+        for(int tileX = 0; tileX < (ref->width + tileSize);
+                tileX = tileX + tileSize)
+        {
+            // Get back the local thresold from the Matrix[ts][ts]
+            guchar threshold = UGetLocalThreshold(ref, tileX, tileY, 
+                    tileSize, tileSize);
+            // Assign the Black/White data to the binary Image
+	    for (int y = tileY; y < (tileY + tileSize); y++)
+	    {
+		for (int x = tileX; x < (tileX + tileSize); x++)
+			image->data[x][y] = ref->intensity[x][y] / threshold;
+	    }
+        }
+
+    return image;
+}
+
 ImageBN *URgbToBinary(Image *ref)
 {
 	ImageGS *tmp = URgbToGrayscale(ref);

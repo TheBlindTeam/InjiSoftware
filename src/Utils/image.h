@@ -2,6 +2,7 @@
 #define __IMAGE__
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
+#include <math.h>
 
 #define M_PI 3.14159265358979323846
 
@@ -54,6 +55,14 @@ Pixel UGetPixel(GdkPixbuf *pixbuf, int x, int y);
 
 // Translate RGB Image to GrayScale Image
 ImageGS *URgbToGrayscale(Image *rgbImage);
+
+// Get Local Threshold using Sauvola Method
+    // Local Threshold computed inside the region (x, y, size) = Square Region
+guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
+        size_t width, size_t height);
+
+// Split Img into Tile - Compute Tile's Threshold - Binarize the image
+ImageBN *USauvolaBinarization(ImageGS *ref);
 
 // Translate GrayScale Image to RGB Image
 Image *UGrayscaleToRgb(ImageGS *reference);

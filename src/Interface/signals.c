@@ -779,9 +779,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			if (data->segBoxArray == NULL)
 			{
 				int count;
-				ImageBN *tmp = URgbToBinary(data->img_rgb);
-				data->firstBox = GetBoxFromSplit(tmp);
-				UFreeImageBinary(tmp);
+				data->firstBox = GetBoxFromSplit(data->img_rgb);
 				data->segBoxArray = GetBreadthBoxArray(
 					data->firstBox, &count);
 				gtk_button_set_label(GTK_BUTTON(

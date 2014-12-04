@@ -24,9 +24,17 @@ typedef struct Box
 	SegmentationLevel lvl;
 	int nbChars;
 	unsigned char *c;
+	double *input;
+	int capacity;
 	int nbSubBoxes;
 	struct Box **subBoxes;
 } Box;
+
+typedef enum
+{
+	HORIZONTAL,
+	VERTICAL
+} Orientation;
 
 typedef struct BoxElementList
 {
@@ -35,12 +43,6 @@ typedef struct BoxElementList
 } BoxElementList;
 
 typedef BoxElementList *BoxList;
-
-typedef enum
-{
-	HORIZONTAL,
-	VERTICAL
-} Orientation;
 
 //Adds an element box b in a list list and returns it.
 BoxList AddInList(BoxList list, Box *b);
@@ -54,6 +56,10 @@ Box **BoxListToArray(BoxList list, int *count);
 //frees the list list.
 void FreeBoxList(BoxList list);
 
+Box *InitBox();
+
+void AddInSubBoxes(Box *b, Box *toBeAdded);
+
 //Frees the box b.
 void FreeBox(Box *b);
 
@@ -63,15 +69,23 @@ void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
 //Returns if a whole line is blank
-int isBlank(ImageBN *img, Box *b, Orientation orient, int start);
+int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int SpaceColor);
 /**/
-BoxList Split(ImageBN *img, Box *b, Orientation orient, int minBlank);
+
+void Split(ImageBN *img, Box *b, Orientation orient, int minSpace, int spaceColor);
 
 /*Removes the margins froms the image*/
-void CutMargin(ImageBN *img, Box *b, int V, int H);
+void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor);
 
+void GetCharsFromImage(ImageBN *img, Box *b);
+
+void GetWordsFromImage(ImageBN *img, Box *b);
+
+void GetLinesFromImage(ImageBN *img, Box *b);
+
+void GetBlocksFromImage(ImageBN *img, ImageBN *mask,Box *b);
 /**/
-Box *GetBoxFromSplit(ImageBN *img);
+Box *GetBoxFromSplit(Image *img);
 
 /**/
 Box **GetBreadthBoxArray(Box *b, int *count);
@@ -83,4 +97,8 @@ void GetBreadthBoxArrayAux(BoxList list);
 Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p);
 
 Image *DrawBox(Image *img, Box *b, Pixel p);
+
+Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p);
+
+Image *DrawBlackPixels(Image *img, ImageBN *mask, Box *b, Pixel p);
 #endif

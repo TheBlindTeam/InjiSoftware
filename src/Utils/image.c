@@ -257,3 +257,57 @@ ImageBN *NegativeBinaryImage(ImageBN *img)
 	}
 	return r;
 }
+
+ImageBN *DilatationOnBinary(ImageBN *img, int coef)
+{
+	ImageBN *r = malloc(sizeof(ImageBN));
+	r->width = img->width;
+	r->height = r->height;
+	r->data = malloc(sizeof(int*) * r->width);
+	for (int i = 0; i < r->width; i ++)
+	{
+		r->data[i] = malloc(sizeof(int) * r->height);
+		for (int j = 0; j < r->height; j ++)
+			r->data[i] = 0;
+		int tmp = coef + 1;
+		for (int j = 0; j < r->height; j++)
+		{
+			if (img->data[i][j])
+				tmp = 0;
+			if (tmp <= coef)
+				r->data[i][j] = 1;
+			tmp++;
+		}
+		tmp = coef + 1;
+		for (int j = r->height - 1; j >= 0; j--)
+		{
+			if (img->data[i][j])
+				tmp = 0;
+			if (tmp <= coef)
+				r->data[i][j] = 1;
+			tmp++;
+		}
+	}
+	for (int i = 0; i < r->height; i ++)
+	{
+		int tmp = coef + 1;
+		for (int j = 0; j < r->width; j++)
+		{
+			if (img->data[j][i])
+				tmp = 0;
+			if (tmp <= coef)
+				r->data[j][i] = 1;
+			tmp++;
+		}
+		tmp = coef + 1;
+		for (int j = r->width - 1; j >= 0; j--)
+		{
+			if (img->data[i][j])
+				tmp = 0;
+			if (tmp <= coef)
+				r->data[j][i] = 1;
+			tmp++;
+		}
+	}
+	return r;
+}

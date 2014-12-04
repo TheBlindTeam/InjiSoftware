@@ -78,6 +78,9 @@ guchar* UGetPixelDataFromPixelsStruct(Pixel **pixlist, int width,
 // Create pixbuf from Pixel struct
 GdkPixbuf *UGetPixbufFromImage(Image *img, guchar **tmpPixels);
 
+//Dilate the white pixels
+ImageBN *DilatationOnBinary(ImageBN *img, int coef);
+
 // Rotate an image matrix left/right
 void URotateImage(Image *img);
 

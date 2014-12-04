@@ -55,12 +55,38 @@ void FreeBoxList(BoxList list)
 	}
 }
 
+Box *InitBox()
+{
+	Box *r = malloc(sizeof(Box));
+	r->capacity = 1;
+	r->nbSubBoxes = 0;
+	r->subBoxes = malloc(sizeof(Box*) * r->capacity);
+	r->c = NULL;
+	r->input = NULL;
+	return r;
+}
+
+void AddInSubBoxes(Box *b, Box *toBeAdded)
+{
+	if (b->nbSubBoxes == b->capacity)
+	{
+		b->capacity *= 2;
+		b->subBoxes = realloc(b->subBoxes, sizeof(Box*) * b->capacity);
+	}
+	b->subBoxes[b->nbSubBoxes++] = toBeAdded;
+}
+
 void FreeBox(Box *b)
 {
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		FreeBox(b->subBoxes[i]);
-	if (b->nbSubBoxes)
+	if (b->capacity)
 		free(b->subBoxes);
+	b->capacity = 0;
+	if (b->c)
+		free(b->c);
+	if (b->input)
+		free(b->input);
 	free(b);
 }
 
@@ -70,12 +96,12 @@ void GetIterPrim(Orientation orient, int *primWidth, int *primHeight)
 	*primHeight = *primWidth ? 0 : 1;
 }
 
-void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight)
+void GetIterSec(Orientation orient, int *secondWidth, int *secondHeight)
 {
 	GetIterPrim(orient, secondHeight, secondWidth);
 }
 
-int isBlank(ImageBN *img, Box *b, Orientation orient, int start)
+int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int spaceColor)
 {
 	int x1, x2, y1, y2;
 	int min, max;
@@ -87,11 +113,12 @@ int isBlank(ImageBN *img, Box *b, Orientation orient, int start)
 	max = b->rectangle.x2 * x2 + b->rectangle.y2 * y2;
 
 	for (int i = min; i <= max && r; i ++)
-		r = img->data[start * x1 + i * x2][start * y1 + i * y2] ? 1 : 0;
+		r = img->data[start * x1 + i * x2][start * y1 + i * y2] == spaceColor
+			? 1 : 0;
 	return r;
 }
 
-void CutMargin(ImageBN *img, Box *b, int V, int H)
+void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor)
 {
 	int min = b->rectangle.x1;
 	int max = b->rectangle.x2;
@@ -99,14 +126,14 @@ void CutMargin(ImageBN *img, Box *b, int V, int H)
 	if (V)
 	{
 		for (int i = min; i <= max; i ++)
-			if(!isBlank(img, b, VERTICAL, i))
+			if(!isBlank(img, b, VERTICAL, i, spaceColor))
 			{
 				b->rectangle.x1 = i;
 				min = i;
 				break;
 			}
 		for (int i = max; i >= min; i --)
-			if(!isBlank(img, b, VERTICAL, i))
+			if(!isBlank(img, b, VERTICAL, i, spaceColor))
 			{
 				b->rectangle.x2 = i;
 				break;
@@ -117,14 +144,14 @@ void CutMargin(ImageBN *img, Box *b, int V, int H)
 		min = b->rectangle.y1;
 		max = b->rectangle.y2;
 		for (int i = min; i <= max; i ++)
-			if(!isBlank(img, b, HORIZONTAL, i))
+			if(!isBlank(img, b, HORIZONTAL, i, spaceColor))
 			{
 				b->rectangle.y1 = i;
 				min = i;
 				break;
 			}
 		for (int i = max; i >= min; i --)
-			if(!isBlank(img, b, HORIZONTAL, i))
+			if(!isBlank(img, b, HORIZONTAL, i, spaceColor))
 			{
 				b->rectangle.y2 = i;
 				break;
@@ -132,14 +159,14 @@ void CutMargin(ImageBN *img, Box *b, int V, int H)
 	}
 }
 
-BoxList Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
+void Split(ImageBN *img, Box *b, Orientation orient,
+	int minSpace, int spaceColor)
 {
 	int x1, y1, x2, y2;
 	int count = 0;
 	int prev;
 	int min;
 	int max;
-	BoxList list = NULL;
 
 	GetIterPrim(orient, &x1, &y1);
 	GetIterSec(orient, &x2, &y2);
@@ -148,35 +175,33 @@ BoxList Split(ImageBN *img, Box *b, Orientation orient, int minBlank)
 	prev = min;
 	for (int i = min; i <= max; i ++)
 	{
-		int isCurBlank = isBlank(img, b, orient, i);
+		int isCurBlank = isBlank(img, b, orient, i, spaceColor);
 		if (isCurBlank)
 			count ++;
-		if ((!isCurBlank && count > minBlank) || i == max)
+		if ((!isCurBlank && count > minSpace) || i == max)
 		{
-			Box *tmp = malloc(sizeof(Box));
+			Box *tmp = InitBox();
 			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
 			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
 			tmp->rectangle.x2 = x1 *
-				(!(!isCurBlank && count >= minBlank) ? i :
+				(!(!isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + x2 * b->rectangle.x2;
 			tmp->rectangle.y2 = y1 *
-				(!(!isCurBlank && count >= minBlank) ? i :
+				(!(!isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + y2 * b->rectangle.y2;
 			tmp->nbSubBoxes = 0;
 			tmp->subBoxes = NULL;
 			prev = i;
-			list = AddInList(list, tmp);
+			AddInSubBoxes(b, tmp);
 		}
 		if (!isCurBlank)
 			count = 0;
 	}
-	return list;
 }
 
 void GetCharsFromImage(ImageBN *img, Box *b)
 {
-	BoxList list = Split(img, b, VERTICAL, 1);
-	b->subBoxes = BoxListToArray(list, &b->nbSubBoxes);
+	Split(img, b, VERTICAL, 1, 0);
 }
 
 void GetWordsFromImage(ImageBN *img, Box *b)
@@ -191,13 +216,14 @@ void GetLinesFromImage(ImageBN *img, Box *b)
 	b = b;
 }
 
-void GetBlocksFromImage(ImageBN *img, Box *b)
+void GetBlocksFromImage(ImageBN *img, ImageBN *mask,Box *b)
 {
+	mask = mask;
 	img = img;
 	b = b;
 }
 
-Box *GetBoxFromSplit(ImageBN *img)
+Box *GetBoxFromSplit(Image *img)
 {
 	img = img;
 	return NULL;
@@ -269,5 +295,23 @@ Image *DrawBox(Image *img, Box *b, Pixel p)
 		img->pixList[b->rectangle.x1][j] = p;
 		img->pixList[b->rectangle.x2][j] = p;
 	}
+	return r;
+}
+
+Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p)
+{
+	Image *r = ImageCopy(img);
+	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i++)
+		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
+			if (mask->data[i][j])
+				img->pixList[i][j] = p;
+	return r;
+}
+
+Image *DrawBlackPixels(Image *img, ImageBN *mask, Box *b, Pixel p)
+{
+	ImageBN *tmp = NegativeBinaryImage(mask);
+	Image *r = DrawWhitePixels(img, tmp, b, p);
+	UFreeImageBinary(tmp);
 	return r;
 }

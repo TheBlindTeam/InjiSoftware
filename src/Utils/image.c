@@ -185,6 +185,7 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
 ImageBN *USauvolaBinarization(ImageGS *ref)
 {
     ImageBN *image = malloc(sizeof(ImageBN));
+    guchar localThreshold = 0;
     int tileSize = 30; // 30 * 30 pixels by Tile
 
     // Image Intialization
@@ -197,21 +198,29 @@ ImageBN *USauvolaBinarization(ImageGS *ref)
     }
 
     // Loop among all tiles
-    for(int tileY = 0; tileY < (ref->height + tileSize);
+    int tileY = 0; // Tile up corner
+    int tileX = 0; // Tile left corner
+    for(; (tileY + tileSize) < image->height;
             tileY = tileY + tileSize)
-        for(int tileX = 0; tileX < (ref->width + tileSize);
+        for(; (tileX + tileSize) < image->width;
                 tileX = tileX + tileSize)
         {
             // Get back the local thresold from the Matrix[ts][ts]
-            guchar threshold = UGetLocalThreshold(ref, tileX, tileY, 
+            localThreshold = UGetLocalThreshold(ref, tileX, tileY,
                     tileSize, tileSize);
+
             // Assign the Black/White data to the binary Image
 	    for (int y = tileY; y < (tileY + tileSize); y++)
 	    {
 		for (int x = tileX; x < (tileX + tileSize); x++)
-			image->data[x][y] = ref->intensity[x][y] / threshold;
+			image->data[x][y] = ref->intensity[x][y] / localThreshold;
 	    }
         }
+
+    // Loop among remaining pixels
+    for(; tileY < image->height; tileY++)
+        for(; tileX < image->width; tileX++)
+            image->data[tileX][tileY] = ref->intensity[tileX][tileY] / localThreshold;
 
     return image;
 }

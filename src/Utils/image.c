@@ -127,7 +127,7 @@ Image *UGrayscaleToRgb(ImageGS *reference)
 	}
 	return result;
 }
-
+/*
 ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
 	ImageBN *result = malloc(sizeof(ImageBN));
@@ -143,7 +143,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
 	}
 
 	return result;
-}
+}*/
 
 guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
         size_t width, size_t height)
@@ -182,7 +182,7 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
 
 }
 
-ImageBN *USauvolaBinarization(ImageGS *ref)
+ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
     ImageBN *image = malloc(sizeof(ImageBN));
     guchar localThreshold = 0;
@@ -200,10 +200,9 @@ ImageBN *USauvolaBinarization(ImageGS *ref)
     // Loop among all tiles
     int tileY = 0; // Tile up corner
     int tileX = 0; // Tile left corner
-    for(; (tileY + tileSize) < image->height;
-            tileY = tileY + tileSize)
-        for(; (tileX + tileSize) < image->width;
-                tileX = tileX + tileSize)
+    for(; (tileY + tileSize) < image->height; tileY = tileY + tileSize)
+    {
+        for(; (tileX + tileSize) < image->width; tileX = tileX + tileSize)
         {
             // Get back the local thresold from the Matrix[ts][ts]
             localThreshold = UGetLocalThreshold(ref, tileX, tileY,
@@ -213,11 +212,20 @@ ImageBN *USauvolaBinarization(ImageGS *ref)
 	    for (int y = tileY; y < (tileY + tileSize); y++)
 	    {
 		for (int x = tileX; x < (tileX + tileSize); x++)
-			image->data[x][y] = ref->intensity[x][y] / localThreshold;
+                {
+                        image->data[x][y] =
+                            (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
+			//image->data[x][y] = ref->intensity[x][y] / localThreshold;
+                }
 	    }
+
         }
 
+        tileX = 0;
+    }
     // Loop among remaining pixels
+    localThreshold = UGetLocalThreshold(ref, tileX, tileY, image->width - tileX,
+            image->height - tileY);
     for(; tileY < image->height; tileY++)
         for(; tileX < image->width; tileX++)
             image->data[tileX][tileY] = ref->intensity[tileX][tileY] / localThreshold;

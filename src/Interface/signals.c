@@ -1175,10 +1175,14 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		if(data->fseg != NULL)
 			free(data->fseg);
 		data->fseg = NULL;
+		
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "FileNameEntry"));
 
-		data->fseg = fopen("trainingSet.txt", "w");
+	char* filename = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+		data->fseg = fopen(filename, "w");
 		if(data->fseg == NULL)
-			printf("Error opening trainingSet.txt\n");
+			printf("Error while opening the training set file\n");
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
@@ -1198,21 +1202,37 @@ gchar* get_text_from_txtview(SGlobalData *data)
 	return text;
 }
 
-gchar get_next_char_txtview(SGlobalData *data)
+gunichar get_next_char_txtview(SGlobalData *data)
 {
-	gchar* txt = g_locale_to_utf8(get_text_from_txtview(data), -1, NULL, NULL, NULL);
-	printf("%c\n", txt[0]);
-	gchar tmp = *txt;
-	int i = 0;
-	while(tmp == ' ' || tmp == '\n')
-		tmp = txt[i++];
-	g_free(txt);
-	return tmp;
+	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+		"TxtLearning"));
+	GtkTextIter start, end;
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+	gunichar text;
+
+	gtk_text_buffer_get_bounds (buffer, &start, &end);
+	text = gtk_text_iter_get_char(&start);
+
+	while(text == ' ' || text == '\r' || text == '\n')
+	{
+		remove_first_char(data);
+		gtk_text_buffer_get_bounds (buffer, &start, &end);
+		text = gtk_text_iter_get_char(&start);
+	}
+	return text;
 }
 
 void remove_first_char(SGlobalData *data)
 {
-	if(data){}
+	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+		"TxtLearning"));
+
+	GtkTextIter start, first;
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+	gtk_text_buffer_get_start_iter(buffer, &start);
+	gtk_text_buffer_get_iter_at_offset(buffer, &first, 1);
+	gtk_text_buffer_delete(buffer, &start, &first);
+	gtk_text_view_set_buffer(view, buffer);
 }
 
 void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
@@ -1224,14 +1244,10 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 		{
 
 			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
-			gchar text = get_next_char_txtview(data);
-			//printf("%u\n", (unsigned int)text);
+			gunichar text = get_next_char_txtview(data);
 			fprintf(data->fseg, "%c ", text);
 			for(int i = 0; i < charInputSize * charInputSize; i++)
-			{
-				printf("%d %p %d\n", (int)data->segBoxArray[data->boxDetectIndex]->lvl, data->segBoxArray[data->boxDetectIndex]->input, data->boxDetectIndex);
 				fprintf(data->fseg, "%d", (int)data->segBoxArray[data->boxDetectIndex]->input[i]);
-			}
 			fprintf(data->fseg, "\n");
 			remove_first_char(data);
 			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);

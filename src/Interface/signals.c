@@ -1116,6 +1116,10 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 			data->builder, "LearningWindow"));
 		if(data->img_rgb)
 			apply_zoom(data, 1);
+
+		data->seg = GetBoxFromSplit(data->img_rgb);
+
+
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
 	}

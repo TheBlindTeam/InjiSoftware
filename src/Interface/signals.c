@@ -79,6 +79,21 @@ void connectSignals(SGlobalData *data)
 			"DilatationBtn")),
 		"clicked",
 		G_CALLBACK(on_click_transform_dilatation), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnOKBtn")),
+		"clicked",
+		G_CALLBACK(on_click_learning_ok), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnNextBtn")),
+		"clicked",
+		G_CALLBACK(on_click_learning_next), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnSaveBtn")),
+		"clicked",
+		G_CALLBACK(on_click_learning_save), data);
 	/* Menu */
 
 	// File
@@ -246,6 +261,7 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 			{
 				if (data->img_rgb != NULL)
 					UFreeImage(data->img_rgb);
+				data->img_rgb = NULL;
 
 				if (data->segBoxArray != NULL)
 				{
@@ -1067,7 +1083,6 @@ void on_zoom_change(GtkWidget *widget, gpointer user_data)
 				data->builder, "ZoomField"));
 			int zoom = atoi(gtk_entry_get_text(GTK_ENTRY(entry)));
 			double zm = (!zoom)?1:(double)zoom/100;
-			printf("%d %f\n", zoom, zm);
 			data->previewScale = zm;
 			apply_zoom(data, 0);
 		}
@@ -1118,6 +1133,29 @@ void apply_zoom(SGlobalData *data, int change_field)
 				"ZoomField")), str);
 	}
 }
+/*
+void rec_draw_box(SGlobalData *data, Box** box)
+{
+	if (box->lvl != 4)
+		for (int i = 0; i < box->nbSubBoxes; i++)
+			rec_draw_box(data, box->subBoxes[i]);
+	else
+	{
+		DrawBox
+	}
+}
+*/
+
+int get_next_char_index(Box** segBox, int from, int max)
+{
+	if(from >= max || from < 0)
+		return -1;
+	while(segBox[from++]->lvl != CHARACTER && from < max)
+		if(from >= max)
+			return -1;
+	return from;
+}
+
 void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
@@ -1128,10 +1166,99 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		if(data->img_rgb)
 			apply_zoom(data, 1);
 
-		data->seg = GetBoxFromSplit(data->img_rgb);
+		data->img_bn = URgbToBinary(data->img_rgb);
+		data->firstBox = GetBoxFromSplit(data->img_rgb);
+		data->segBoxArray = GetBreadthBoxArray(data->firstBox, &data->boxCount);
+		// DrawAllBoxes (rec_draw_box)
+		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0, data->boxCount);
+		DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+		if(data->fseg != NULL)
+			free(data->fseg);
+		data->fseg = NULL;
 
+		data->fseg = fopen("trainingSet.txt", "w");
+		if(data->fseg == NULL)
+			printf("Error opening trainingSet.txt\n");
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
 	}
 }
+
+gchar* get_text_from_txtview(SGlobalData *data)
+{
+	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+		"TxtLearning"));
+	GtkTextIter start, end;
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+	gchar *text;
+
+	gtk_text_buffer_get_bounds (buffer, &start, &end);
+	text = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+	return text;
+}
+
+gchar get_next_char_txtview(SGlobalData *data)
+{
+	gchar* txt = g_locale_to_utf8(get_text_from_txtview(data), -1, NULL, NULL, NULL);
+	printf("%c\n", txt[0]);
+	gchar tmp = *txt;
+	int i = 0;
+	while(tmp == ' ' || tmp == '\n')
+		tmp = txt[i++];
+	g_free(txt);
+	return tmp;
+}
+
+void remove_first_char(SGlobalData *data)
+{
+	if(data){}
+}
+
+void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if(data->boxDetectIndex != -1)
+		{
+
+			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
+			gchar text = get_next_char_txtview(data);
+			//printf("%u\n", (unsigned int)text);
+			fprintf(data->fseg, "%c ", text);
+			for(int i = 0; i < charInputSize * charInputSize; i++)
+			{
+				printf("%d %p %d\n", (int)data->segBoxArray[data->boxDetectIndex]->lvl, data->segBoxArray[data->boxDetectIndex]->input, data->boxDetectIndex);
+				fprintf(data->fseg, "%d", (int)data->segBoxArray[data->boxDetectIndex]->input[i]);
+			}
+			fprintf(data->fseg, "\n");
+			remove_first_char(data);
+			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
+		}
+		if(data->boxDetectIndex != -1)
+			DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+	}
+}
+
+
+
+void on_click_learning_next(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if(data){}//del
+	}
+}
+
+void on_click_learning_save(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if(data){}//del
+		fclose(data->fseg);
+	}
+}
+

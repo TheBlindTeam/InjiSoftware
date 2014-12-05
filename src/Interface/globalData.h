@@ -13,6 +13,7 @@ typedef struct
 	GtkBuilder *builder;
 	Image *img_rgb;
 	Image *img_rgb_original;
+	ImageBN *img_bn;
 	CairoNeuronData *neuronData;
 	NetworkSet* networkSet;
 	Box** segBoxArray;
@@ -21,5 +22,5 @@ typedef struct
 	double previewScale;
 	GdkPixbuf *pixbuf;
 	guchar **tmp;
-	Box *seg;
+	FILE* fseg;
 } SGlobalData;

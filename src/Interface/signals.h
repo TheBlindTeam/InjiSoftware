@@ -11,6 +11,7 @@
 
 #include "../NeuralNetwork/neuronsUtils.h"
 #include "../NeuralNetwork/gates.h"
+#include "../NeuralNetwork/character.h"
 #include "../PreTreatment/matrixOperation.h"
 #include "../PreTreatment/segmentation.h"
 #include "../PreTreatment/hough.h"
@@ -90,3 +91,7 @@ void on_zoom_change(GtkWidget *widget, gpointer user_data);
 void apply_zoom(SGlobalData *data, int change_field);
 
 // Learning
+void rec_draw_box(SGlobalData *data, Box** box);
+void on_click_learning_ok(GtkWidget *widget, gpointer user_data);
+void on_click_learning_next(GtkWidget *widget, gpointer user_data);
+void on_click_learning_save(GtkWidget *widget, gpointer user_data);

@@ -329,15 +329,15 @@ int GetCharsFromImage(ImageBN *img, Box *b)
 	{
 		b->subBoxes[i]->lvl = CHARACTER;
 		CutMargin(img, b->subBoxes[i], 1, 0, 0);
-		b->charImg = ToSquareImage(img, b->subBoxes[i]);
-		ImageBN *tmp = ResizeImageBNToChar(b->charImg);
-		UFreeImageBinary(b->charImg);
-		b->charImg = tmp;
-		b->input = ConvertImageToInput(tmp);
-		for (int i = 0; i < charInputSize; i ++)
+		b->subBoxes[i]->charImg = ToSquareImage(img, b->subBoxes[i]);
+		ImageBN *tmp = ResizeImageBNToChar(b->subBoxes[i]->charImg);
+		UFreeImageBinary(b->subBoxes[i]->charImg);
+		b->subBoxes[i]->charImg = tmp;
+		b->subBoxes[i]->input = ConvertImageToInput(tmp);
+		for (int x = 0; x < charInputSize; x ++)
 		{
-			for (int j = 0; j < charInputSize; j ++)
-				if ((int)b->input[i + j * charInputSize])
+			for (int y = 0; y < charInputSize; y ++)
+				if ((int)b->subBoxes[i]->input[x + y * charInputSize])
 					printf("X");
 				else
 					printf(".");
@@ -560,6 +560,7 @@ Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 
 Image *DrawBlackPixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 {
+	printf("%d %p\n", b->lvl, b->input);
 	ImageBN *tmp = NegativeBinaryImage(mask);
 	Image *r = DrawWhitePixels(img, tmp, b, p);
 	UFreeImageBinary(tmp);

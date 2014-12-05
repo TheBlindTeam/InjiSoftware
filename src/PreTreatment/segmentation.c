@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+const Pixel BoxColor[] = {{255, 255, 255, 255}, {255, 255, 0, 255},
+	{255, 0, 255, 255}, {0, 255, 255, 255}, {255, 0, 0, 255}, {0, 255, 0, 255}};
 BoxList AddInList(BoxList list, Box *b)
 {
 	BoxElementList *elt = malloc(sizeof(BoxElementList));
@@ -73,7 +75,8 @@ void AddInSubBoxes(Box *b, Box *toBeAdded)
 		b->capacity *= 2;
 		b->subBoxes = realloc(b->subBoxes, sizeof(Box*) * b->capacity);
 	}
-	b->subBoxes[b->nbSubBoxes++] = toBeAdded;
+	b->subBoxes[b->nbSubBoxes] = toBeAdded;
+	b->nbSubBoxes++;
 }
 
 void FreeBox(Box *b)
@@ -193,8 +196,6 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 			tmp->rectangle.y2 = y1 *
 				(!(!isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + y2 * b->rectangle.y2;
-			tmp->nbSubBoxes = 0;
-			tmp->subBoxes = NULL;
 			prev = i;
 			AddInSubBoxes(parent, tmp);
 			r++;
@@ -241,62 +242,55 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 	{
 		if (Split(mask, b->subBoxes[i], b, HORIZONTAL, 1, 0) > 1)
 			r = 1;
-		while (prev <= b->nbSubBoxes)
+		while (prev < b->nbSubBoxes)
 			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
 		FreeBox(b->subBoxes[i]);
 		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+		b->nbSubBoxes--;
 	}
 	max = b->nbSubBoxes;
 	prev = max;
-	for (int i = 0; i < max; i ++)
-	{
-		if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
-			r = 1;
-		while (prev <= b->nbSubBoxes)
-			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
-		FreeBox(b->subBoxes[i]);
-		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
-	}
 	if (r)
+		for (int i = 0; i < max; i ++)
+		{
+			if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
+				r = 2;
+			while (prev < b->nbSubBoxes)
+				CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
+			FreeBox(b->subBoxes[i]);
+			b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+			b->nbSubBoxes--;
+		}
+	if (r == 2)
+	{
 		GetBlocksFromImage(img, mask, b);
+	}
 	else
+	{
 		for (int i = 0; i < b->nbSubBoxes; i ++)
 			GetLinesFromImage(img, b->subBoxes[i]);
+	}
 }
 
 Box *GetBoxFromSplit(Image *img)
 {
-	printf("GetBox1\n");
 	ImageBN *tmp = URgbToBinary(img);
-	printf("GetBox2\n");
 	ImageBN *bn = NegativeBinaryImage(tmp);
-	printf("GetBox3\n");
-	UFreeImageBinary(bn);
-	printf("GetBox4\n");
+	UFreeImageBinary(tmp);
 	ImageBN *dilated = DilatationOnBinary(bn, (img->width + img->height) / 200);
-	printf("GetBox5\n");
 	Box *r = InitBox();
-	printf("GetBox6\n");
 	r->rectangle.x1 = 0;
 	r->rectangle.y1 = 0;
 	r->rectangle.x2 = bn->width - 1;
 	r->rectangle.y2 = bn->height - 1;
-	printf("GetBox7\n");
 	r->lvl = NOTEXT;
-	printf("GetBox8\n");
 	CutMargin(dilated, r, 1, 1, 0);
-	printf("GetBox9\n");
 	Split(dilated, r, r, HORIZONTAL, 1, 0);
-	printf("GetBox10\n");
 	for (int i = 0; i < r->nbSubBoxes; i ++)
 		CutMargin(dilated, r, 1, 1, 0);
-	printf("GetBox11\n");
 	GetBlocksFromImage(bn, dilated, r);
-	printf("GetBox12\n");
 	UFreeImageBinary(bn);
-	printf("GetBox13\n");
 	UFreeImageBinary(dilated);
-	printf("GetBox14\n");
 	return r;
 }
 
@@ -375,7 +369,7 @@ Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i++)
 		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
 			if (mask->data[i][j])
-				img->pixList[i][j] = p;
+				r->pixList[i][j] = p;
 	return r;
 }
 

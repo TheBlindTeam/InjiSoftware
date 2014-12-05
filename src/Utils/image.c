@@ -262,6 +262,8 @@ Image *ImageCopy(Image *img)
 	Image *r = malloc(sizeof(Image));
 	r->width = img->width;
 	r->height = img->height;
+	r->bits_per_sample = img->bits_per_sample;
+	r->has_alpha = img->has_alpha;
 	r->pixList = malloc(sizeof(Pixel *) * r->width);
 	for (int i = 0; i < r->width; i ++)
 	{
@@ -382,7 +384,7 @@ ImageBN *DilatationOnBinary(ImageBN *img, int coef)
 		tmp = coef + 1;
 		for (int j = r->width - 1; j >= 0; j--)
 		{
-			if (img->data[i][j])
+			if (img->data[j][i])
 				tmp = 0;
 			if (tmp <= coef)
 				r->data[j][i] = 1;

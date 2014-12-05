@@ -3,6 +3,8 @@
 #include "../Utils/image.h"
 #include <math.h>
 
+extern const Pixel BoxColor[];
+
 typedef struct
 {
 	int nb_chars;

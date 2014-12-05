@@ -800,12 +800,17 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			}
 			if (data->boxDetectIndex == data->boxCount)
 				return;
-			if (data->boxDetectIndex != 0)
-				DrawNotInSubBoxes(data->img_rgb,
-					data->segBoxArray
-					[data->boxDetectIndex - 1], BLUE);
-			DrawNotInSubBoxes(data->img_rgb,
-				data->segBoxArray[data->boxDetectIndex], RED);
+			Image *segTmpImg;
+			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
+				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
+			else
+			{
+				ImageBN *segBnImg = URgbToBinary(data->img_rgb);
+				segTmpImg = DrawBlackPixels(data->img_rgb, segBnImg, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
+				UFreeImageBinary(segBnImg);
+			}
+			UFreeImage(data->img_rgb);
+			data->img_rgb =  segTmpImg;
 			data->boxDetectIndex++;
 
 			if(data->tmp)

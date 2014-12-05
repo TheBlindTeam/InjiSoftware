@@ -343,7 +343,6 @@ int GetCharsFromImage(ImageBN *img, Box *b)
 					printf(".");
 			printf("\n");
 		}
-		getchar();
 	}
 	qsort(b->subBoxes, b->nbSubBoxes, sizeof(Box*), compareBox);
 	return b->nbSubBoxes;

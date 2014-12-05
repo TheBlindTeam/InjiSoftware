@@ -217,6 +217,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
     int tileX = 0; // Tile left corner
     for(; (tileY + tileSize) < image->height; tileY = tileY + tileSize)
     {
+        tileX = 0;
         for(; (tileX + tileSize) < image->width; tileX = tileX + tileSize)
         {
             // Get back the local thresold from the Matrix[ts][ts]
@@ -230,20 +231,36 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
                 {
                         image->data[x][y] =
                             (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
-			//image->data[x][y] = ref->intensity[x][y] / localThreshold;
                 }
 	    }
 
         }
 
-        tileX = 0;
     }
+
+    printf("tileX = %d | tileY = %d\n", tileX, tileY);
+
     // Loop among remaining pixels
-    localThreshold = UGetLocalThreshold(ref, tileX, tileY, image->width - tileX,
+    localThreshold = UGetLocalThreshold(ref, tileX, 0, image->width - tileX,
             image->height - tileY);
-    for(; tileY < image->height; tileY++)
-        for(; tileX < image->width; tileX++)
-            image->data[tileX][tileY] = ref->intensity[tileX][tileY] / localThreshold;
+
+    for(int x = tileX; x < image->width; x++)
+        for(int y = 0; y < tileY; y++)
+        {
+            image->data[x][y] =
+                (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
+        }
+
+    localThreshold = UGetLocalThreshold(ref, 0, tileY, image->width,
+            image->height - tileY);
+    // Last rectangle which cannot be a 30*30 pixels
+    for(int y = tileY; y < image->height; y++)
+        for(int x = 0; x < image->width; x++)
+        {
+
+            image->data[x][y] =
+                (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
+        }
 
     return image;
 }*/

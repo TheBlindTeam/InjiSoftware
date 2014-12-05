@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <locale.h>
 #include "serialization.h"
 #include "../Utils/math.h"
 
@@ -8,15 +9,8 @@ int writeConnection(Connection ct, FILE *file)
 {
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
-	fprintf(file, "\t\t\t\tWEI: ");
-	if (ct.weight < 0)
-	{
-		fprintf(file, "-");
-		ct.weight *= -1;
-	}
-	fprintf(file, "%d.%d\n", (int)ct.weight,
-	(int)((ct.weight - (int)(ct.weight))*1000000));
-	//fprintf(file, "\t\t\t\tWEI: %.6lf\n", ct.weight);
+	setlocale(LC_NUMERIC, "C");
+	fprintf(file, "\t\t\t\tWEI: %f\n", ct.weight);
 	return 1;
 }
 
@@ -147,7 +141,7 @@ int readConnection(FILE *file, Connection *c)
 	if (error != EOF)
 	{
 		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
-		printf("saved %lf\n", c->weight);
+		printf("saved %f\n", c->weight);
 	}
 	else
 		return error;

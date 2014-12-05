@@ -14,7 +14,7 @@ double *ConvertCharToTargetArray(gchar c);
 
 ImageBN *ToSquareImage(ImageBN *img, struct Box *b);
 
-ImageBN *ResizeImage(ImageBN *img);
+ImageBN *ResizeImageBNToChar(ImageBN *img);
 
 double *ConvertImageToInput(ImageBN *img);
 #endif

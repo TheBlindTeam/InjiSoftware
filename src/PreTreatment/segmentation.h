@@ -7,8 +7,7 @@ extern const Pixel BoxColor[];
 
 typedef struct
 {
-	int nb_chars;
-	gchar *c;
+	gchar c;
 	double prob;
 }CharOutput;
 
@@ -54,6 +53,10 @@ typedef struct BoxElementList
 
 typedef BoxElementList *BoxList;
 
+#include "../NeuralNetwork/character.h"
+
+int compareBox(const void *a, const void *b);
+
 //Adds an element box b in a list list and returns it.
 BoxList AddInList(BoxList list, Box *b);
 
@@ -95,11 +98,13 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient, int minSpace, i
 /*Removes the margins froms the image*/
 void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor);
 
-void GetCharsFromImage(ImageBN *img, Box *b);
+ImageBN *ExtractCharacterInBinary(ImageBN *img, Box *b);
 
-void GetWordsFromImage(ImageBN *img, Box *b);
+int GetCharsFromImage(ImageBN *img, Box *b);
 
-void GetLinesFromImage(ImageBN *img, Box *b);
+int GetWordsFromImage(ImageBN *img, Box *b);
+
+int GetLinesFromImage(ImageBN *img, Box *b);
 
 void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b);
 /**/

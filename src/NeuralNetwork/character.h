@@ -3,14 +3,24 @@
 #include "../Utils/image.h"
 #include "../PreTreatment/segmentation.h"
 #include "stdlib.h"
+#include "neuronsUtils.h"
+#include "learning.h"
 
 extern const int charInputSize;
 
-gchar ConvertToOrderedChar(gchar c);
+CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size);
 
-gchar ConvertToRegularChar(gchar c);
+void NInitCharacterNetworkSetParams(NetworkSet *ref);
 
-double *ConvertCharToTargetArray(gchar c);
+NetworkSet* NInitCharacterNetworkSet(char *path);
+
+ExempleSet *NGetCharExempleSet(char *path);
+
+gunichar ConvertToOrderedChar(gunichar c);
+
+gunichar ConvertToRegularChar(gunichar c);
+
+double *ConvertCharToTargetArray(gunichar c);
 
 ImageBN *ToSquareImage(ImageBN *img, struct Box *b);
 

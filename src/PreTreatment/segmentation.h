@@ -7,7 +7,7 @@ extern const Pixel BoxColor[];
 
 typedef struct
 {
-	gchar c;
+	gunichar c;
 	double prob;
 }CharOutput;
 

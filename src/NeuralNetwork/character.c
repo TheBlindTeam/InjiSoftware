@@ -1,31 +1,91 @@
 #include "character.h"
 
 const int charInputSize = 32;
-const int output = 255;
+const int outputSize = 255;//A Changer
 const double learningRate = 0.03;
 const double momentum = 0.1;
 const double overfitCoef = 0.08;
 
-/*CharOutput *()
+CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
+{
+	CharOutput *r;
+	double *output;
+	*size = 0;
+	NRun(nWorkSet->nWork, input, &output);
+	for (int i = 0; i < outputSize; i ++)
+		if (output[i] > 0.8)
+			(*size)++;
+	r = malloc(sizeof(CharOutput) * (*size));
+	*size = 0;
+	for (int i = 0; i < outputSize; i ++)
+		if (output[i] > 0.8)
+		{
+			r[i].c = ConvertToRegularChar((gchar)i);
+			r[i].prob = output[i];
+			(*size)++;
+		}
+	qsort(r, )
+	return r;
+}
+
+void NInitCharacterNetworkSetParams(NetworkSet *ref)
+{
+	ref->maxError = 0;
+	ref->lRate = learningRate;
+	ref->momentum = momentum;
+	ref->overfitCoef = overfitCoef;
+	ref->learn = &NBackPropLearn;
+}
+
+NetworkSet* NInitCharacterNetworkSet(char *path, ExempleSet *exSet)
+{
+	NetworkSet *r = malloc(sizeof(NetworkSet));
+	NInitCharacterNetworkSetParams(r);
+	r->exSet = exSet;
+	if (!path)
+	{
+		r->nWork = NINIT[5](charInputSize * charInputSize, outputSize);
+		NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, LINEAR, TAN_SIGMOID);
+	}
+	/*
+	else
+		r->nWork = LoadFrompath
+	*/
+	return r;
+}
 
 ExempleSet *NGetCharExempleSet(char *path)
 {
-	
-}*/
+	path = path;
+	int nbLines = 0; //Le nombre de ligne du fichier path
+	double **input;
+	double **target;
+	input = malloc(sizeof(double*) * nbLines);
+	target = malloc(sizeof(double*) * nbLines);
+	for (int i = 0; i < nbLines; i ++)
+	{
+		target[i] = ConvertCharToTargetArray('A'); //Remplacer 'A' par le char en debut de ligne
+		input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
+		for (int j = 0; j < charInputSize * charInputSize; j ++)
+			input[i][j] = 0; //Remplacer 0 par le jnth nombre sur la ligne
+	}
+	ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
+	return r;
+}
 
-gchar ConvertToOrderedChar(gchar c)
+gunichar ConvertToOrderedChar(gunichar c)
 {
 	return c;
 }
 
-gchar ConvertToRegularChar(gchar c)
+gunichar ConvertToRegularChar(gunichar c)
 {
 	
 	return c;
 }
 
 
-double *ConvertCharToTargetArray(gchar c)
+double *ConvertCharToTargetArray(gunichar c)
 {
 	int tmp = ConvertToOrderedChar(c);
 	if (tmp < 255)

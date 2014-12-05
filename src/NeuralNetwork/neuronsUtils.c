@@ -11,7 +11,9 @@ const Ninit NINIT[] = {
 	&NInitializeCompleteBias,
 	&NInitializeCompleteNBias,
 	&NInitializeLinearBias,
-	&NInitializeLinearNBias };
+	&NInitializeLinearNBias,
+	&NInitializeDoubleBias,
+	&NInitializeDoubleNBias};
 
 
 Network *NInitializeSimpleMLP(int input, int output, int middle, int bias)

@@ -184,6 +184,21 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
 
 ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
+	ImageBN *image = malloc(sizeof(*ref));
+	image->width = ref->width;
+	image->height = ref->height;
+	image->data = malloc(sizeof(int *) * image->width);
+	for (int i = 0; i < image->width; i ++)
+	{
+		image->data[i] = malloc(sizeof(int) * image->height);
+		for (int j = 0; j < image->height; j ++)
+			image->data[i][j] = ref->intensity[i][j] / 127;
+	}
+	return image;
+}
+
+/*ImageBN *UGrayscaleToBinary(ImageGS *ref)
+{
     ImageBN *image = malloc(sizeof(ImageBN));
     guchar localThreshold = 0;
     int tileSize = 30; // 30 * 30 pixels by Tile
@@ -248,7 +263,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
         }
 
     return image;
-}
+}*/
 
 ImageBN *URgbToBinary(Image *ref)
 {
@@ -287,6 +302,8 @@ Image *ImageCopy(Image *img)
 	Image *r = malloc(sizeof(Image));
 	r->width = img->width;
 	r->height = img->height;
+	r->bits_per_sample = img->bits_per_sample;
+	r->has_alpha = img->has_alpha;
 	r->pixList = malloc(sizeof(Pixel *) * r->width);
 	for (int i = 0; i < r->width; i ++)
 	{
@@ -407,7 +424,7 @@ ImageBN *DilatationOnBinary(ImageBN *img, int coef)
 		tmp = coef + 1;
 		for (int j = r->width - 1; j >= 0; j--)
 		{
-			if (img->data[i][j])
+			if (img->data[j][i])
 				tmp = 0;
 			if (tmp <= coef)
 				r->data[j][i] = 1;

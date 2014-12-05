@@ -3,6 +3,8 @@
 #include "../Utils/image.h"
 #include <math.h>
 
+extern const Pixel BoxColor[];
+
 typedef struct
 {
 	int nb_chars;
@@ -31,6 +33,7 @@ typedef struct Box
 	SegmentationLevel lvl;
 	int nbOutput;
 	CharOutput *output;
+	ImageBN *charImg;
 	double *input;
 	int capacity;
 	int nbSubBoxes;
@@ -79,6 +82,14 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int SpaceColor);
 /**/
 
+int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size);
+
+int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r);
+
+int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
+
+int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
+
 int Split(ImageBN *img, Box *b, Box *parent, Orientation orient, int minSpace, int spaceColor);
 
 /*Removes the margins froms the image*/
@@ -103,7 +114,7 @@ void GetBreadthBoxArrayAux(BoxList list);
 /*Draws coloured rectangles in all spaces that are not text*/
 Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p);
 
-Image *DrawBox(Image *img, Box *b, Pixel p);
+Image *DrawBox(Image *img, Box *b, Pixel p, int thickness);
 
 Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p);
 

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+const Pixel BoxColor[] = {{255, 255, 255, 255}, {255, 255, 0, 255},
+	{255, 0, 255, 255}, {0, 255, 255, 255}, {255, 0, 0, 255}, {0, 255, 0, 255}};
 BoxList AddInList(BoxList list, Box *b)
 {
 	BoxElementList *elt = malloc(sizeof(BoxElementList));
@@ -73,7 +75,8 @@ void AddInSubBoxes(Box *b, Box *toBeAdded)
 		b->capacity *= 2;
 		b->subBoxes = realloc(b->subBoxes, sizeof(Box*) * b->capacity);
 	}
-	b->subBoxes[b->nbSubBoxes++] = toBeAdded;
+	b->subBoxes[b->nbSubBoxes] = toBeAdded;
+	b->nbSubBoxes++;
 }
 
 void FreeBox(Box *b)
@@ -162,6 +165,102 @@ void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor)
 	}
 }
 
+int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size)
+{
+	int x1, y1;
+	int *r;
+	int count = 0;
+	int max;
+	int min;
+	GetIterPrim(orient, &x1, &y1);
+	min = b->rectangle.x1 * x1 + b->rectangle.y1 * y1;
+	max = b->rectangle.x2 * x1 + b->rectangle.y2 * y1;
+	*size = max - min + 1;
+	r = malloc(sizeof(int) * *size);
+	for (int i = 0; i < *size; i ++)
+		r[i] = 0;
+	for (int i = min; i <= max; i ++)
+	{
+		if (isBlank(img, b, orient, i, 0))
+			count ++;
+		else if (count > 1)
+		{
+			r[count - 1]++;
+			count = 0;
+		}
+		if (count == *size)
+			r[count - 1]++;
+	}
+	return r;
+}
+
+int SpacesExpectedValue(int *spaces, int nbSpaces, int add, double *r)
+{
+	int count = 0;
+	int sum = 0;
+	for (int i = 0; i < nbSpaces; i ++)
+	{
+		sum += spaces[i] * (i + 1 + add);
+		count += spaces[i];
+	}
+	if (count)
+	{
+		*r = (double)sum / (double)count;
+		return 1;
+	}
+	return 0;
+}
+
+int SpacesVariance(int *spaces, int nbSpaces, int add, double *r)
+{
+	double expectedValue = 0;
+	double sum = 0;
+	int count = 0;
+	if(!SpacesExpectedValue(spaces, nbSpaces, add, &expectedValue))
+		return 0;
+	for (int i = 0; i < nbSpaces; i ++)
+	{
+		sum += spaces[i] * pow(1 - ((i + 1 + add) < expectedValue ? 
+			(double)(i + 1 + add) / (double)expectedValue :
+			(double)expectedValue / (double)(i + 1 + add)), 2);
+		count += spaces[i];
+	}
+	if (count)
+	{
+		*r = sum / (double)count;
+		return 1;
+	}
+	return 0;
+}
+
+int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
+{
+	double tmpA = 0;
+	double tmpB = 0;
+	double expA = 0;
+	double expB = 0;
+	double min;
+ 	if(!SpacesVariance(spaces, nbSpaces, 0, &tmpB))
+		return 0;
+	min = pow(tmpB, 2);
+	*r = 0;
+	for (int i = 1; i < nbSpaces - 1; i ++)
+		if (spaces[i] > 0)
+			if (SpacesVariance(spaces, i + 1, i, &tmpA) &&
+				SpacesVariance(&spaces[i + 1],
+					nbSpaces - i - 1, i + 1, &tmpB))
+				if (pow(tmpA, 2) + pow(tmpB, 2) < min)
+				{
+					min = pow(tmpB, 4) + pow(tmpA, 4);
+					*r = i + 1;
+					SpacesExpectedValue(spaces, i + 1, i, &expA);
+					SpacesExpectedValue(spaces, nbSpaces - i - 1,
+						i + 1, &expB);
+				}
+	*minVar = pow(1 - (expA / expB), 2);
+	return 1;
+}
+
 int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 	int minSpace, int spaceColor)
 {
@@ -171,6 +270,7 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 	int min;
 	int max;
 	int r = 0;
+	int start = 0;
 
 	GetIterPrim(orient, &x1, &y1);
 	GetIterSec(orient, &x2, &y2);
@@ -182,7 +282,7 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 		int isCurBlank = isBlank(img, b, orient, i, spaceColor);
 		if (isCurBlank)
 			count ++;
-		if ((!isCurBlank && count > minSpace) || i == max)
+		if ((start && !isCurBlank && count > minSpace) || i == max)
 		{
 			Box *tmp = InitBox();
 			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
@@ -193,14 +293,15 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 			tmp->rectangle.y2 = y1 *
 				(!(!isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + y2 * b->rectangle.y2;
-			tmp->nbSubBoxes = 0;
-			tmp->subBoxes = NULL;
 			prev = i;
 			AddInSubBoxes(parent, tmp);
 			r++;
 		}
 		if (!isCurBlank)
+		{
 			count = 0;
+			start = 1;
+		}
 	}
 	return r;
 }
@@ -209,14 +310,26 @@ void GetCharsFromImage(ImageBN *img, Box *b)
 {
 	Split(img, b, b, VERTICAL, 1, 0);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
+	{
+		b->subBoxes[i]->lvl = CHARACTER;
 		CutMargin(img, b->subBoxes[i], 1, 0, 0);
+	}
 }
 
 void GetWordsFromImage(ImageBN *img, Box *b)
 {
-	Split(img, b, b, VERTICAL, 10, 0);
+	int *spaces;
+	int size;
+	double tmp;
+	int minBlank = 1;
+	spaces = GetSpaceArray(img, b, VERTICAL, &size);
+	if (SpacesExpectedValue(spaces, size, 0, &tmp))
+		minBlank = round(tmp);
+	free(spaces);
+	Split(img, b, b, VERTICAL, minBlank, 0);
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 	{
+		b->subBoxes[i]->lvl = WORD;
 		CutMargin(img, b->subBoxes[i], 1, 0, 0);
 		GetCharsFromImage(img, b->subBoxes[i]);
 	}
@@ -227,6 +340,7 @@ void GetLinesFromImage(ImageBN *img, Box *b)
 	Split(img, b, b, HORIZONTAL, 1, 0);
 	for (int i = 0; i < b->nbSubBoxes; i++)
 	{
+		b->subBoxes[i]->lvl = LINE;
 		CutMargin(img, b->subBoxes[i], 1, 1, 0);
 		GetWordsFromImage(img, b->subBoxes[i]);
 	}
@@ -241,62 +355,56 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 	{
 		if (Split(mask, b->subBoxes[i], b, HORIZONTAL, 1, 0) > 1)
 			r = 1;
-		while (prev <= b->nbSubBoxes)
+		while (prev < b->nbSubBoxes)
 			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
 		FreeBox(b->subBoxes[i]);
 		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+		b->nbSubBoxes--;
 	}
 	max = b->nbSubBoxes;
 	prev = max;
-	for (int i = 0; i < max; i ++)
-	{
-		if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
-			r = 1;
-		while (prev <= b->nbSubBoxes)
-			CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
-		FreeBox(b->subBoxes[i]);
-		b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
-	}
 	if (r)
+		for (int i = 0; i < max; i ++)
+		{
+			if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
+				r = 2;
+			while (prev < b->nbSubBoxes)
+				CutMargin(mask, b->subBoxes[prev++], 1, 1, 0);
+			FreeBox(b->subBoxes[i]);
+			b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
+			b->nbSubBoxes--;
+		}
+	if (r == 2)
+	{
 		GetBlocksFromImage(img, mask, b);
+	}
 	else
 		for (int i = 0; i < b->nbSubBoxes; i ++)
+		{
+			b->subBoxes[i]->lvl = BLOCK;
 			GetLinesFromImage(img, b->subBoxes[i]);
+		}
 }
 
 Box *GetBoxFromSplit(Image *img)
 {
-	printf("GetBox1\n");
 	ImageBN *tmp = URgbToBinary(img);
-	printf("GetBox2\n");
 	ImageBN *bn = NegativeBinaryImage(tmp);
-	printf("GetBox3\n");
-	UFreeImageBinary(bn);
-	printf("GetBox4\n");
+	UFreeImageBinary(tmp);
 	ImageBN *dilated = DilatationOnBinary(bn, (img->width + img->height) / 200);
-	printf("GetBox5\n");
 	Box *r = InitBox();
-	printf("GetBox6\n");
 	r->rectangle.x1 = 0;
 	r->rectangle.y1 = 0;
 	r->rectangle.x2 = bn->width - 1;
 	r->rectangle.y2 = bn->height - 1;
-	printf("GetBox7\n");
 	r->lvl = NOTEXT;
-	printf("GetBox8\n");
 	CutMargin(dilated, r, 1, 1, 0);
-	printf("GetBox9\n");
 	Split(dilated, r, r, HORIZONTAL, 1, 0);
-	printf("GetBox10\n");
 	for (int i = 0; i < r->nbSubBoxes; i ++)
 		CutMargin(dilated, r, 1, 1, 0);
-	printf("GetBox11\n");
 	GetBlocksFromImage(bn, dilated, r);
-	printf("GetBox12\n");
 	UFreeImageBinary(bn);
-	printf("GetBox13\n");
 	UFreeImageBinary(dilated);
-	printf("GetBox14\n");
 	return r;
 }
 
@@ -311,8 +419,7 @@ Box **GetBreadthBoxArray(Box *b, int *count)
 void GetBreadthBoxArrayAux(BoxList list)
 {
 	for (int i = 0; i < list->value->nbSubBoxes; i ++)
-		if (list->value->subBoxes[i]->nbSubBoxes)
-			list = AddInList(list, list->value->subBoxes[i]);
+		list = AddInList(list, list->value->subBoxes[i]);
 	if (list->next)
 		GetBreadthBoxArrayAux(list->next);
 }
@@ -353,18 +460,28 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 	return r;
 }
 
-Image *DrawBox(Image *img, Box *b, Pixel p)
+Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 {
 	Image *r = ImageCopy(img);
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
 	{
-		img->pixList[i][b->rectangle.y1] = p;
-		img->pixList[i][b->rectangle.y2] = p;
+		for (int j = -thickness / 2; j < thickness / 2; j++)
+		{
+			if (b->rectangle.y1 + j >= 0 && b->rectangle.y1 + j < img->height)
+				r->pixList[i][b->rectangle.y1 + j] = p;
+			if (b->rectangle.y2 + j >= 0 && b->rectangle.y2 + j < img->height)
+				r->pixList[i][b->rectangle.y2 + j] = p;
+		}
 	}
-	for (int j = b->rectangle.y1; j <= b->rectangle.y2; j ++)
+	for (int i = b->rectangle.y1; i <= b->rectangle.y2; i ++)
 	{
-		img->pixList[b->rectangle.x1][j] = p;
-		img->pixList[b->rectangle.x2][j] = p;
+		for (int j = -thickness / 2; j < thickness / 2; j++)
+		{
+			if (b->rectangle.x1 + j >= 0 && b->rectangle.x1 + j < img->width)
+				r->pixList[b->rectangle.x1 + j][i] = p;
+			if (b->rectangle.x2 + j >= 0 && b->rectangle.x2 + j < img->width)
+				r->pixList[b->rectangle.x2 + j][i] = p;
+		}
 	}
 	return r;
 }
@@ -375,7 +492,7 @@ Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i++)
 		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
 			if (mask->data[i][j])
-				img->pixList[i][j] = p;
+				r->pixList[i][j] = p;
 	return r;
 }
 

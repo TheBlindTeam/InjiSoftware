@@ -95,3 +95,4 @@ void rec_draw_box(SGlobalData *data, Box** box);
 void on_click_learning_ok(GtkWidget *widget, gpointer user_data);
 void on_click_learning_next(GtkWidget *widget, gpointer user_data);
 void on_click_learning_save(GtkWidget *widget, gpointer user_data);
+void remove_first_char(SGlobalData *data);

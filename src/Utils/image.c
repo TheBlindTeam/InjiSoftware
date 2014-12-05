@@ -184,6 +184,21 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
 
 ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
+	ImageBN *image = malloc(sizeof(*ref));
+	image->width = ref->width;
+	image->height = ref->height;
+	image->data = malloc(sizeof(int *) * image->width);
+	for (int i = 0; i < image->width; i ++)
+	{
+		image->data[i] = malloc(sizeof(int) * image->height);
+		for (int j = 0; j < image->height; j ++)
+			image->data[i][j] = ref->intensity[i][j] / 127;
+	}
+	return image;
+}
+
+/*ImageBN *UGrayscaleToBinary(ImageGS *ref)
+{
     ImageBN *image = malloc(sizeof(ImageBN));
     guchar localThreshold = 0;
     int tileSize = 30; // 30 * 30 pixels by Tile
@@ -231,7 +246,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
             image->data[tileX][tileY] = ref->intensity[tileX][tileY] / localThreshold;
 
     return image;
-}
+}*/
 
 ImageBN *URgbToBinary(Image *ref)
 {

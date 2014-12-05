@@ -801,10 +801,21 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			if (data->boxDetectIndex == data->boxCount)
 				return;
 			Image *segTmpImg;
+			printf("Interface 1\n");
 			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
-				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
+			{
+				printf("Interface 2\n");
+				printf("img %d %d\n", data->img_rgb->width, data->img_rgb->height);
+				printf("Box x %d %d y %d %d %d\n", data->segBoxArray[data->boxDetectIndex]->rectangle.x1
+												, data->segBoxArray[data->boxDetectIndex]->rectangle.x2
+												, data->segBoxArray[data->boxDetectIndex]->rectangle.y1
+												, data->segBoxArray[data->boxDetectIndex]->rectangle.y2
+												, (int)data->segBoxArray[data->boxDetectIndex]->lvl);
+				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl], 2);
+			}
 			else
 			{
+				printf("Interface 3\n");
 				ImageBN *segBnImg = URgbToBinary(data->img_rgb);
 				segTmpImg = DrawBlackPixels(data->img_rgb, segBnImg, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
 				UFreeImageBinary(segBnImg);

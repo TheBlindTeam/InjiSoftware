@@ -62,13 +62,13 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
         size_t width, size_t height);
 
 // Split Img into Tile - Compute Tile's Threshold - Binarize the image
-ImageBN *USauvolaBinarization(ImageGS *ref);
+ImageBN *UGrayscaleToBinary(ImageGS *ref);
 
 // Translate GrayScale Image to RGB Image
 Image *UGrayscaleToRgb(ImageGS *reference);
 
-// GrayImage to Binary Image
-ImageBN *UGrayscaleToBinary(ImageGS *ref);
+// Previ
+//ImageBN *UGrayscaleToBinary(ImageGS *ref);
 
 // RGBImage to Binary Image
 ImageBN *URgbToBinary(Image *ref);

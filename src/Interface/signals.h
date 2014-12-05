@@ -86,6 +86,7 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data);
 // Called when the "zoom in" or "zoom out" button is pressed
 void on_zoom_in(GtkWidget *widget, gpointer user_data);
 void on_zoom_out(GtkWidget *widget, gpointer user_data);
-void apply_zoom(SGlobalData *data);
+void on_zoom_change(GtkWidget *widget, gpointer user_data);
+void apply_zoom(SGlobalData *data, int change_field);
 
 // Learning

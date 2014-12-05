@@ -165,6 +165,11 @@ void connectSignals(SGlobalData *data)
 			"ZoomOutButton")),
 		"clicked",
 		G_CALLBACK(on_zoom_out), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"ZoomField")),
+		"changed",
+		G_CALLBACK(on_zoom_change), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -258,6 +263,10 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				}
 
 				data->previewScale = 1;
+				gtk_entry_set_text(GTK_ENTRY(
+					gtk_builder_get_object(data->builder,
+						"ZoomField")), "100");
+
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
@@ -842,7 +851,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				"PreviewImage")),
 				data->pixbuf);
 
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -899,7 +908,7 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 					"PreviewImage")),
 				data->pixbuf);
 
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -939,7 +948,7 @@ void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
 					"PreviewImage")),
 				data->pixbuf);
 
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -978,7 +987,7 @@ void on_click_transform_noiseeraser(GtkWidget *widget, gpointer user_data)
 					"PreviewImage")),
 				data->pixbuf);
 
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -1015,7 +1024,7 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 					"PreviewImage")),
 				data->pixbuf);
 
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -1028,7 +1037,7 @@ void on_zoom_in(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			data->previewScale += ZOOM_COEF;
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
@@ -1042,12 +1051,30 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data)
 			data->previewScale > 2 *ZOOM_COEF)
 		{
 			data->previewScale -= ZOOM_COEF;
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		}
 	}
 }
 
-void apply_zoom(SGlobalData *data)
+void on_zoom_change(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if (data->img_rgb != NULL)
+		{
+			GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "ZoomField"));
+			int zoom = atoi(gtk_entry_get_text(GTK_ENTRY(entry)));
+			double zm = (!zoom)?1:(double)zoom/100;
+			printf("%d %f\n", zoom, zm);
+			data->previewScale = zm;
+			apply_zoom(data, 0);
+		}
+	}
+}
+
+void apply_zoom(SGlobalData *data, int change_field)
 {
 	if(data->tmp)
 	{
@@ -1082,6 +1109,14 @@ void apply_zoom(SGlobalData *data)
 			data->img_rgb->height *
 				data->previewScale,
 			GDK_INTERP_BILINEAR));
+	if(change_field)
+	{
+		char str[10];
+		sprintf(str, "%1.0f", data->previewScale * 100);
+		gtk_entry_set_text(GTK_ENTRY(
+			gtk_builder_get_object(data->builder,
+				"ZoomField")), str);
+	}
 }
 void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 {
@@ -1091,7 +1126,7 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "LearningWindow"));
 		if(data->img_rgb)
-			apply_zoom(data);
+			apply_zoom(data, 1);
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
 	}

@@ -1158,27 +1158,11 @@ Adrien NEVEU</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkPaned" id="PreviewToolBar">
+                          <object class="GtkBox" id="box7">
+                            <property name="width_request">125</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
+                            <property name="can_focus">False</property>
                             <property name="halign">center</property>
-                            <property name="position">1</property>
-                            <property name="position_set">True</property>
-                            <child>
-                              <object class="GtkButton" id="ZoomInButton">
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="hexpand">True</property>
-                                <property name="image">ImageZoomIn</property>
-                                <property name="relief">none</property>
-                                <property name="image_position">right</property>
-                              </object>
-                              <packing>
-                                <property name="resize">False</property>
-                                <property name="shrink">False</property>
-                              </packing>
-                            </child>
                             <child>
                               <object class="GtkButton" id="ZoomOutButton">
                                 <property name="visible">True</property>
@@ -1190,8 +1174,51 @@ Adrien NEVEU</property>
                                 <property name="always_show_image">True</property>
                               </object>
                               <packing>
-                                <property name="resize">False</property>
-                                <property name="shrink">False</property>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="ZoomInButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="hexpand">True</property>
+                                <property name="image">ImageZoomIn</property>
+                                <property name="relief">none</property>
+                                <property name="image_position">right</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator" id="separator2">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_right">5</property>
+                                <property name="orientation">vertical</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="ZoomField">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="width_chars">5</property>
+                                <property name="input_purpose">number</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                           </object>

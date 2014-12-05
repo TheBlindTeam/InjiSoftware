@@ -258,6 +258,10 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				}
 
 				data->previewScale = 1;
+				gtk_entry_set_text(GTK_ENTRY(
+					gtk_builder_get_object(data->builder,
+						"ZoomField")), "100%");
+
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"ImageChooser")));
@@ -1071,6 +1075,12 @@ void apply_zoom(SGlobalData *data)
 			data->img_rgb->height *
 				data->previewScale,
 			GDK_INTERP_BILINEAR));
+	char str[10];
+	sprintf(str, "%1.0f%%", data->previewScale * 100);
+	gtk_entry_set_text(GTK_ENTRY(
+		gtk_builder_get_object(data->builder,
+			"ZoomField")), str);
+
 }
 void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 {

@@ -1212,7 +1212,7 @@ Adrien NEVEU</property>
                               <object class="GtkEntry" id="ZoomField">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="width_chars">4</property>
+                                <property name="width_chars">5</property>
                                 <property name="input_purpose">number</property>
                               </object>
                               <packing>

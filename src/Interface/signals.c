@@ -941,7 +941,6 @@ void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
 			UFreeImageBinary(tmpGs);
 			UFreeImageBinary(tmpNegBN);
 			UFreeImageBinary(tmpNegBN2);
-			Image *tmpImg = UBinaryToRgb(tmpGs);
 			
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
@@ -979,7 +978,7 @@ void on_click_transform_noiseeraser(GtkWidget *widget, gpointer user_data)
 			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
-			UFreeImageBinary(tmpBn);
+			UFreeImageGray(tmpBn);
 			UFreeImageGray(tmpGs);
 
 			UFreeImage(data->img_rgb);

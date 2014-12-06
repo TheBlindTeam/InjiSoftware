@@ -876,7 +876,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 		{
 			ImageBN* tmpBn = URgbToBinary(data->img_rgb);
 			double angle = FindInclinationAngle(tmpBn);
-			free(tmpBn);
+			UFreeImageBinary(tmpBn);
 
 			gchar txt[20];
 			sprintf(txt, "%f", angle);
@@ -896,7 +896,7 @@ void on_click_transform_grayscale(GtkWidget *widget, gpointer user_data)
 		{
 			ImageGS *tmpGs = URgbToGrayscale(data->img_rgb);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
-			free(tmpGs);
+			UFreeImageGray(tmpGs);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
@@ -935,8 +935,8 @@ void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
 			ImageBN *tmpGs = DilatationOnBinary(tmpBn,
 				(data->img_rgb->width + data->img_rgb->height)/200);
 			Image *tmpImg = UBinaryToRgb(tmpGs);
-			free(tmpBn);
-			free(tmpGs);
+			UFreeImageBinary(tmpBn);
+			UFreeImageGray(tmpGs);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
@@ -974,8 +974,8 @@ void on_click_transform_noiseeraser(GtkWidget *widget, gpointer user_data)
 			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
-			free(tmpBn);
-			free(tmpGs);
+			UFreeImageBinary(tmpBn);
+			UFreeImageGray(tmpGs);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
@@ -1012,7 +1012,7 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 		{
 			ImageBN *tmpBn = URgbToBinary(data->img_rgb);
 			Image *tmpImg = UBinaryToRgb(tmpBn);
-			free(tmpBn);
+			UFreeImageBinary(tmpBn);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;
@@ -1262,6 +1262,7 @@ void on_click_learning_next(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		if(data){}//del
+		remove_first_char(data);
+		data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
 	}
 }

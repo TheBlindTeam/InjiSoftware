@@ -728,7 +728,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix1</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -744,7 +744,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix5</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -760,7 +760,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix9</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -776,7 +776,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix3</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -792,7 +792,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix2</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -808,7 +808,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix7</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -824,7 +824,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix4</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -840,7 +840,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix8</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -856,7 +856,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="text" translatable="yes">0.0</property>
                     <property name="adjustment">adjustmentBasicMatrix6</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -917,7 +917,7 @@ Adrien NEVEU</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="FCButtonOK1">
+              <object class="GtkButton" id="FCButtonOKLearn">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

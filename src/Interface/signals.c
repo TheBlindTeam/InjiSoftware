@@ -1301,6 +1301,22 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 			remove_first_char(data);
 			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
 			fclose(data->fseg);
+
+			FILE *listF = fopen("trainingSet.list", "a+");
+			char line[256];
+			int isFileListed = 0;
+			while(fgets(line, sizeof(line), listF))
+			{
+				line[strlen(line)-1] = 0;
+				if(!strcmp(line, filename))
+				{
+					isFileListed = 1;
+					break;
+				}
+			}
+			if(!isFileListed)
+				fprintf(listF, "%s\n", filename);
+			fclose(listF);
 		}
 		if (data->boxDetectIndex != -1)
 		{

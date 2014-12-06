@@ -1436,7 +1436,6 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 		g_free(filename);
 	}
 }
-
 int rand_limit(int limit)
 {
 	int divisor = RAND_MAX/(limit+1);
@@ -1514,3 +1513,33 @@ void on_click_new_network_learn(GtkWidget *widget, gpointer user_data)
 			data->builder, "LearnButtonLearn")), TRUE);
 	}
 }
+/*
+Process
+ImageBN *bn = PreTreatment(img->data);
+Image *img = UBinaryToRgb(bn);
+UFreeImage(img->data)
+img->data = img;
+Box *b = Recognition(nWorkSetDuFIchierNetworkSetMain, bn);
+img = DrawAllBoxes(img, b, 1);
+UFreImage(img->data);
+img->data = img;
+Afficher img->data
+Dans la TextBox, Faire un parcours en profondeur de b
+et de ses subBoxes
+
+FOO
+	if (b->lvl == BLOCK)
+		PRINT("\t");
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		Foo(b->subBoxes[i]);
+	if (b->lvl == BLOCK)
+		PRINT("\n\n");
+	if (b->lvl == LINE)
+		PRINT("\n");
+	if (b->lvl == WORD)
+		PRINT(" ");
+	if (b->lvl == CHARACTER)
+		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
+			PRINT("b->output[0].c")
+FIN FOO
+*/

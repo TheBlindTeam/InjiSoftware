@@ -512,6 +512,39 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 	return r;
 }
 
+void DrawAllBoxesAux(Image *img, Box *b, int thickness)
+{
+	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
+		for (int j = -thickness / 2; j <= thickness / 2; j++)
+		{
+			if (b->rectangle.y1 + j >= 0 &&
+					b->rectangle.y1 + j < img->height)
+				img->pixList[i][b->rectangle.y1 + j] = BoxColor[b->lvl];
+			if (b->rectangle.y2 + j >= 0 &&
+					b->rectangle.y2 + j < img->height)
+				img->pixList[i][b->rectangle.y2 + j] = BoxColor[b->lvl];
+		}
+	for (int i = b->rectangle.y1; i <= b->rectangle.y2; i ++)
+		for (int j = -thickness / 2; j <= thickness / 2; j++)
+		{
+			if (b->rectangle.x1 + j >= 0 &&
+					b->rectangle.x1 + j < img->width)
+				img->pixList[b->rectangle.x1 + j][i] = BoxColor[b->lvl];
+			if (b->rectangle.x2 + j >= 0 &&
+					b->rectangle.x2 + j < img->width)
+				img->pixList[b->rectangle.x2 + j][i] = BoxColor[b->lvl];
+		}
+	for (int i = 0; i < b->nbSubBoxes; i++)
+		DrawAllBoxesAux(img, b->subBoxes[i], thickness);
+}
+
+Image *DrawAllBoxes(Image *img, Box *b, int thickness)
+{
+	Image *r = ImageCopy(img);
+	DrawAllBoxesAux(r, b, thickness);
+	return r;
+}
+
 Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
 	Pixel p, int thickness, SegmentationLevel lvl)
 {

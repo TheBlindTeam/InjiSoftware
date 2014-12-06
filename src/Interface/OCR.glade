@@ -198,20 +198,6 @@ Adrien NEVEU</property>
                     <property name="column_spacing">1</property>
                     <property name="row_homogeneous">True</property>
                     <child>
-                      <object class="GtkButton" id="LearnSaveBtn">
-                        <property name="label" translatable="yes">Save</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">True</property>
-                      </object>
-                      <packing>
-                        <property name="left_attach">0</property>
-                        <property name="top_attach">3</property>
-                        <property name="width">1</property>
-                        <property name="height">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkButton" id="LearnNextBtn">
                         <property name="label" translatable="yes">Next</property>
                         <property name="width_request">95</property>

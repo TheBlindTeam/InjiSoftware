@@ -89,11 +89,6 @@ void connectSignals(SGlobalData *data)
 			"LearnNextBtn")),
 		"clicked",
 		G_CALLBACK(on_click_learning_next), data);
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
-			"LearnSaveBtn")),
-		"clicked",
-		G_CALLBACK(on_click_learning_save), data);
 	/* Menu */
 
 	// File
@@ -1175,14 +1170,6 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		if(data->fseg != NULL)
 			free(data->fseg);
 		data->fseg = NULL;
-		
-		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
-			data->builder, "FileNameEntry"));
-
-	char* filename = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
-		data->fseg = fopen(filename, "w");
-		if(data->fseg == NULL)
-			printf("Error while opening the training set file\n");
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
@@ -1243,6 +1230,16 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 		if(data->boxDetectIndex != -1)
 		{
 
+			GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "FileNameEntry"));
+			char* filename = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+			data->fseg = fopen(filename, "a");
+			if(!data->fseg)
+			{
+				printf("Error while opening the training set file\n");
+				return;
+			}
+			
 			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
 			gunichar text = get_next_char_txtview(data);
 			fprintf(data->fseg, "%c ", text);
@@ -1251,6 +1248,7 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 			fprintf(data->fseg, "\n");
 			remove_first_char(data);
 			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
+			fclose(data->fseg);
 		}
 		if(data->boxDetectIndex != -1)
 			DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
@@ -1267,14 +1265,3 @@ void on_click_learning_next(GtkWidget *widget, gpointer user_data)
 		if(data){}//del
 	}
 }
-
-void on_click_learning_save(GtkWidget *widget, gpointer user_data)
-{
-	if (widget && user_data)
-	{
-		SGlobalData *data = (SGlobalData*) user_data;
-		if(data){}//del
-		fclose(data->fseg);
-	}
-}
-

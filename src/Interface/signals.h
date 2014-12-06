@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <libgen.h>
 #include "unistd.h"
 
 #include "../NeuralNetwork/neuronsUtils.h"
@@ -91,8 +92,14 @@ void on_zoom_out(GtkWidget *widget, gpointer user_data);
 void on_zoom_change(GtkWidget *widget, gpointer user_data);
 void apply_zoom(SGlobalData *data, int change_field);
 
-// Learning
+// Training
 void rec_draw_box(SGlobalData *data, Box** box);
 void on_click_learning_ok(GtkWidget *widget, gpointer user_data);
 void on_click_learning_next(GtkWidget *widget, gpointer user_data);
 void remove_first_char(SGlobalData *data);
+
+// Learning
+void on_learn_load_button_clicked(GtkWidget *widget, gpointer user_data);
+void file_chooser_cancel_learning(GtkWidget *widget, gpointer user_data);
+void file_chooser_selection_changed_learning(GtkWidget *widget, gpointer user_data);
+void file_chooser_select_file_from_button_learn(GtkWidget *widget, gpointer user_data);

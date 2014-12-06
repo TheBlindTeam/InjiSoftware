@@ -180,11 +180,35 @@ void connectSignals(SGlobalData *data)
 			"ZoomOutButton")),
 		"clicked",
 		G_CALLBACK(on_zoom_out), data);
+
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"ZoomField")),
 		"changed",
 		G_CALLBACK(on_zoom_change), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnLoad")),
+		"clicked",
+		G_CALLBACK(on_learn_load_button_clicked), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"FCButtonCancelLearn")),
+		"clicked",
+		G_CALLBACK(file_chooser_cancel_learning), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearningNetworkChooser")),
+		"selection-changed",
+		G_CALLBACK(file_chooser_selection_changed_learning), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOKLearn")),
+		"clicked",
+		G_CALLBACK(file_chooser_select_file_from_button_learn), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -317,6 +341,15 @@ void file_chooser_cancel(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "ImageChooser")));
+	}
+}
+void file_chooser_cancel_learning(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		gtk_widget_hide(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearningNetworkChooser")));
 	}
 }
 
@@ -1296,5 +1329,61 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
+	}
+}
+
+void on_learn_load_button_clicked(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "LearningNetworkChooser"));
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void file_chooser_selection_changed_learning(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearningPath"));
+		char *filename = gtk_file_chooser_get_filename(
+			GTK_FILE_CHOOSER(widget));
+		if (filename != NULL)
+			gtk_entry_set_text(GTK_ENTRY(entry), filename);
+		g_free(filename);
+	}
+}
+
+void file_chooser_select_file_from_button_learn(GtkWidget *widget,
+	gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		char *filename = gtk_file_chooser_get_filename(
+			GTK_FILE_CHOOSER(gtk_builder_get_object(data->builder,
+				"LearningNetworkChooser")));
+		if (access(filename, F_OK|R_OK) != -1)
+		{
+			struct stat statbuf;
+
+			if (stat(filename, &statbuf) == 0 &&
+				S_ISREG(statbuf.st_mode))
+			{
+
+				GtkWidget *label = GTK_WIDGET(gtk_builder_get_object(data->builder, "FilenameLearning"));
+				gtk_label_set_text(GTK_LABEL(label), basename(filename));
+				
+				gtk_widget_hide(GTK_WIDGET(
+					gtk_builder_get_object(data->builder,
+						"LearningNetworkChooser")));
+			}
+		}
+		g_free(filename);
 	}
 }

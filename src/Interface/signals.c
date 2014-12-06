@@ -1269,8 +1269,13 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
 			fclose(data->fseg);
 		}
-		if(data->boxDetectIndex != -1)
-			DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+		if (data->boxDetectIndex != -1)
+		{
+			Image *tmp;
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmp;
+		}
 		apply_zoom(data, 0);
 	}
 }

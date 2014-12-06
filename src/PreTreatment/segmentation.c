@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-const Pixel BoxColor[] = {{255, 255, 255, 255}, {255, 255, 0, 255},
+const Pixel BoxColor[] = {{127, 0, 255, 255}, {255, 255, 0, 255},
 	{255, 0, 255, 255}, {0, 255, 255, 255}, {255, 0, 0, 255}, {0, 255, 0, 255},
 	{0, 0, 255, 255}};
 
@@ -529,7 +529,7 @@ Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
 		if (b[k]->lvl == lvl)
 		{
 			for (int i = b[k]->rectangle.x1; i <= b[k]->rectangle.x2; i ++)
-				for (int j = -thickness / 2; j < thickness / 2; j++)
+				for (int j = -thickness / 2; j <= thickness / 2; j++)
 				{
 					if (b[k]->rectangle.y1 + j >= 0 &&
 							b[k]->rectangle.y1 + j < img->height)
@@ -539,7 +539,7 @@ Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
 						r->pixList[i][b[k]->rectangle.y2 + j] = p;
 				}
 			for (int i = b[k]->rectangle.y1; i <= b[k]->rectangle.y2; i ++)
-				for (int j = -thickness / 2; j < thickness / 2; j++)
+				for (int j = -thickness / 2; j <= thickness / 2; j++)
 				{
 					if (b[k]->rectangle.x1 + j >= 0 &&
 							b[k]->rectangle.x1 + j < img->width)
@@ -557,7 +557,7 @@ Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 	Image *r = ImageCopy(img);
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
 	{
-		for (int j = -thickness / 2; j < thickness / 2; j++)
+		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
 			if (b->rectangle.y1 + j >= 0 && b->rectangle.y1 + j < img->height)
 				r->pixList[i][b->rectangle.y1 + j] = p;
@@ -567,7 +567,7 @@ Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 	}
 	for (int i = b->rectangle.y1; i <= b->rectangle.y2; i ++)
 	{
-		for (int j = -thickness / 2; j < thickness / 2; j++)
+		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
 			if (b->rectangle.x1 + j >= 0 && b->rectangle.x1 + j < img->width)
 				r->pixList[b->rectangle.x1 + j][i] = p;

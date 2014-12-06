@@ -79,11 +79,15 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
             arraySize = filterSize;
             // Extract the neighbors and get the 1-D array size
             neighbors = ExtractNeighbors(ref, x, y, &arraySize);
+
             // Sort neighbors' array
             BubbleSort(neighbors, arraySize);
+
             // Get the median value
             if(arraySize % 2)
-                result->intensity[x][y] = neighbors[arraySize / 2];
+            {
+                result->intensity[x][y] =  neighbors[arraySize / 2];
+           }
             else
             {
                 result->intensity[x][y] = (neighbors[arraySize / 2]

@@ -24,7 +24,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 			r[i].prob = output[i];
 			(*size)++;
 		}
-	qsort(r, )
+	//qsort(r, )
 	return r;
 }
 
@@ -76,7 +76,7 @@ ExempleSet *NGetCharExempleSet(char *path)
 			input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
 			for (int j = 0; j < charInputSize * charInputSize; j ++)
 				input[i][j] = (double)getc(fp);
-			while((c = get(c)) != '\n');
+			while((c = getc(fp)) != '\n');
 		}
 		ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
 		fclose(fp);

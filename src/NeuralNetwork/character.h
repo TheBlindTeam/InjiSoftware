@@ -12,7 +12,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size);
 
 void NInitCharacterNetworkSetParams(NetworkSet *ref);
 
-NetworkSet* NInitCharacterNetworkSet(char *path);
+NetworkSet* NInitCharacterNetworkSet(char *path, ExempleSet *exSet);
 
 ExempleSet *NGetCharExempleSet(char *path);
 

@@ -304,10 +304,10 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
 			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
 			tmp->rectangle.x2 = x1 *
-				(!(!isCurBlank && count >= minSpace) ? i :
+				(!(start && !isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + x2 * b->rectangle.x2;
 			tmp->rectangle.y2 = y1 *
-				(!(!isCurBlank && count >= minSpace) ? i :
+				(!(start && !isCurBlank && count >= minSpace) ? i :
 					(i ? i - 1 : 0)) + y2 * b->rectangle.y2;
 			prev = i;
 			AddInSubBoxes(parent, tmp);
@@ -319,6 +319,8 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 			start = 1;
 		}
 	}
+	printf("r %d\n", r);
+	getchar();
 	return r;
 }
 
@@ -334,6 +336,7 @@ int GetCharsFromImage(ImageBN *img, Box *b)
 		UFreeImageBinary(b->subBoxes[i]->charImg);
 		b->subBoxes[i]->charImg = tmp;
 		b->subBoxes[i]->input = ConvertImageToInput(tmp);
+/*
 		for (int x = 0; x < charInputSize; x ++)
 		{
 			for (int y = 0; y < charInputSize; y ++)
@@ -342,8 +345,9 @@ int GetCharsFromImage(ImageBN *img, Box *b)
 				else
 					printf(".");
 			printf("\n");
-		}
+		}*/
 	}
+
 	qsort(b->subBoxes, b->nbSubBoxes, sizeof(Box*), compareBox);
 	return b->nbSubBoxes;
 }
@@ -401,8 +405,14 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 	int r = 0;
 	int max = b->nbSubBoxes;
 	int prev = max;
+	printf("First\n");
 	for (int i = 0; i < max; i++)
 	{
+		printf("img %d %d\n", img->width, img->height);
+		printf("box %d %d %d %d\n", b->subBoxes[i]->rectangle.x1
+							, b->subBoxes[i]->rectangle.x2
+							, b->subBoxes[i]->rectangle.y1
+							, b->subBoxes[i]->rectangle.y2);
 		if (Split(mask, b->subBoxes[i], b, HORIZONTAL, 1, 0) > 1)
 			r = 1;
 		while (prev < b->nbSubBoxes)
@@ -414,6 +424,8 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 	max = b->nbSubBoxes;
 	prev = max;
 	if (r)
+	{
+		printf("Second\n");
 		for (int i = 0; i < max; i ++)
 		{
 			if (Split(mask, b->subBoxes[i], b, VERTICAL, 1, 0) > 1)
@@ -424,6 +436,7 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 			b->subBoxes[i] = b->subBoxes[b->nbSubBoxes - 1];
 			b->nbSubBoxes--;
 		}
+	}
 	if (r == 2)
 		GetBlocksFromImage(img, mask, b);
 	else
@@ -437,10 +450,6 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b)
 				for (int j = 0; j < b->subBoxes[i]->nbSubBoxes; j++)
 					FreeBox(b->subBoxes[i]->subBoxes[j]);
 				b->subBoxes[i]->nbSubBoxes = 0;
-				printf("OHHHHHHHHHH%d %d %d %d\n", b->subBoxes[i]->rectangle.x1
-												, b->subBoxes[i]->rectangle.x2
-												, b->subBoxes[i]->rectangle.y1
-												, b->subBoxes[i]->rectangle.y2);
 				b->subBoxes[i] = NULL;
 			}
 		}
@@ -461,7 +470,7 @@ Box *GetBoxFromSplit(Image *img)
 	r->rectangle.y2 = bn->height - 1;
 	r->lvl = MAIN;
 	CutMargin(dilated, r, 1, 1, 0);
-	Split(dilated, r, r, HORIZONTAL, 1, 0);
+	Split(dilated, r, r, VERTICAL, 1, 0);
 	for (int i = 0; i < r->nbSubBoxes; i ++)
 		CutMargin(dilated, r, 1, 1, 0);
 	GetBlocksFromImage(bn, dilated, r);
@@ -560,7 +569,6 @@ Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 
 Image *DrawBlackPixels(Image *img, ImageBN *mask, Box *b, Pixel p)
 {
-	printf("%d %p\n", b->lvl, b->input);
 	ImageBN *tmp = NegativeBinaryImage(mask);
 	Image *r = DrawWhitePixels(img, tmp, b, p);
 	UFreeImageBinary(tmp);

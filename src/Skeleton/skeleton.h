@@ -1,12 +1,18 @@
 #ifndef SKELETON_H
 #define SKELETON_H
 
-#include "PreTreatment/matrixOperation.h"
-#include "Utils/image.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "../PreTreatment/matrixOperation.h"
+#include "../PreTreatment/segmentation.h"
+#include "../PreTreatment/hough.h"
+#include "../Utils/image.h"
+#include "../NeuralNetwork/neuronsUtils.h"
 
 // Filtering - Binarization - Rotation - Segmentation - Recognition
-char* Recognition(Image *ref);
+Box *Recognition(NetworkSet *nWorkSet, ImageBN* imgBn);
 
+ImageBN *PreTreatment(Image *ref);
+
+void RecognizeAllCharacters(Box *b, NetworkSet *n);
 #endif

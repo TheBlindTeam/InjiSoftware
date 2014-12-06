@@ -1,7 +1,7 @@
 #include "character.h"
 
 const int charInputSize = 32;
-const int outputSize = 255;//A Changer
+const int outputSize = 162;//A Changer
 const double learningRate = 0.03;
 const double momentum = 0.1;
 const double overfitCoef = 0.08;

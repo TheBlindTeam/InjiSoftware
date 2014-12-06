@@ -818,7 +818,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 				ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 				Image *tmpImg = UGrayscaleToRgb(tmpGs);
-				data->firstBox = GetBoxFromSplit(data->img_rgb, tmpImg);
+				data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
 				UFreeImageGray(tmpBn);
 				UFreeImageGray(tmpGs);
 				UFreeImage(tmpImg);
@@ -1150,9 +1150,10 @@ int get_next_char_index(Box** segBox, int from, int max)
 {
 	if(from >= max || from < 0)
 		return -1;
-	while(segBox[from++]->lvl != CHARACTER && from < max)
-		if(from >= max)
-			return -1;
+	while(segBox[from]->lvl != CHARACTER && from < max)
+		from++;
+	if (from >= max)
+		return -1;
 	return from;
 }
 
@@ -1170,12 +1171,12 @@ void on_click_open_training(GtkWidget *widget, gpointer user_data)
 		ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 		ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 		Image *tmpImg = UGrayscaleToRgb(tmpGs);
-		data->firstBox = GetBoxFromSplit(data->img_rgb, tmpImg);
+		data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
 		UFreeImageGray(tmpBn);
 		UFreeImageGray(tmpGs);
 		UFreeImage(tmpImg);
 		data->segBoxArray = GetBreadthBoxArray(data->firstBox, &data->boxCount);
-		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb, data->segBoxArray, data->boxCount, BoxColor[CHARACTER], 1, CHARACTER);
+		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb, data->segBoxArray, data->boxCount, BLUE, 1, CHARACTER);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = tmp;
 		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0, data->boxCount);

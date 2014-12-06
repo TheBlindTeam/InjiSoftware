@@ -140,10 +140,8 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref)
 	{
 		result->data[x] = malloc(result->height * sizeof(int));
 		for (int y = 0; y < result->height; y++)
-                {
 			result->data[x][y] =
                             ref->intensity[x][y] > threshold ? 1 : 0;
-                }
 	}
 
 	return result;
@@ -195,6 +193,8 @@ guchar UGetOtsuThreshold(ImageGS *ref)
 
     }
 
+	if (threshold > 127)
+		threshold = 127;
     return threshold;
 }
 

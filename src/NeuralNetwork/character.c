@@ -56,21 +56,34 @@ NetworkSet* NInitCharacterNetworkSet(char *path, ExempleSet *exSet)
 
 ExempleSet *NGetCharExempleSet(char *path)
 {
-	path = path;
-	int nbLines = 0; //Le nombre de ligne du fichier path
-	double **input;
-	double **target;
-	input = malloc(sizeof(double*) * nbLines);
-	target = malloc(sizeof(double*) * nbLines);
-	for (int i = 0; i < nbLines; i ++)
+	FILE* fp = fopen(path, "r");
+	if (fp)
 	{
-		target[i] = ConvertCharToTargetArray('A'); //Remplacer 'A' par le char en debut de ligne
-		input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
-		for (int j = 0; j < charInputSize * charInputSize; j ++)
-			input[i][j] = 0; //Remplacer 0 par le jnth nombre sur la ligne
+		int c;
+		int nbLines = 0;
+		while((c = getc(fp)) != EOF)
+			if(c == '\n')
+				nbLines++;
+		rewind(fp);
+		double **input;
+		double **target;
+		input = malloc(sizeof(double*) * nbLines);
+		target = malloc(sizeof(double*) * nbLines);
+		for (int i = 0; i < nbLines; i ++)
+		{
+			target[i] = ConvertCharToTargetArray(getc(fp));
+			c = getc(fp);
+			input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
+			for (int j = 0; j < charInputSize * charInputSize; j ++)
+				input[i][j] = (double)getc(fp);
+			while((c = get(c)) != '\n');
+		}
+		ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
+		fclose(fp);
+		return r;
 	}
-	ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
-	return r;
+	printf("Error opening file - NGetCharExempleSet");
+	return NULL;
 }
 
 gunichar ConvertToOrderedChar(gunichar c)

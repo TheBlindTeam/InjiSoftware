@@ -1,4 +1,7 @@
 src/Inji
+Inji
+src/InjiDebug
+InjiDebug
 *.swp
 *.swo
 */*.swp

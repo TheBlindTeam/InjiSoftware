@@ -1170,9 +1170,16 @@ void on_click_open_learning(GtkWidget *widget, gpointer user_data)
 		UFreeImageGray(tmpGs);
 		UFreeImage(tmpImg);
 		data->segBoxArray = GetBreadthBoxArray(data->firstBox, &data->boxCount);
-		// DrawAllBoxes (rec_draw_box)
+		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb, data->segBoxArray, data->boxCount, BoxColor[CHARACTER], 1, CHARACTER);
+		UFreeImage(data->img_rgb);
+		data->img_rgb = tmp;
 		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0, data->boxCount);
-		DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+		if (data->boxDetectIndex != -1)
+		{
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmp;
+		}
 		if(data->fseg != NULL)
 			free(data->fseg);
 		data->fseg = NULL;

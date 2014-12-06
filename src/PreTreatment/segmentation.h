@@ -119,6 +119,9 @@ void GetBreadthBoxArrayAux(BoxList list);
 /*Draws coloured rectangles in all spaces that are not text*/
 Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p);
 
+Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
+	Pixel p, int thickness, SegmentationLevel lvl);
+
 Image *DrawBox(Image *img, Box *b, Pixel p, int thickness);
 
 Image *DrawWhitePixels(Image *img, ImageBN *mask, Box *b, Pixel p);

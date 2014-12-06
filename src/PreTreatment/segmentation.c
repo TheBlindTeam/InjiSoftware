@@ -343,7 +343,6 @@ int GetCharsFromImage(ImageBN *img, ImageBN *mask, Box *b)
 					printf(".");
 			printf("\n");
 		}
-		getchar();
 	}
 	qsort(b->subBoxes, b->nbSubBoxes, sizeof(Box*), compareBox);
 	return b->nbSubBoxes;
@@ -522,6 +521,37 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 	return r;
 }
 
+Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
+	Pixel p, int thickness, SegmentationLevel lvl)
+{
+	Image *r = ImageCopy(img);
+	for (int k = 0; k < size; k ++)
+		if (b[k]->lvl == lvl)
+		{
+			for (int i = b[k]->rectangle.x1; i <= b[k]->rectangle.x2; i ++)
+				for (int j = -thickness / 2; j < thickness / 2; j++)
+				{
+					if (b[k]->rectangle.y1 + j >= 0 &&
+							b[k]->rectangle.y1 + j < img->height)
+						r->pixList[i][b[k]->rectangle.y1 + j] = p;
+					if (b[k]->rectangle.y2 + j >= 0 &&
+							b[k]->rectangle.y2 + j < img->height)
+						r->pixList[i][b[k]->rectangle.y2 + j] = p;
+				}
+			for (int i = b[k]->rectangle.y1; i <= b[k]->rectangle.y2; i ++)
+				for (int j = -thickness / 2; j < thickness / 2; j++)
+				{
+					if (b[k]->rectangle.x1 + j >= 0 &&
+							b[k]->rectangle.x1 + j < img->width)
+						r->pixList[b[k]->rectangle.x1 + j][i] = p;
+					if (b[k]->rectangle.x2 + j >= 0 &&
+							b[k]->rectangle.x2 + j < img->width)
+						r->pixList[b[k]->rectangle.x2 + j][i] = p;
+				}
+		}
+	return r;
+	
+}
 Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 {
 	Image *r = ImageCopy(img);

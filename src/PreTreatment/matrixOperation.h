@@ -36,6 +36,8 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize);
 // Size will be modified according to the new size of the 1-D array
 guchar *ExtractNeighbors(ImageGS *ref, int posX, int posY, int *size);
 
+Image *UCutAlphaMargin(Image *ref);
+
 // Rotate A Given Matrix
 Image *URotate(Image *ref, double angle);
 

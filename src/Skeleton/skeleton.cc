@@ -1,23 +1,43 @@
 #include "skeleton.h"
 
-char* Recognition(Image *ref)
+ImageBN *PreTreatment(Image *ref)
 {
-    char *text = "salut les lamas";
-    ref = ref;
-    /* ImageGS *imageGS; // The new img
-    ImageGS *tmp; // Temp pointer to free each previous img
-    ImageBN *imageBN; // Binarized version of the image
+	Image *tmpForFree = NULL;
+	Image *tmp;
+	tmp = ref; //A remplacer par l'effacement du bruit
+	/*
+		//ENelever les commentaires quand le lissage sera fait
+	tmpForFree = tmp;
+	*/
+	double angle = FindInclinationAngle(tmp);
+	if ((int)angle)
+	{
+		tmp = URotate(tmp, angle);
+		/*
+			//Enlever les commentaires quand il y aura l'effacement du bruit
+		free(tmpForFree);
+		*/
+		tmpForFree = tmp;
+	}
+	ImageBN *tmpBn = UrgbToBinary(tmp);
+	if (tmpForFree) //enlever quand le lissage sera fait
+		free(tmpForFree);
+	return tmpBn;
+}
 
-    // Change RGB Img to Grayscale Img
-    imageGS = RGBToGrayscale(ref);
+void RecognizeAllCharacters(Box *b, NetworkSet *n)
+{
+	if (b->lvl = CHARACTER)
+		b->Recognize(n, b->input, &b->nbOutput);
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		RecognizeAllCharacters(b->subBoxes[i]);
+}
 
-    // First Filter : Median Filter
-    tmp = imageGS;
-    imageGS = MedianFilter(imageGS, 3);
-    UFreeImageGray(tmp); // Free the previous image
-
-    // Sauvola Binarization
-    imageBN = USauvolaBinarization(imageGS); */
-
-    return text;
+Box *Recognition(NetworkSet *nWorkSet, ImageBN* imgBn)
+{
+	Image *img = UBinaryToRgb(imgBn);
+	Box *r = GetBoxFromSplit(img, img);
+	RecognizeAllCharacters(r, nWorkSet);
+	UFreeImage(img);
+	return r;
 }

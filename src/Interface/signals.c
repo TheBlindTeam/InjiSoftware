@@ -1488,6 +1488,8 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 				NFreeExempleSet(data->learningNet->exSet);
 			data->learningNet->exSet = NULL;
 			data->learningNet->exSet = NGetCharExempleSet(line);
+			if(!data->learningNet->exSet)
+				return;
 			for(int j = 0; j < nbIter; j++)
 				data->learningNet->learn(data->learningNet);
 			SWrite(*data->learningNet->nWork, fname);

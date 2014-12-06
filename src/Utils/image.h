@@ -58,8 +58,8 @@ ImageGS *URgbToGrayscale(Image *rgbImage);
 
 // Get Local Threshold using Sauvola Method
     // Local Threshold computed inside the region (x, y, size) = Square Region
-guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
-        size_t width, size_t height);
+guchar UGetLocalThreshold(ImageGS *ref, int x, int y,
+        int width, int height);
 
 // Split Img into Tile - Compute Tile's Threshold - Binarize the image
 ImageBN *UGrayscaleToBinary(ImageGS *ref);
@@ -67,8 +67,7 @@ ImageBN *UGrayscaleToBinary(ImageGS *ref);
 // Translate GrayScale Image to RGB Image
 Image *UGrayscaleToRgb(ImageGS *reference);
 
-// Previ
-//ImageBN *UGrayscaleToBinary(ImageGS *ref);
+guchar UGetOtsuThreshold(ImageGS *ref);
 
 // RGBImage to Binary Image
 ImageBN *URgbToBinary(Image *ref);

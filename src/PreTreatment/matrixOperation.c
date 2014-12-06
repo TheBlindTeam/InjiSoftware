@@ -69,7 +69,6 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
     // Image Initialization
     result->width = ref->width;
     result->height = ref->height;
-
     result->intensity = malloc(result->width * sizeof(guchar *));
     for(int y = 0; y < result->width; y++)
         result->intensity[y] = malloc(result->height * sizeof(guchar));
@@ -77,12 +76,19 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
     for(int y = 0; y < result->height; y++)
         for(int x = 0; x < result->width; x++)
         {
-            // Extract the 8 neighbors to a 1-D array
+            arraySize = filterSize;
+            // Extract the neighbors and get the 1-D array size
             neighbors = ExtractNeighbors(ref, x, y, &arraySize);
             // Sort neighbors' array
             BubbleSort(neighbors, arraySize);
-            result->intensity[x][y] =
-                neighbors[arraySize / 2]; // Replace (x,y) pixel by median val
+            // Get the median value
+            if(arraySize % 2)
+                result->intensity[x][y] = neighbors[arraySize / 2];
+            else
+            {
+                result->intensity[x][y] = (neighbors[arraySize / 2]
+                        + neighbors[arraySize / 2 + 1]) / 2;
+            }
 
             // Free previous neighbors allocation
             free(neighbors);
@@ -193,8 +199,8 @@ guchar *ExtractNeighbors(ImageGS *ref, int posX, int posY, int *size)
 
     *size = 0;
     // Find the size of the return's array
-    for(int y = (posY - matrixSize / 2); y < (posY + matrixSize / 2); y++)
-        for(int x = (posX - matrixSize / 2); x < (posX + matrixSize / 2); x++)
+    for(int y = (posY - matrixSize / 2); y <= (posY + matrixSize / 2); y++)
+        for(int x = (posX - matrixSize / 2); x <= (posX + matrixSize / 2); x++)
         {
             if((x >= 0 && x < ref->width) &&
                     (y >= 0 && y < ref->height))
@@ -202,13 +208,12 @@ guchar *ExtractNeighbors(ImageGS *ref, int posX, int posY, int *size)
                 (*size)++;
             }
         }
-
     // Allocate the memory
     neighbors = malloc(*size * sizeof(guchar));
 
     int index = 0;
-    for(int y = (posY - matrixSize / 2); y < (posY + matrixSize / 2); y++)
-        for(int x = (posX - matrixSize / 2); x < (posX + matrixSize / 2); x++)
+    for(int y = (posY - matrixSize / 2); y <= (posY + matrixSize / 2); y++)
+        for(int x = (posX - matrixSize / 2); x <= (posX + matrixSize / 2); x++)
         {
             if((y >= 0 && y < ref->height) &&
                     (x >= 0 && x < ref->width))

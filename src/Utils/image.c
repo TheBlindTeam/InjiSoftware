@@ -127,46 +127,99 @@ Image *UGrayscaleToRgb(ImageGS *reference)
 	}
 	return result;
 }
-/*
+
 ImageBN *UGrayscaleToBinary(ImageGS *ref)
 {
 	ImageBN *result = malloc(sizeof(ImageBN));
 	result->width = ref->width;
 	result->height = ref->height;
+        guchar threshold = UGetOtsuThreshold(ref);
 
 	result->data = malloc(result->width * sizeof(int*));
 	for (int x = 0; x < result->width; x++)
 	{
 		result->data[x] = malloc(result->height * sizeof(int));
 		for (int y = 0; y < result->height; y++)
-			result->data[x][y] = ref->intensity[x][y] > 127 ? 1 : 0;
+                {
+			result->data[x][y] =
+                            ref->intensity[x][y] > threshold ? 1 : 0;
+                }
 	}
 
 	return result;
-}*/
+}
 
-guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
-        size_t width, size_t height)
+guchar UGetOtsuThreshold(ImageGS *ref)
+{
+    int hist [256]; // Pixels Histogram
+    int pixNbr = ref->width * ref->height; // Total Pixels Numberi
+    guchar threshold = 0;
+    int sum = 0;
+    int sumB = 0;
+    float wbackgrd = 0;
+    float wforegrd = 0;
+    float varMax = 0;
+
+    // Histogramm Initialization & Filling
+    for(int i = 0; i < 256; i++)
+        hist[i] = 0;
+    for(int y = 0; y < ref->height; y++)
+        for(int x = 0; x < ref->width; x++)
+        {
+            hist[ref->intensity[x][y]] += 1;
+        }
+
+    for(int i = 0; i < 256; i++)
+        sum += i * hist[i];
+    // Apply the otsu algorithm
+    for(int i = 0; i < 256; i++)
+    {
+        wbackgrd += hist[i];
+        if(!wbackgrd)
+            continue;
+        wforegrd = pixNbr - wbackgrd;
+        if(!wforegrd)
+            break;
+
+        sumB += i * hist[i];
+        float meanB = sumB / wbackgrd;
+        float meanF = (sum - sumB) / wforegrd;
+
+        float betweenVar = wbackgrd * wforegrd * (meanB - meanF) * (meanB - meanF);
+
+        if(betweenVar > varMax)
+        {
+            varMax = betweenVar;
+            threshold = i;
+        }
+
+    }
+
+    return threshold;
+}
+
+/*guchar UGetLocalThreshold(ImageGS *ref, int x, int y,
+      int width, int height)
 {
     float local_threshold = 0;
     int maxNbr = width * height; // Save the number of elements
     float mean = 0; // Pixel mean value
     float variance = 0; // Use to calculate the Standard deviation
     float standard_deviation = 0; // Used in the Sauvola's formula
-    float k = 0.37; // Fixed constant
+    float k = 0.4; // Fixed constant
     float R = 128; // Fixed range of standar deviation
 
     // Used to compute the mean
-    for(size_t y2 = y; y2  < y + height; y2++)
-        for(size_t x2 = x; x2 < x + width; x2++)
+    for(int y2 = y; y2  < y + height; y2++)
+        for(int x2 = x; x2 < x + width; x2++)
         {
             mean += ref->intensity[x2][y2];
         }
     mean /= maxNbr; // Compute mean pixel value
 
     // Used to compute the variance
-    for(size_t y2 = y; y2  < y + height; y2++)
-        for(size_t x2 = x; x2 < x + width; x2++)
+    for(int y2 = y; y2  < y + height; y2++)
+        for(int x2 = x; x2 < x + width; x2++)
         {
             variance += (ref->intensity[x][y] - mean) 
                 * (ref->intensity[x][y] - mean);
@@ -180,89 +233,6 @@ guchar UGetLocalThreshold(ImageGS *ref, size_t x, size_t y,
 
     return (guchar)round(local_threshold);
 
-}
-
-ImageBN *UGrayscaleToBinary(ImageGS *ref)
-{
-	ImageBN *image = malloc(sizeof(*ref));
-	image->width = ref->width;
-	image->height = ref->height;
-	image->data = malloc(sizeof(int *) * image->width);
-	for (int i = 0; i < image->width; i ++)
-	{
-		image->data[i] = malloc(sizeof(int) * image->height);
-		for (int j = 0; j < image->height; j ++)
-			image->data[i][j] = ref->intensity[i][j] / 127;
-	}
-	return image;
-}
-
-/*ImageBN *UGrayscaleToBinary(ImageGS *ref)
-{
-    ImageBN *image = malloc(sizeof(ImageBN));
-    guchar localThreshold = 0;
-    int tileSize = 30; // 30 * 30 pixels by Tile
-
-    // Image Intialization
-    image->width = ref->width;
-    image->height = ref->height;
-    image->data = malloc(image->width * sizeof(int *));
-    for(int x = 0; x < ref->width; x++)
-    {
-        image->data[x] = malloc(image->height * sizeof(int));
-    }
-
-    // Loop among all tiles
-    int tileY = 0; // Tile up corner
-    int tileX = 0; // Tile left corner
-    for(; (tileY + tileSize) < image->height; tileY = tileY + tileSize)
-    {
-        tileX = 0;
-        for(; (tileX + tileSize) < image->width; tileX = tileX + tileSize)
-        {
-            // Get back the local thresold from the Matrix[ts][ts]
-            localThreshold = UGetLocalThreshold(ref, tileX, tileY,
-                    tileSize, tileSize);
-
-            // Assign the Black/White data to the binary Image
-	    for (int y = tileY; y < (tileY + tileSize); y++)
-	    {
-		for (int x = tileX; x < (tileX + tileSize); x++)
-                {
-                        image->data[x][y] =
-                            (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
-                }
-	    }
-
-        }
-
-    }
-
-    printf("tileX = %d | tileY = %d\n", tileX, tileY);
-
-    // Loop among remaining pixels
-    localThreshold = UGetLocalThreshold(ref, tileX, 0, image->width - tileX,
-            image->height - tileY);
-
-    for(int x = tileX; x < image->width; x++)
-        for(int y = 0; y < tileY; y++)
-        {
-            image->data[x][y] =
-                (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
-        }
-
-    localThreshold = UGetLocalThreshold(ref, 0, tileY, image->width,
-            image->height - tileY);
-    // Last rectangle which cannot be a 30*30 pixels
-    for(int y = tileY; y < image->height; y++)
-        for(int x = 0; x < image->width; x++)
-        {
-
-            image->data[x][y] =
-                (ref->intensity[x][y] >= localThreshold) ? 1 : 0;
-        }
-
-    return image;
 }*/
 
 ImageBN *URgbToBinary(Image *ref)

@@ -325,19 +325,19 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 int GetCharsFromImage(ImageBN *img, ImageBN *mask, Box *b)
 {
 	Split(mask, b, b, VERTICAL, 1, 0);
-	for (int i = 0; i < b->nbSubBoxes; i ++)
+	for (int k = 0; k < b->nbSubBoxes; k ++)
 	{
-		b->subBoxes[i]->lvl = CHARACTER;
-		CutMargin(mask, b->subBoxes[i], 1, 0, 0);
-		b->charImg = ToSquareImage(img, b->subBoxes[i]);
-		ImageBN *tmp = ResizeImageBNToChar(b->charImg);
-		UFreeImageBinary(b->charImg);
-		b->charImg = tmp;
-		b->input = ConvertImageToInput(tmp);
+		b->subBoxes[k]->lvl = CHARACTER;
+		CutMargin(mask, b->subBoxes[k], 1, 0, 0);
+		b->subBoxes[k]->charImg = ToSquareImage(img, b->subBoxes[k]);
+		ImageBN *tmp = ResizeImageBNToChar(b->subBoxes[k]->charImg);
+		UFreeImageBinary(b->subBoxes[k]->charImg);
+		b->subBoxes[k]->charImg = tmp;
+		b->subBoxes[k]->input = ConvertImageToInput(tmp);
 		for (int i = 0; i < charInputSize; i ++)
 		{
 			for (int j = 0; j < charInputSize; j ++)
-				if ((int)b->input[i + j * charInputSize])
+				if ((int)b->subBoxes[k]->input[i + j * charInputSize])
 					printf("X");
 				else
 					printf(".");

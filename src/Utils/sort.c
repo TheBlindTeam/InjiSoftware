@@ -1,15 +1,8 @@
 #include "sort.h"
 
-void SwapCell(guchar *array, size_t cell1, size_t cell2)
+void BubbleSort(guchar *array, int size)
 {
-    guchar tmp = array[cell1];
-    array[cell1] = array[cell2];
-    array[cell2] = tmp;
-}
-
-void BubbleSort(guchar *array, size_t size)
-{
-    for(int i = size - 2; i >= 0; i++)
+    for(int i = size - 1; i >= 0; i--)
     {
         int toSwap = 1;
         for(int j = 0; j < i; j++)
@@ -25,4 +18,5 @@ void BubbleSort(guchar *array, size_t size)
             return;
     }
 }
+
 

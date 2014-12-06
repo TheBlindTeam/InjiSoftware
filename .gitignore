@@ -7,8 +7,14 @@ InjiDebug
 */*.swp
 */*.swo
 */*/*.swp
+*/*/*/*.swp
+*/*/*/*.swo
 */*/*.swo
 */*.jpg
 */*.jpeg
 */*.bmp
 */*.png
+*.jpg
+*.jpeg
+*.bmp
+*.png

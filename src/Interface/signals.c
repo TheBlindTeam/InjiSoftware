@@ -209,6 +209,18 @@ void connectSignals(SGlobalData *data)
 		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOKLearn")),
 		"clicked",
 		G_CALLBACK(file_chooser_select_file_from_button_learn), data);
+	
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnButtonLearn")),
+		"clicked",
+		G_CALLBACK(on_click_learn_button_learn), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"LearnNew")),
+		"clicked",
+		G_CALLBACK(on_click_new_network_learn), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -1405,9 +1417,17 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 				S_ISREG(statbuf.st_mode))
 			{
 
+				if(data->learningNet)
+					NFreeNetworkSet(data->learningNet);
+				data->learningNet = NULL;
+				data->learningNet = NInitCharacterNetworkSet(filename);
+
 				GtkWidget *label = GTK_WIDGET(gtk_builder_get_object(data->builder, "FilenameLearning"));
 				gtk_label_set_text(GTK_LABEL(label), basename(filename));
-				
+
+				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+					data->builder, "LearnButtonLearn")), TRUE);
+
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
 						"LearningNetworkChooser")));
@@ -1416,7 +1436,81 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 		g_free(filename);
 	}
 }
+int rand_limit(int limit)
+{
+	int divisor = RAND_MAX/(limit+1);
+	int retval;
+	do
+		retval = rand() / divisor;
+	while (retval > limit);
+	return retval;
+}
 
+void get_random_training_set(char* line)
+{
+	FILE *fList = fopen("trainingSets.list", "r");
+	if(fList)
+	{
+		int c;
+		int nbLines = 0;
+		while((c = getc(fList)) != EOF)
+			if(c == '\n')
+				nbLines++;
+		rewind(fList);
+		int rd = rand_limit(nbLines-1);
+		while(fgets(line, sizeof(line), fList) && rd > 0)
+			rd--;
+		fclose(fList);
+	}
+}
+
+void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *spinner = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "SpinnerLearn"));
+		gtk_spinner_start(GTK_SPINNER(spinner));
+		int nbSession = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+				gtk_builder_get_object(data->builder, "LearnNbSessions")));
+		int nbIter = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+				gtk_builder_get_object(data->builder, "LearnNbIter")));
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "LearnFileName"));
+		char *fname = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+		for(int i = 0; i < nbSession; i++)
+		{
+			char line[256];
+			get_random_training_set(line);
+			if(data->learningNet->exSet)
+				NFreeExempleSet(data->learningNet->exSet);
+			data->learningNet->exSet = NULL;
+			data->learningNet->exSet = NGetCharExempleSet(line);
+			for(int j = 0; j < nbIter; j++)
+				data->learningNet->learn(data->learningNet);
+			SWrite(*data->learningNet->nWork, fname);
+		}
+	}
+}
+
+void on_click_new_network_learn(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		if(data->learningNet)
+			NFreeNetworkSet(data->learningNet);
+		data->learningNet = NULL;
+
+		data->learningNet = NInitCharacterNetworkSet(NULL);
+		GtkWidget *label = GTK_WIDGET(gtk_builder_get_object(data->builder, "FilenameLearning"));
+		gtk_label_set_text(GTK_LABEL(label), "New Network");
+
+		gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearnButtonLearn")), TRUE);
+	}
+}
 /*
 Process
 ImageBN *bn = PreTreatment(img->data);
@@ -1446,4 +1540,4 @@ FOO
 		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
 			PRINT("b->output[0].c")
 FIN FOO
-
+*/

@@ -23,4 +23,5 @@ typedef struct
 	GdkPixbuf *pixbuf;
 	guchar **tmp;
 	FILE* fseg;
+	NetworkSet* learningNet;
 } SGlobalData;

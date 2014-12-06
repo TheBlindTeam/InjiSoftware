@@ -6,6 +6,16 @@ const double learningRate = 0.03;
 const double momentum = 0.1;
 const double overfitCoef = 0.08;
 
+int compareCharOutput(const void *a, const void *b)
+{
+	double tmp = ((CharOutput*)a)->prob - ((CharOutput*)b)->prob;
+	if (tmp > 0)
+		return 1;
+	if (tmp < 0)
+		return -1;
+	return 0;
+}
+
 CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 {
 	CharOutput *r;
@@ -24,7 +34,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 			r[i].prob = output[i];
 			(*size)++;
 		}
-	//qsort(r, )
+	qsort(r, *size, sizeof(CharOutput), compareCharOutput);
 	return r;
 }
 
@@ -82,7 +92,7 @@ ExempleSet *NGetCharExempleSet(char *path)
 		fclose(fp);
 		return r;
 	}
-	printf("Error opening file - NGetCharExempleSet");
+	printf("Error opening file - NGetCharExempleSet\n");
 	return NULL;
 }
 

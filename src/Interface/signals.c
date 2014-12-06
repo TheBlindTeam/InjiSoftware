@@ -932,11 +932,15 @@ void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
 		if (data->img_rgb != NULL)
 		{
 			ImageBN *tmpBn = URgbToBinary(data->img_rgb);
-			ImageBN *tmpGs = DilatationOnBinary(tmpBn,
+			ImageBN *tmpNegBN = NegativeBinaryImage(tmpBn);
+			ImageBN *tmpGs = DilatationOnBinary(tmpNegBN,
 				(data->img_rgb->width + data->img_rgb->height)/200);
-			Image *tmpImg = UBinaryToRgb(tmpGs);
-			free(tmpBn);
-			free(tmpGs);
+			ImageBN *tmpNegBN2 = NegativeBinaryImage(tmpGs);
+			Image *tmpImg = UBinaryToRgb(tmpNegBN2);
+			UFreeImageBinary(tmpBn);
+			UFreeImageBinary(tmpGs);
+			UFreeImageBinary(tmpNegBN);
+			UFreeImageBinary(tmpNegBN2);
 
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmpImg;

@@ -8,6 +8,8 @@
 
 extern const int charInputSize;
 
+int compareCharOutput(const void *a, const void *b);
+
 CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size);
 
 void NInitCharacterNetworkSetParams(NetworkSet *ref);

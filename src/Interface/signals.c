@@ -773,7 +773,8 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			Image *tmpImg = URotate(data->img_rgb, amount);
+			Image *tmpImg = URotate(data->img_rgb, M_PI *
+				(double)amount / (double)180);
 
 			UFreeImage(data->img_rgb);
 
@@ -879,7 +880,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			UFreeImageBinary(tmpBn);
 
 			gchar txt[20];
-			sprintf(txt, "%f", angle);
+			sprintf(txt, "%f", (double)(180 * angle) / M_PI);
 			gtk_entry_set_text(GTK_ENTRY(
 				gtk_builder_get_object(data->builder,
 					"DetectAngleVal")), txt);
@@ -1174,9 +1175,16 @@ void on_click_open_training(GtkWidget *widget, gpointer user_data)
 		UFreeImageGray(tmpGs);
 		UFreeImage(tmpImg);
 		data->segBoxArray = GetBreadthBoxArray(data->firstBox, &data->boxCount);
-		// DrawAllBoxes (rec_draw_box)
+		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb, data->segBoxArray, data->boxCount, BoxColor[CHARACTER], 1, CHARACTER);
+		UFreeImage(data->img_rgb);
+		data->img_rgb = tmp;
 		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0, data->boxCount);
-		DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+		if (data->boxDetectIndex != -1)
+		{
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			UFreeImage(data->img_rgb);
+			data->img_rgb = tmp;
+		}
 		if(data->fseg != NULL)
 			free(data->fseg);
 		data->fseg = NULL;

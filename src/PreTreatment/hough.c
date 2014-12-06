@@ -4,7 +4,7 @@ double FindInclinationAngle(ImageBN *ref)
 {
 	// This var get back the maximum number value index from ACCU
 	int maxAngleAccu = 0;
-	const int thetaMax = 2 * 90 + 1;
+	const int thetaMax = 900;
 	const int rMax = round(sqrt(pow(ref->width, 2) +
 		pow(ref->height, 2)) * 2 + 1);
 
@@ -27,7 +27,8 @@ double FindInclinationAngle(ImageBN *ref)
 			{
 				for (int theta = 0; theta < thetaMax; theta++)
 				{
-					double radian = (M_PI * (theta - 90)) / 180;
+					double radian = (M_PI * (double)(theta - thetaMax / 2))
+						/ (double)thetaMax;
 					int r = round(x * cos(radian) + y * sin(radian));
 
 					r+= rMax / 2;
@@ -43,7 +44,10 @@ double FindInclinationAngle(ImageBN *ref)
 		free(accu[i]);
 	free(accu);
 
-	return thetaMax - maxAngleAccu - 1;
+	double answer = M_PI * (double)(thetaMax - maxAngleAccu - 1) / (double)thetaMax;
+	if (answer > M_PI / 2)
+		answer -= M_PI;
+	return answer;
 }
 
 

@@ -148,14 +148,14 @@ int readConnection(FILE *file, Connection *c)
 	return error;
 }
 
-Network SRead(char *fileName)
+Network* SRead(char *fileName)
 {
-	Network n;
+	Network *n = NULL;
 	int error = 1;
 	FILE *file = fopen(fileName, "r");
 	if (file)
 	{
-		error = readNetwork(file, &n);
+		error = readNetwork(file, n);
 		fclose(file);
 	}
 	else

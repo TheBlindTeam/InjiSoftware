@@ -13,4 +13,4 @@ int SWrite(Network n, char* fileName);
 int readNetwork(FILE *file, Network *n);
 int readNeuron(FILE *file, Neuron *n);
 int readConnection(FILE *file, Connection *c);
-Network SRead(char* fileName);
+Network *SRead(char* fileName);

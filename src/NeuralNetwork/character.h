@@ -2,6 +2,7 @@
 #define CHARACTERNEURAL_H
 #include "../Utils/image.h"
 #include "../PreTreatment/segmentation.h"
+#include "../Serialization/serialization.h"
 #include "stdlib.h"
 #include "neuronsUtils.h"
 #include "learning.h"
@@ -14,7 +15,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size);
 
 void NInitCharacterNetworkSetParams(NetworkSet *ref);
 
-NetworkSet* NInitCharacterNetworkSet(char *path, ExempleSet *exSet);
+NetworkSet* NInitCharacterNetworkSet(char *path);
 
 ExempleSet *NGetCharExempleSet(char *path);
 

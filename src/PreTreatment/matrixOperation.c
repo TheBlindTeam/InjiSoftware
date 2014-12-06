@@ -105,7 +105,7 @@ Image *URotate(Image *ref, double angle)
 {
 	Image *image = malloc(sizeof(Image));
 	// Calculate Rotation 
-	double radian = (angle * M_PI) / 180;
+	double radian = angle;
 	int newWidth;
 	int newHeight;
 	Vector2 min, max;

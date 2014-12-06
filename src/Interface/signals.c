@@ -768,7 +768,8 @@ void on_apply_rotation(GtkWidget *widget, gpointer user_data)
 
 		if (amount != 0)
 		{
-			Image *tmpImg = URotate(data->img_rgb, amount);
+			Image *tmpImg = URotate(data->img_rgb, M_PI *
+				(double)amount / (double)180);
 
 			UFreeImage(data->img_rgb);
 
@@ -874,7 +875,7 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			UFreeImageBinary(tmpBn);
 
 			gchar txt[20];
-			sprintf(txt, "%f", angle);
+			sprintf(txt, "%f", (double)(180 * angle) / M_PI);
 			gtk_entry_set_text(GTK_ENTRY(
 				gtk_builder_get_object(data->builder,
 					"DetectAngleVal")), txt);

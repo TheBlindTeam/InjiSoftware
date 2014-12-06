@@ -314,6 +314,9 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 						"Segmentation");
 				}
 
+				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
+					data->builder, "TrainingBtn")), TRUE);
+
 				data->previewScale = 1;
 				gtk_entry_set_text(GTK_ENTRY(
 					gtk_builder_get_object(data->builder,
@@ -1207,6 +1210,8 @@ void on_click_open_training(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
+		if(!data->img_rgb)
+			return;
 		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "TrainingWindow"));
 		if(data->img_rgb)

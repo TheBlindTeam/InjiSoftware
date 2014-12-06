@@ -1477,15 +1477,20 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder, "LearnNbSessions")));
 		int nbIter = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
 				gtk_builder_get_object(data->builder, "LearnNbIter")));
-
+		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
+				data->builder, "LearnFileName"));
+		char *fname = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
 		for(int i = 0; i < nbSession; i++)
 		{
 			char line[256];
 			get_random_training_set(line);
+			if(data->learningNet->exSet)
+				NFreeExempleSet(data->learningNet->exSet);
+			data->learningNet->exSet = NULL;
 			data->learningNet->exSet = NGetCharExempleSet(line);
 			for(int j = 0; j < nbIter; j++)
-			{
-			}
+				data->learningNet->learn(data->learningNet);
+			SWrite(*data->learningNet->nWork, fname);
 		}
 	}
 }

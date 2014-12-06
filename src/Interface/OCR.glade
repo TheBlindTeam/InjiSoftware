@@ -492,10 +492,10 @@ Adrien NEVEU</property>
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry3">
+              <object class="GtkEntry" id="LearnFileName">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="text" translatable="yes">ImAFilename.inji</property>
+                <property name="text" translatable="yes">Networks/Net1.inji</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>

@@ -334,15 +334,6 @@ int GetCharsFromImage(ImageBN *img, ImageBN *mask, Box *b)
 		UFreeImageBinary(b->subBoxes[k]->charImg);
 		b->subBoxes[k]->charImg = tmp;
 		b->subBoxes[k]->input = ConvertImageToInput(tmp);
-		for (int i = 0; i < charInputSize; i ++)
-		{
-			for (int j = 0; j < charInputSize; j ++)
-				if ((int)b->subBoxes[k]->input[i + j * charInputSize])
-					printf("X");
-				else
-					printf(".");
-			printf("\n");
-		}
 	}
 	qsort(b->subBoxes, b->nbSubBoxes, sizeof(Box*), compareBox);
 	return b->nbSubBoxes;

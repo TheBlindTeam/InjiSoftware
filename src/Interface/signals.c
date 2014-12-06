@@ -1188,6 +1188,7 @@ void on_click_open_training(GtkWidget *widget, gpointer user_data)
 		if(data->fseg != NULL)
 			free(data->fseg);
 		data->fseg = NULL;
+		apply_zoom(data, 0);
 
 		gtk_dialog_run(GTK_DIALOG(window));
 		gtk_widget_hide(window);
@@ -1257,7 +1258,6 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 				printf("Error while opening the training set file\n");
 				return;
 			}
-			printf("tesssst\n");
 			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
 			gunichar text = get_next_char_txtview(data);
 			fprintf(data->fseg, "%c ", text);

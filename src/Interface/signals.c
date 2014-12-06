@@ -66,6 +66,11 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_click_transform_binary), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
+			"TrainingBtn")),
+		"clicked",
+		G_CALLBACK(on_click_open_training), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
 			"LearningBtn")),
 		"clicked",
 		G_CALLBACK(on_click_open_learning), data);
@@ -1151,7 +1156,7 @@ int get_next_char_index(Box** segBox, int from, int max)
 	return from;
 }
 
-void on_click_open_learning(GtkWidget *widget, gpointer user_data)
+void on_click_open_training(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
 	{
@@ -1252,7 +1257,7 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 				printf("Error while opening the training set file\n");
 				return;
 			}
-			
+			printf("tesssst\n");
 			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
 			gunichar text = get_next_char_txtview(data);
 			fprintf(data->fseg, "%c ", text);
@@ -1265,6 +1270,7 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 		}
 		if(data->boxDetectIndex != -1)
 			DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+		apply_zoom(data, 0);
 	}
 }
 
@@ -1277,5 +1283,18 @@ void on_click_learning_next(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		remove_first_char(data);
 		data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
+	}
+}
+
+void on_click_open_learning(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearningWindow"));
+
+		gtk_dialog_run(GTK_DIALOG(window));
+		gtk_widget_hide(window);
 	}
 }

@@ -47,20 +47,17 @@ void NInitCharacterNetworkSetParams(NetworkSet *ref)
 	ref->learn = &NBackPropLearn;
 }
 
-NetworkSet* NInitCharacterNetworkSet(char *path, ExempleSet *exSet)
+NetworkSet* NInitCharacterNetworkSet(char *path)
 {
 	NetworkSet *r = malloc(sizeof(NetworkSet));
 	NInitCharacterNetworkSetParams(r);
-	r->exSet = exSet;
 	if (!path)
 	{
 		r->nWork = NINIT[5](charInputSize * charInputSize, outputSize);
 		NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, LINEAR, TAN_SIGMOID);
 	}
-	/*
 	else
-		r->nWork = LoadFrompath
-	*/
+		r->nWork = SRead(path);
 	return r;
 }
 
@@ -102,7 +99,7 @@ gunichar ConvertToOrderedChar(gunichar c)
 		return c-33;
 	if(c >= 188 && c <= 255)
 		return c-94;
-	return 0;
+	return 255;
 }
 
 gunichar ConvertToRegularChar(gunichar c)

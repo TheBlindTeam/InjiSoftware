@@ -98,13 +98,18 @@ ExempleSet *NGetCharExempleSet(char *path)
 
 gunichar ConvertToOrderedChar(gunichar c)
 {
-	return c;
+	if(c >= 33 && c <= 126)
+		return c-33;
+	if(c >= 188 && c <= 255)
+		return c-94;
+	return 0;
 }
 
 gunichar ConvertToRegularChar(gunichar c)
 {
-	
-	return c;
+	if(c <= 93)
+		return c+33;
+	return c+94;
 }
 
 

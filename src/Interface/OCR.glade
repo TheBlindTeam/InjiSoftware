@@ -1293,20 +1293,6 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="TrainingBtn">
-                    <property name="label" translatable="yes">Training Window</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">8</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkButton" id="ProcessBtn1">
                     <property name="label" translatable="yes"> Process</property>
                     <property name="visible">True</property>
@@ -1383,7 +1369,21 @@ Adrien NEVEU</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">10</property>
+                    <property name="top_attach">12</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="separator6">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_top">7</property>
+                    <property name="margin_bottom">7</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">11</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -1397,7 +1397,35 @@ Adrien NEVEU</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
+                    <property name="top_attach">10</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="TrainingBtn">
+                    <property name="label" translatable="yes">Training Window</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
                     <property name="top_attach">9</property>
+                    <property name="width">1</property>
+                    <property name="height">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="separator7">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="margin_top">7</property>
+                    <property name="margin_bottom">7</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">8</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>

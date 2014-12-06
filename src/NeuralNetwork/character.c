@@ -23,12 +23,12 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 	*size = 0;
 	NRun(nWorkSet->nWork, input, &output);
 	for (int i = 0; i < outputSize; i ++)
-		if (output[i] > 0.8)
+		if (output[i] >= 0.8)
 			(*size)++;
 	r = malloc(sizeof(CharOutput) * (*size));
 	*size = 0;
 	for (int i = 0; i < outputSize; i ++)
-		if (output[i] > 0.8)
+		if (output[i] >= 0.8)
 		{
 			r[i].c = ConvertToRegularChar((gchar)i);
 			r[i].prob = output[i];
@@ -139,8 +139,10 @@ ImageBN *ToSquareImage(ImageBN *img, Box *b)
 	}
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
 		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
+		{
 			r->data[i + (r->width - size_x) / 2 - b->rectangle.x1]
-				[j + (r->height - size_y) - b->rectangle.y1] = img->data[i][j];
+				[j + (r->height - size_y) / 2 - b->rectangle.y1] = img->data[i][j];
+		}
 	return r;
 }
 
@@ -156,7 +158,8 @@ ImageBN *ResizeImageBNToChar(ImageBN *img)
 		for (int j = 0; j < r->height; j ++)
 			r->data[i][j] = 0;
 	}
-	//if (r->width < img->width)
+	if (img->width > 1 && img->height > 1)
+	{
 		for (int i = 0; i < img->width; i ++)
 			for (int j = 0; j < img->height; j ++)
 				if (img->data[i][j])
@@ -165,7 +168,6 @@ ImageBN *ResizeImageBNToChar(ImageBN *img)
 					int y = round((double)(r->height - 1) * (double)j / (double)(img->height - 1));
 					r->data[x][y] = 1;
 				}
-	//else
 		for (int i = 0; i < r->width; i ++)
 		{
 			for (int j = 0; j < r->height; j ++)
@@ -176,6 +178,7 @@ ImageBN *ResizeImageBNToChar(ImageBN *img)
 					r->data[i][j] = img->data[x][y];
 			}
 		}
+	}
 	return r;
 }
 

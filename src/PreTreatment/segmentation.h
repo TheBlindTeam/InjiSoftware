@@ -100,15 +100,15 @@ void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor);
 
 ImageBN *ExtractCharacterInBinary(ImageBN *img, Box *b);
 
-int GetCharsFromImage(ImageBN *img, Box *b);
+int GetCharsFromImage(ImageBN *img, ImageBN *mask, Box *b);
 
-int GetWordsFromImage(ImageBN *img, Box *b);
+int GetWordsFromImage(ImageBN *img, ImageBN *mask, Box *b);
 
-int GetLinesFromImage(ImageBN *img, Box *b);
+int GetLinesFromImage(ImageBN *img, ImageBN *mask, Box *b);
 
-void GetBlocksFromImage(ImageBN *img, ImageBN *mask, Box *b);
+void GetBlocksFromImage(ImageBN *img, ImageBN *mask, ImageBN *dilated,Box *b);
 /**/
-Box *GetBoxFromSplit(Image *img);
+Box *GetBoxFromSplit(Image *img, Image *mask);
 
 /**/
 Box **GetBreadthBoxArray(Box *b, int *count);

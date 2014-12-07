@@ -104,6 +104,7 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
 Image *URotate(Image *ref, double angle)
 {
 	Image *image = malloc(sizeof(Image));
+        Image *imageBorderless = NULL; // The new image without borders
 	// Calculate Rotation 
 	double radian = angle;
 	int newWidth;
@@ -165,11 +166,11 @@ Image *URotate(Image *ref, double angle)
 	image->pixList = pix;
 
         // Delete Useless Bounds
-        image = UCutAlphaMargin(ref);
+        imageBorderless = UCutAlphaMargin(image);
         // Free previous image
-        //UFreeImage(ref);
+        UFreeImage(image);
 
-	return image;
+	return imageBorderless;
 
 }
 
@@ -179,10 +180,8 @@ Image *UCutAlphaMargin(Image *ref)
     result->bits_per_sample = ref->bits_per_sample;
     result->has_alpha = ref->has_alpha;
 
-    Vector2 min = {0, 0}; // Xmin and Ymin
-    Vector2 max = {0, 0}; // Xmax and Ymax
-
-    printf("Width : %d | Hei : %d\n",ref->width, ref->height);
+    Vector2 min = {-1, -1}; // Xmin and Ymin
+    Vector2 max = {-1, -1}; // Xmax and Ymax
 
     // Find the Ymin value
     for(int y = 0; y < ref->height; y++)
@@ -193,42 +192,47 @@ Image *UCutAlphaMargin(Image *ref)
             if(ref->pixList[x][y].a)
             {
                 min.y = y;
-                if(max.y) // min has been found
+                if(max.y != -1) // min has been found
                     break;
             }
+
             if(ref->pixList[x][ref->height - y - 1].a)
             {
                 max.y = ref->height - y - 1;
-                if(min.y) // max has been found
+                if(min.y != -1) // max has been found
                     break;
             }
-
-            printf("y : %d | size - y = %d\n", y, ref->height - y - 1);
         }
 
-        if(min.x && max.x && min.y && max.y)
+        if(min.y != -1 && max.y != -1)
             break;
 
     }
 
     // find the Xmin value
     for(int x = 0; x < ref->width; x++)
+    {
         for(int y = 0; y < ref->height; y++)
         {
             // First pixel non-transparent
             if(ref->pixList[x][y].a)
             {
                 min.x = x;
-                if(max.x) // max has been found
+                if(max.x != -1) // max has been found
                     break;
             }
             if(ref->pixList[ref->width - x -1][y].a)
             {
                 max.x = ref->width - x - 1;
-                if(min.x) // min has been found
+                if(min.x != -1) // min has been found
                     break;
             }
         }
+
+        if(min.x != -1 && max.x != -1)
+            break;
+
+    }
 
     // Compute the new size
     result->width = max.x - min.x + 1;
@@ -244,6 +248,7 @@ Image *UCutAlphaMargin(Image *ref)
 
     for(int y = min.y; y <= max.y; y++)
     {
+        newX = 0;
         for(int x = min.x; x <= max.x; x++)
         {
             result->pixList[newX][newY] = ref->pixList[x][y];

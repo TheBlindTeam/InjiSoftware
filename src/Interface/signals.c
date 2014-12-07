@@ -1485,6 +1485,7 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 					NFreeNetworkSet(data->learningNet);
 				data->learningNet = NULL;
 				data->learningNet = NInitCharacterNetworkSet(filename);
+				data->learningNet->exSet = NULL;
 
 				GtkWidget *label = GTK_WIDGET(gtk_builder_get_object(data->builder, "FilenameLearning"));
 				gtk_label_set_text(GTK_LABEL(label), basename(filename));

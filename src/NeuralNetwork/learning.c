@@ -98,5 +98,6 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 						tmp->connectList[l].prevChange;
 				}
 			}
+	free(output);
 	return 1;
 }

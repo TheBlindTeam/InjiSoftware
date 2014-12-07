@@ -208,6 +208,7 @@ double NComputeError(Network *nWork, ExempleSet *exSet,
 			addInStringAt(r, "\n", &i, max);
 		}
 		count++;
+		free(output);
 	}
 	totalError /= count;
 	if (print)
@@ -217,7 +218,6 @@ double NComputeError(Network *nWork, ExempleSet *exSet,
 		addInStringAt(r, tmp, &i, max);
 		addInStringAt(r, "\n", &i, max);
 	}
-	free(output);
 	nWork->error = totalError;
 	return totalError;
 }
@@ -306,6 +306,7 @@ void NFreeExempleSet(ExempleSet *exSet)
 {
 	for (int i = 0; i < exSet->size; i ++)
 		NFreeExemple(exSet->exemple[i]);
+	free(exSet->exemple);
 }
 
 void NFreeNetworkSet(NetworkSet* nWorkset)

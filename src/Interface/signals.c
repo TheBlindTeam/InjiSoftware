@@ -1529,7 +1529,7 @@ void get_random_training_set(char* line)
 	}
 }
 
-void learnRc(SGlobalData *data, int nbIter, char* fname)
+double learnRc(SGlobalData *data, int nbIter, char* fname)
 {
 	GtkWidget *entryLR = GTK_WIDGET(gtk_builder_get_object(
 		data->builder, "LearnLR"));
@@ -1540,7 +1540,7 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 	data->learningNet->exSet = NULL;
 	data->learningNet->exSet = NGetCharExempleSet(line);
 	if(!data->learningNet->exSet)
-		return;
+		return 1;
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
 	if (rand() % 10 == 0)
@@ -1557,20 +1557,17 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 			int Letter = ConvertToOrderedChar(c[j].c);
 			if (data->learningNet->exSet->exemple[i]->target[Letter] == 1)
 				printf("\033[32;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-			else if (!data->learningNet->exSet->exemple[i]->target[Letter])
-				printf("letter %d target %lf prob %lf\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
 			else
-			{
 				printf("\033[31;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-				getchar();
-			}
 		}
 		printf("\n\n");
 		free(c);}
 	}
 	}
-	printf("Average error : %lf\n",NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0));
+	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
+	printf("Average error : %lf learningrate %lf\n", r, data->learningNet->lRate);
 	SWrite(*data->learningNet->nWork, fname);
+	return r;
 }
 
 void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
@@ -1595,10 +1592,16 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 		char *fname = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
 		if(nbSession > 0)
 			for(int i = 0; i < nbSession; i++)
+			{
 				learnRc(data, nbIter, fname);
+				data->learningNet->lRate *= 0.99;
+			}
 		else
 			while(1)
+			{
 				learnRc(data, nbIter, fname);
+				data->learningNet->lRate *= 0.99;
+			}
 	}
 }
 

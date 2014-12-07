@@ -2,8 +2,8 @@
 
 const int charInputSize = 16;
 const int outputSize = 162;//A Changer
-const double learningRate = 0.01;
-const double momentum = 0.3;
+const double learningRate = 0.001;
+const double momentum = 0.8;
 const double overfitCoef = 0.0000;
 
 int compareCharOutput(const void *a, const void *b)
@@ -25,15 +25,31 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 	for (int i = 0; i < outputSize; i ++)
 		if (output[i] >= 0.8)
 			(*size)++;
-	r = malloc(sizeof(CharOutput) * (*size));
-	*size = 0;
-	for (int i = 0; i < outputSize; i ++)
-		if (output[i] >= 0.8)
-		{
-			r[*size].c = ConvertToRegularChar((gunichar)i);
-			r[*size].prob = output[i];
-			(*size)++;
-		}
+	if (*size)
+	{
+		r = malloc(sizeof(CharOutput) * (*size));
+		*size = 0;
+		for (int i = 0; i < outputSize; i ++)
+			if (output[i] >= 0.8)
+			{
+				r[*size].c = ConvertToRegularChar((gunichar)i);
+				r[*size].prob = output[i];
+				(*size)++;
+			}
+	}
+	else
+	{
+		r = malloc(sizeof(CharOutput));
+		r[0].c = ConvertToRegularChar((gunichar)0);
+		r[0].prob = output[0];
+		for (int i = 0; i < outputSize; i ++)
+			if (output[i] > r[0].prob)
+			{
+				r[0].c = ConvertToRegularChar((gunichar)i);
+				r[0].prob = output[i];
+			}
+		*size = 1;
+	}
 	free(output);
 	qsort(r, *size, sizeof(CharOutput), compareCharOutput);
 	return r;
@@ -79,14 +95,22 @@ ExempleSet *NGetCharExempleSet(char *path)
 		target = malloc(sizeof(double*) * nbLines);
 		for (int i = 0; i < nbLines; i ++)
 		{
-			target[i] = ConvertCharToTargetArray(getc(fp));
+			gunichar currentC = ConvertToOrderedChar(getc(fp));
 			c = getc(fp);
 			input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
 			for (int j = 0; j < charInputSize * charInputSize; j ++)
 				input[i][j] = (double)getc(fp);
+			target[i] = ConvertCharToTargetArray(currentC);
 			while((c = getc(fp)) != '\n');
 		}
 		ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
+		for (int i = 0; i < nbLines; i ++)
+		{
+			free(input[i]);
+			free(target[i]);
+		}
+		free(input);
+		free(target);
 		fclose(fp);
 		return r;
 	}
@@ -113,14 +137,13 @@ gunichar ConvertToRegularChar(gunichar c)
 
 double *ConvertCharToTargetArray(gunichar c)
 {
-	int tmp = ConvertToOrderedChar(c);
-	if (tmp < 255)
+	if (c < 255)
 	{
-		int size = ConvertToOrderedChar(255) + 1;
-		double *r = malloc(sizeof(double) * size);
+		int size = outputSize;
+		double *r = malloc(sizeof(double) * outputSize);
 		for (int i = 0; i < size; i ++)
 			r[i] = 0;
-		r[tmp] = 1;
+		r[c] = 1;
 		return r;
 	}
 	return NULL;

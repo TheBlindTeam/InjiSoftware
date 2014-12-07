@@ -23,7 +23,7 @@ gunichar ConvertToOrderedChar(gunichar c);
 
 gunichar ConvertToRegularChar(gunichar c);
 
-double *ConvertCharToTargetArray(gunichar c);
+double *ConvertCharToTargetArray(gunichar);
 
 ImageBN *ToSquareImage(ImageBN *img, struct Box *b);
 

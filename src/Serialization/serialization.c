@@ -150,6 +150,7 @@ int readConnection(FILE *file, Connection *c)
 
 Network* SRead(char *fileName)
 {
+	printf("WALLAH\n");
 	Network *n = NULL;
 	int error = 1;
 	FILE *file = fopen(fileName, "r");
@@ -165,5 +166,6 @@ Network* SRead(char *fileName)
 	}
 	if (error == EOF)
 		printf("Erreur lors de l'écriture du fichier");
+	printf("WALLAH CA MARCHE\n");
 	return n;
 }

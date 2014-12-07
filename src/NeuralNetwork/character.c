@@ -2,16 +2,16 @@
 
 const int charInputSize = 16;
 const int outputSize = 162;//A Changer
-const double learningRate = 0.01;
-const double momentum = 0.9;
-const double overfitCoef = 0.002;
+const double learningRate = 0.04;
+const double momentum = 0.1;
+const double overfitCoef = 0.0000;
 
 int compareCharOutput(const void *a, const void *b)
 {
-	double tmp = ((CharOutput*)a)->prob - ((CharOutput*)b)->prob;
-	if (tmp > 0)
+	double tmp = (*(CharOutput*)b).prob - (*(CharOutput*)a).prob;
+	if (tmp > 0.0)
 		return 1;
-	if (tmp < 0)
+	if (tmp < 0.0)
 		return -1;
 	return 0;
 }
@@ -30,8 +30,8 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 	for (int i = 0; i < outputSize; i ++)
 		if (output[i] >= 0.8)
 		{
-			r[i].c = ConvertToRegularChar((gchar)i);
-			r[i].prob = output[i];
+			r[*size].c = ConvertToRegularChar((gunichar)i);
+			r[*size].prob = output[i];
 			(*size)++;
 		}
 	qsort(r, *size, sizeof(CharOutput), compareCharOutput);

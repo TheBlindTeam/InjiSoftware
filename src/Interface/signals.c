@@ -479,7 +479,7 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
 			iterCalls++;
-
+		NComputeError(networkSet->nWork, networkSet->exSet, 0, NULL, 0);
 		cairo_set_line_width(cr, 1);
 		cairo_set_source_rgba(cr, 1.0, 0.5, 0.2, 1);
 
@@ -1525,6 +1525,25 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 		return;
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
+	for (int i = 0; i < data->learningNet->exSet->size; i ++)
+	{
+		int tmpSize = 0;
+		CharOutput *c = Recognize(data->learningNet, data->learningNet->exSet->exemple[i]->input, &tmpSize);
+		for (int j = 0; j < tmpSize; j ++)
+		{
+			int Letter = ConvertToOrderedChar(c[j].c);
+			if (data->learningNet->exSet->exemple[i]->target[Letter] == 1)
+				printf("\033[32;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
+			else if (!data->learningNet->exSet->exemple[i]->target[Letter])
+				printf("letter %d target %lf prob %lf\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
+			else
+			{
+				printf("\033[31;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
+				getchar();
+			}
+		}
+		printf("\n\n");
+	}
 	SWrite(*data->learningNet->nWork, fname);
 }
 

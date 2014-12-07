@@ -49,18 +49,15 @@ void NChangeLostNetwork(Network won, double wError, Network lost,
 int NBackPropLearn(NetworkSet *nWorkSet)
 {
 	double *output = NULL;
-	if (nWorkSet->nWork->error < nWorkSet->maxError)
-		return 0;
 	Network *nWork = nWorkSet->nWork;
-	Exemple *ex = nWorkSet->exSet->exemple[rand() % nWorkSet->exSet->size];
+	int index = rand() % nWorkSet->exSet->size;
+	Exemple *ex = nWorkSet->exSet->exemple[index];
 	NRun(nWork, ex->input, &output);
 	for (int j = 0; j < nWorkSet->exSet->targetSize; j ++)
 	{
 		Neuron *tmp = &nWork->neurons[nWork->nbLayers - 1][j];
-		tmp->error = FUNCTIONS[tmp->shockFoo].df(output[j])*(ex->target[j]
-				- output[j]);
-		if ((int)ex->target[j] && (rand() % 100 == 42))
-			printf("error output %lf target %lf %lf\n", output[j], ex->target[j], tmp->error);
+		tmp->error = FUNCTIONS[tmp->shockFoo].df(output[j]) *
+			(ex->target[j] - output[j]);
 	}
 	for (int j = nWork->nbLayers - 2; j > 0; j --)
 		for (int k = 0; k < nWork->layersSize[j]; k++)
@@ -68,35 +65,38 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 			Neuron *tmp = &nWork->neurons[j][k];
 			tmp->error = 0.0;
 			for (int l = 0; l < tmp->nbConnections; l ++)
-				tmp->error +=
-					tmp->connectList[l].weight
-					* nWork->neurons
-					[tmp->connectList[l].layer]
-					[tmp->connectList[l].index]
-					.error;
-			tmp->error *= FUNCTIONS[tmp->shockFoo].df(tmp->shock);
-		}
-	for (int j = 0; j < nWork->nbLayers; j ++)
-		for (int k = 0; k < nWork->layersSize[j]; k++)
-		{
-			Neuron *tmp = &nWork->neurons[j][k];
-			for (int l = 0; l < tmp->nbConnections; l++)
 			{
-				tmp->connectList[l].weight +=
-					nWorkSet->momentum
-					* tmp->connectList[l]
-					.prevChange;
-				tmp->connectList[l].prevChange =
-					nWorkSet->lRate
-					* nWork->neurons
+				tmp->error += tmp->connectList[l].weight *
+					nWork->neurons
 					[tmp->connectList[l].layer]
-					[tmp->connectList[l].index]
-					.error * tmp->shock;
-				tmp->connectList[l].weight +=
-					tmp->connectList[l].prevChange;
+					[tmp->connectList[l].index].error;
+			}
+			tmp->error *= FUNCTIONS[tmp->shockFoo].df(tmp->shock);
+			for (int l = 0; l < tmp->nbConnections; l ++)
+			{
+				tmp->error += pow(tmp->connectList[l].weight, 2) *
+					nWorkSet->overfitCoef;
 			}
 		}
-	NComputeError(nWork, nWorkSet->exSet, 0, NULL, 0);
-	//getchar();
+		for (int j = 0; j < nWork->nbLayers; j ++)
+			for (int k = 0; k < nWork->layersSize[j]; k++)
+			{
+				Neuron *tmp = &nWork->neurons[j][k];
+				for (int l = 0; l < tmp->nbConnections; l++)
+				{
+					tmp->connectList[l].weight +=
+						nWorkSet->momentum
+						* tmp->connectList[l]
+						.prevChange;
+					tmp->connectList[l].prevChange =
+						nWorkSet->lRate
+						* nWork->neurons
+						[tmp->connectList[l].layer]
+						[tmp->connectList[l].index]
+						.error * tmp->shock;
+					tmp->connectList[l].weight +=
+						tmp->connectList[l].prevChange;
+				}
+			}
 	return 1;
 }

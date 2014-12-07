@@ -1,0 +1,66 @@
+NET:
+	NBL: 3
+		LA0: 3
+		LA1: 3
+		LA2: 1
+	BIA: 1
+	LA0:
+		NE0:
+			FOO: 0
+			NBC: 2
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: 1.908088
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: -42.006886
+		NE1:
+			FOO: 0
+			NBC: 2
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: 1.912161
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: -41.134202
+		NE2:
+			FOO: 0
+			NBC: 2
+			CO0:
+				LAY: 1
+				IND: 0
+				WEI: -0.832461
+			CO1:
+				LAY: 1
+				IND: 1
+				WEI: 81.946681
+	LA1:
+		NE0:
+			FOO: 2
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: 2.689838
+		NE1:
+			FOO: 2
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: 2.462278
+		NE2:
+			FOO: 0
+			NBC: 1
+			CO0:
+				LAY: 2
+				IND: 0
+				WEI: -0.627586
+	LA2:
+		NE0:
+			FOO: 2
+			NBC: 0

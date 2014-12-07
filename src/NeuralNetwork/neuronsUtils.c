@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <string.h>
 
-const double RAND_UP = 0.1;
-const double RAND_DOWN = -0.1;
+const double RAND_UP = 1;
+const double RAND_DOWN = -1;
 const Ninit NINIT[] = {
 	&NInitializeCompleteBias,
 	&NInitializeCompleteNBias,

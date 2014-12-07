@@ -991,7 +991,7 @@ Adrien NEVEU</property>
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Inji Software</property>
     <property name="window_position">center</property>
-    <property name="default_width">650</property>
+    <property name="default_width">700</property>
     <property name="default_height">563</property>
     <property name="gravity">center</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>

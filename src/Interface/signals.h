@@ -17,6 +17,7 @@
 #include "../PreTreatment/segmentation.h"
 #include "../PreTreatment/hough.h"
 #include "../Serialization/serialization.h"
+#include "../Skeleton/skeleton.h"
 #include "globalData.h"
 
 #define ZOOM_COEF 0.1
@@ -106,3 +107,7 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget, gpointer user
 void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data);
 void on_click_new_network_learn(GtkWidget *widget, gpointer user_data);
 void get_random_training_set(char *line);
+
+void get_main_network(char* line);
+void process_print(SGlobalData *data);
+void on_click_process(GtkWidget *widget, gpointer user_data);

@@ -221,6 +221,12 @@ void connectSignals(SGlobalData *data)
 			"LearnNew")),
 		"clicked",
 		G_CALLBACK(on_click_new_network_learn), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"ProcessBtn")),
+		"clicked",
+		G_CALLBACK(on_click_process), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -1463,7 +1469,6 @@ void get_random_training_set(char* line)
 				nbLines++;
 		rewind(fList);
 		int rd = rand_limit(nbLines-1);
-		printf("d:%d\n", rd);
 		while(fgets(line, 255, fList) && rd > 0)
 			rd--;
 		fclose(fList);
@@ -1520,6 +1525,40 @@ void on_click_new_network_learn(GtkWidget *widget, gpointer user_data)
 			data->builder, "LearnButtonLearn")), TRUE);
 	}
 }
+
+void get_main_network(char* line)
+{
+	FILE *fList = fopen("trainingSet.list", "r");
+	if(fList)
+	{
+		if(fgets(line, 255, fList) != NULL)
+			line[strlen(line)-1] = 0;
+		fclose(fList);
+	}
+}
+
+void on_click_process(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		ImageBN *bn = PreTreatment(data->img_rgb);
+		Image *img = UBinaryToRgb(bn);
+		UFreeImage(data->img_rgb);
+		data->img_rgb = img;
+
+		char netchar[256];
+		get_main_network(netchar);
+		Box *b = Recognition(NInitCharacterNetworkSet(netchar), bn);
+		img = DrawAllBoxes(img, b, 1);
+		UFreeImage(data->img_rgb);
+		data->img_rgb = NULL;
+		data->img_rgb = img;
+
+		apply_zoom(data, 0);
+	}
+}
+
 /*
 Process
 ImageBN *bn = PreTreatment(img->data);

@@ -38,14 +38,17 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 			for (int k = -half; k <= half; k ++)
 				for (int l = -half; l <= half; l ++)
 				{
-					if (x + k >= 0 && x + k < image->width &&
-						y + l >= 0 && y + l < image->height)
+					if (x + k >= 0 && x + k < image->width
+                                        && y + l >= 0 && y + l < image->height)
 					{
-						R += ref->pixList[x + k][y + l].r 
+                                                R +=
+                                                    ref->pixList[x + k][y + l].r
                                                     * convolution[k + half][l + half];
-						G += ref->pixList[x + k][y + l].r 
+						G +=
+                                                    ref->pixList[x + k][y + l].g
                                                     * convolution[k + half][l + half];
-						B += ref->pixList[x + k][y + l].r
+						B +=
+                                                    ref->pixList[x + k][y + l].b
                                                     * convolution[k + half][l + half];
 					}
 				}
@@ -63,7 +66,7 @@ ImageGS *MedianFilter(ImageGS *ref, size_t filterSize)
 {
     ImageGS *result = malloc(sizeof(ImageGS));
     // Size of the Filter Matrix
-    int arraySize = filterSize;// This value will be updated with ExtractNeighbors
+    int arraySize = filterSize;// This value will be updated : ExtractNeighbors
     guchar *neighbors;
 
     // Image Initialization

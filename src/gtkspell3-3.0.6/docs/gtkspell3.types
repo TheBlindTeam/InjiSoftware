@@ -1,2 +1,0 @@
-#include <gtkspell/gtkspell.h>
-gtk_spell_checker_get_type

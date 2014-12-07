@@ -109,8 +109,10 @@ void on_click_new_network_learn(GtkWidget *widget, gpointer user_data);
 void get_random_training_set(char *line);
 
 void get_main_network(char* line);
-void process_print(SGlobalData *data);
+void print_text(SGlobalData *data, gunichar *txt);
+void process_print(SGlobalData *data, Box* b);
 double learnRc(SGlobalData *data, int nbIter, char* fname);
+
 void on_click_process(GtkWidget *widget, gpointer user_data);
 
 void on_click_close_orientation(GtkWidget *widget, gpointer user_data);

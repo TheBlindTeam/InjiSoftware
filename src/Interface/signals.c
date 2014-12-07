@@ -1532,8 +1532,6 @@ void get_random_training_set(char* line)
 
 double learnRc(SGlobalData *data, int nbIter, char* fname)
 {
-	GtkWidget *entryLR = GTK_WIDGET(gtk_builder_get_object(
-		data->builder, "LearnLR"));
 	char line[256];
 	get_random_training_set(line);
 	if(data->learningNet->exSet)
@@ -1548,7 +1546,6 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	{
 	for (int i = 0; i < data->learningNet->exSet->size; i ++)
 	{
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(entryLR), data->learningNet->lRate);
 		if (rand() % 20 == 0)
 		{
 		int tmpSize = 0;
@@ -1586,6 +1583,8 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 		double learningRate = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
 				gtk_builder_get_object(data->builder, "LearnLR")));
 
+		GtkWidget *entryLR = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "LearnLR"));
 		data->learningNet->lRate = learningRate;
 
 		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
@@ -1594,12 +1593,14 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 		if(nbSession > 0)
 			for(int i = 0; i < nbSession; i++)
 			{
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entryLR), data->learningNet->lRate);
 				learnRc(data, nbIter, fname);
 				data->learningNet->lRate *= 0.99;
 			}
 		else
 			while(1)
 			{
+				gtk_spin_button_set_value(GTK_SPIN_BUTTON(entryLR), data->learningNet->lRate);
 				learnRc(data, nbIter, fname);
 				data->learningNet->lRate *= 0.99;
 			}
@@ -1660,15 +1661,37 @@ void get_main_network(char* line)
 	}
 }
 
-void process_print(SGlobalData *data)
+void print_text(SGlobalData *data, gunichar *txt)
 {
-	data=data;
-	/*GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+
+	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
 		"TextView"));
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+	GtkTextIter end;
+	gtk_text_buffer_get_end_iter(buffer, &end);
+	gtk_text_buffer_insert(buffer, &end, (char*)txt, -1);
+	gtk_text_view_set_buffer(view, buffer);
+}
 
-	gtk_text_buffer_get_start_iter(buffer, &start);
-
-	gtk_text_view_set_buffer(view, buffer);*/
+void process_print(SGlobalData *data, Box* b)
+{
+	if (b->lvl == BLOCK)
+		print_text(data, (gunichar*)"\t");
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		process_print(data, b->subBoxes[i]);
+	if (b->lvl == BLOCK)
+		print_text(data, (gunichar*)"\n\n");
+	if (b->lvl == LINE)
+		print_text(data, (gunichar*)"\n");
+	if (b->lvl == WORD)
+		print_text(data, (gunichar*)" ");
+	if (b->lvl == CHARACTER)
+		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
+		{
+			gchar* tmp = "";
+			sprintf(tmp, "%c", b->output[0].c);
+			print_text(data, (gunichar*)tmp);
+		}
 }
 
 void on_click_process(GtkWidget *widget, gpointer user_data)
@@ -1688,6 +1711,7 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;
 		data->img_rgb = img;
+		process_print(data, b);
 
 		apply_zoom(data, 0);
 	}

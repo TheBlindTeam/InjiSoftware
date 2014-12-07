@@ -8,7 +8,7 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_window_destroy), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
+		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkVisualizerBtnTop")),
 		"clicked",
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
 	
@@ -55,13 +55,18 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BDetectOrientation")),
+			"DetectOrientationBtnTop")),
 		"clicked",
+		G_CALLBACK(on_click_detect_orientation), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"View.DetectOrientation")),
+		"activate",
 		G_CALLBACK(on_click_detect_orientation), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"GrayscaleBtn")),
+			"GrayscaleBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_grayscale), data);
 	g_signal_connect(
@@ -72,7 +77,7 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BinarizeBtn")),
+			"BinarizeBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_binary), data);
 	g_signal_connect(
@@ -105,7 +110,7 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"NoiseEraserBtn")),
+			"NoiseEraserBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_noiseeraser), data);
 	g_signal_connect(
@@ -269,9 +274,15 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"ProcessBtn")),
+			"ProcessBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_process), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"CloseBtnAngle")),
+		"clicked",
+		G_CALLBACK(on_click_close_orientation), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -979,10 +990,13 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			UFreeImageBinary(tmpBn);
 
 			gchar txt[20];
-			sprintf(txt, "%f", (double)(180 * angle) / M_PI);
-			gtk_entry_set_text(GTK_ENTRY(
-				gtk_builder_get_object(data->builder,
-					"DetectAngleVal")), txt);
+			sprintf(txt, "%.3f", (double)(180 * angle) / M_PI);
+
+			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(data->builder, "OrientationDialog"));
+			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Angle: %s°", txt);
+
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_hide(dialog);
 		}
 	}
 }
@@ -1222,6 +1236,16 @@ void apply_zoom(SGlobalData *data, int change_field)
 		gtk_entry_set_text(GTK_ENTRY(
 			gtk_builder_get_object(data->builder,
 				"ZoomField")), str);
+	}
+}
+void on_click_close_orientation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "OrientationDialog"));
+		gtk_widget_hide(window);
 	}
 }
 /*

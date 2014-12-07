@@ -47,6 +47,11 @@ void connectSignals(SGlobalData *data)
 			"BSegmentation")),
 		"clicked",
 		G_CALLBACK(on_click_segmentation), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.Segmentation")),
+		"activate",
+		G_CALLBACK(on_click_segmentation), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
@@ -61,9 +66,21 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_click_transform_grayscale), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.Grayscale")),
+		"activate",
+		G_CALLBACK(on_click_transform_grayscale), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
 			"BinarizeBtn")),
 		"clicked",
 		G_CALLBACK(on_click_transform_binary), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.Binarize")),
+		"activate",
+		G_CALLBACK(on_click_transform_binary), data);
+
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"TrainingBtn")),
@@ -71,9 +88,21 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_click_open_training), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
+			"View.Training")),
+		"activate",
+		G_CALLBACK(on_click_open_training), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
 			"LearningBtn")),
 		"clicked",
 		G_CALLBACK(on_click_open_learning), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"View.Learning")),
+		"activate",
+		G_CALLBACK(on_click_open_learning), data);
+
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"NoiseEraserBtn")),
@@ -81,9 +110,21 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_click_transform_noiseeraser), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.NoiseEraser")),
+		"activate",
+		G_CALLBACK(on_click_transform_noiseeraser), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
 			"DilatationBtn")),
 		"clicked",
 		G_CALLBACK(on_click_transform_dilatation), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"Edit.Dilatation")),
+		"activate",
+		G_CALLBACK(on_click_transform_dilatation), data);
+
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"LearnOKBtn")),
@@ -128,6 +169,10 @@ void connectSignals(SGlobalData *data)
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"AboutButton")),
 		"clicked",
+		G_CALLBACK(on_about_button_clicked), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "AboutMenu")),
+		"activate",
 		G_CALLBACK(on_about_button_clicked), data);
 
 	g_signal_connect(
@@ -1158,26 +1203,18 @@ void apply_zoom(SGlobalData *data, int change_field)
 	data->tmp = malloc(sizeof(guchar*));
 	data->pixbuf = UGetPixbufFromImage(
 		data->img_rgb, data->tmp);
+
+	GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple(data->pixbuf,
+		data->img_rgb->width * data->previewScale,
+		data->img_rgb->height * data->previewScale, GDK_INTERP_BILINEAR);
+
 	gtk_image_set_from_pixbuf(GTK_IMAGE(
-		gtk_builder_get_object(data->builder,
-			"PreviewImage")),
-		gdk_pixbuf_scale_simple(
-			data->pixbuf,
-			data->img_rgb->width *
-				data->previewScale,
-			data->img_rgb->height *
-				data->previewScale,
-			GDK_INTERP_BILINEAR));
+		gtk_builder_get_object(data->builder, "PreviewImage")),
+		pixbuf);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(
-		gtk_builder_get_object(data->builder,
-			"ImgLearning")),
-		gdk_pixbuf_scale_simple(
-			data->pixbuf,
-			data->img_rgb->width *
-				data->previewScale,
-			data->img_rgb->height *
-				data->previewScale,
-			GDK_INTERP_BILINEAR));
+		gtk_builder_get_object(data->builder, "ImgLearning")),
+		pixbuf);
+	g_object_unref(pixbuf);
 	if(change_field)
 	{
 		char str[10];

@@ -1526,8 +1526,12 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 		return;
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
+	if (rand() % 10 == 0)
+	{
 	for (int i = 0; i < data->learningNet->exSet->size; i ++)
 	{
+		if (rand() % 20 == 0)
+		{
 		int tmpSize = 0;
 		CharOutput *c = Recognize(data->learningNet, data->learningNet->exSet->exemple[i]->input, &tmpSize);
 		for (int j = 0; j < tmpSize; j ++)
@@ -1544,7 +1548,10 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 			}
 		}
 		printf("\n\n");
+		free(c);}
 	}
+	}
+	printf("Average error : %lf\n",NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0));
 	SWrite(*data->learningNet->nWork, fname);
 }
 

@@ -217,6 +217,7 @@ double NComputeError(Network *nWork, ExempleSet *exSet,
 		addInStringAt(r, tmp, &i, max);
 		addInStringAt(r, "\n", &i, max);
 	}
+	free(output);
 	nWork->error = totalError;
 	return totalError;
 }

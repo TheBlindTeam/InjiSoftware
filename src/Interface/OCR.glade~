@@ -1293,7 +1293,7 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="ProcessBtn1">
+                  <object class="GtkButton" id="ProcessBtn">
                     <property name="label" translatable="yes"> Process</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>

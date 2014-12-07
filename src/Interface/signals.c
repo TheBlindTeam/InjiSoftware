@@ -1453,7 +1453,7 @@ int rand_limit(int limit)
 
 void get_random_training_set(char* line)
 {
-	FILE *fList = fopen("trainingSets.list", "r");
+	FILE *fList = fopen("trainingSet.list", "r");
 	if(fList)
 	{
 		int c;

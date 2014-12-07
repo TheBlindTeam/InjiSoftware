@@ -59,6 +59,8 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 		Neuron *tmp = &nWork->neurons[nWork->nbLayers - 1][j];
 		tmp->error = FUNCTIONS[tmp->shockFoo].df(output[j])*(ex->target[j]
 				- output[j]);
+		if ((int)ex->target[j] && (rand() % 100 == 42))
+			printf("error output %lf target %lf %lf\n", output[j], ex->target[j], tmp->error);
 	}
 	for (int j = nWork->nbLayers - 2; j > 0; j --)
 		for (int k = 0; k < nWork->layersSize[j]; k++)
@@ -95,5 +97,6 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 			}
 		}
 	NComputeError(nWork, nWorkSet->exSet, 0, NULL, 0);
+	//getchar();
 	return 1;
 }

@@ -140,6 +140,7 @@ Image *URotate(Image *ref, double angle)
 			pix[x][y].r = 255;
 			pix[x][y].g = 255;
 			pix[x][y].b = 255;
+                        // Alpha = 0 -> Transparency
 			pix[x][y].a = 0;
 		}
 
@@ -162,7 +163,97 @@ Image *URotate(Image *ref, double angle)
 	}
 
 	image->pixList = pix;
+
+        // Delete Useless Bounds
+        image = UCutAlphaMargin(ref);
+        // Free previous image
+        //UFreeImage(ref);
+
 	return image;
+
+}
+
+Image *UCutAlphaMargin(Image *ref)
+{
+    Image *result = malloc(sizeof(Image));
+    result->bits_per_sample = ref->bits_per_sample;
+    result->has_alpha = ref->has_alpha;
+
+    Vector2 min = {0, 0}; // Xmin and Ymin
+    Vector2 max = {0, 0}; // Xmax and Ymax
+
+    printf("Width : %d | Hei : %d\n",ref->width, ref->height);
+
+    // Find the Ymin value
+    for(int y = 0; y < ref->height; y++)
+    {
+        for(int x = 0; x < ref->width; x++)
+        {
+            // First pixel non-transparent
+            if(ref->pixList[x][y].a)
+            {
+                min.y = y;
+                if(max.y) // min has been found
+                    break;
+            }
+            if(ref->pixList[x][ref->height - y - 1].a)
+            {
+                max.y = ref->height - y - 1;
+                if(min.y) // max has been found
+                    break;
+            }
+
+            printf("y : %d | size - y = %d\n", y, ref->height - y - 1);
+        }
+
+        if(min.x && max.x && min.y && max.y)
+            break;
+
+    }
+
+    // find the Xmin value
+    for(int x = 0; x < ref->width; x++)
+        for(int y = 0; y < ref->height; y++)
+        {
+            // First pixel non-transparent
+            if(ref->pixList[x][y].a)
+            {
+                min.x = x;
+                if(max.x) // max has been found
+                    break;
+            }
+            if(ref->pixList[ref->width - x -1][y].a)
+            {
+                max.x = ref->width - x - 1;
+                if(min.x) // min has been found
+                    break;
+            }
+        }
+
+    // Compute the new size
+    result->width = max.x - min.x + 1;
+    result->height = max.y - min.y + 1;
+    // Initialize Pixels
+    result->pixList = malloc(result->width * sizeof(Pixel *));
+    for(int i = 0; i < result->width; i++)
+        result->pixList[i] = malloc(result->height * sizeof(Pixel));
+
+    // Fill the new image
+    int newX = 0;
+    int newY = 0;
+
+    for(int y = min.y; y <= max.y; y++)
+    {
+        for(int x = min.x; x <= max.x; x++)
+        {
+            result->pixList[newX][newY] = ref->pixList[x][y];
+            newX++;
+        }
+
+        newY++;
+    }
+
+    return result;
 
 }
 

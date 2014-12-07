@@ -8,7 +8,7 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_window_destroy), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "TestBut1")),
+		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkVisualizerBtnTop")),
 		"clicked",
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
 	
@@ -44,7 +44,7 @@ void connectSignals(SGlobalData *data)
 	
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BSegmentation")),
+			"SegmentationBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_segmentation), data);
 	g_signal_connect(
@@ -55,13 +55,18 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BDetectOrientation")),
+			"DetectOrientationBtnTop")),
 		"clicked",
+		G_CALLBACK(on_click_detect_orientation), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"View.DetectOrientation")),
+		"activate",
 		G_CALLBACK(on_click_detect_orientation), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"GrayscaleBtn")),
+			"GrayscaleBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_grayscale), data);
 	g_signal_connect(
@@ -72,7 +77,7 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BinarizeBtn")),
+			"BinarizeBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_binary), data);
 	g_signal_connect(
@@ -83,20 +88,10 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"TrainingBtn")),
-		"clicked",
-		G_CALLBACK(on_click_open_training), data);
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
 			"View.Training")),
 		"activate",
 		G_CALLBACK(on_click_open_training), data);
 
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
-			"LearningBtn")),
-		"clicked",
-		G_CALLBACK(on_click_open_learning), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"View.Learning")),
@@ -105,7 +100,7 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"NoiseEraserBtn")),
+			"NoiseEraserBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_transform_noiseeraser), data);
 	g_signal_connect(
@@ -114,11 +109,6 @@ void connectSignals(SGlobalData *data)
 		"activate",
 		G_CALLBACK(on_click_transform_noiseeraser), data);
 
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
-			"DilatationBtn")),
-		"clicked",
-		G_CALLBACK(on_click_transform_dilatation), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"Edit.Dilatation")),
@@ -269,9 +259,15 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"ProcessBtn")),
+			"ProcessBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_process), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"CloseBtnAngle")),
+		"clicked",
+		G_CALLBACK(on_click_close_orientation), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -358,15 +354,11 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 					data->firstBox = NULL;
 					data->boxDetectIndex = 0;
 					data->boxCount = 0;
-					gtk_button_set_label(GTK_BUTTON(
-						gtk_builder_get_object(
-							data->builder,
-							"BSegmentation")),
-						"Segmentation");
 				}
 
-				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
-					data->builder, "TrainingBtn")), TRUE);
+				gtk_entry_set_text(GTK_ENTRY(
+					gtk_builder_get_object(data->builder,
+						"PreviewPath")), filename);
 
 				data->previewScale = 1;
 				gtk_entry_set_text(GTK_ENTRY(
@@ -474,7 +466,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		data->networkSet->momentum = val[1];
 		data->networkSet->maxError = val[2];
 		data->networkSet->overfitCoef = val[3];
-		SWrite(network, "test.inji");
 
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
@@ -911,27 +902,30 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			if (data->segBoxArray == NULL)
+			if (data->segBoxArray)
 			{
-				int count;
-				ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
-				ImageGS *tmpGs = MedianFilter(tmpBn, 3);
-				Image *tmpImg = UGrayscaleToRgb(tmpGs);
-				data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
-				UFreeImageGray(tmpBn);
-				UFreeImageGray(tmpGs);
-				UFreeImage(tmpImg);
-				data->segBoxArray = GetBreadthBoxArray(
-					data->firstBox, &count);
-				gtk_button_set_label(GTK_BUTTON(
-					gtk_builder_get_object(data->builder,
-						"BSegmentation")), "Detect");
-				data->boxCount = count;
-				return;
+				if(data->firstBox)
+					FreeBox(data->firstBox);
+				data->firstBox = NULL;
+
+				for(int i = 0; i < data->boxCount; i++)
+					FreeBox(data->segBoxArray[i]);
+				data->segBoxArray = NULL;
 			}
-			if (data->boxDetectIndex == data->boxCount)
-				return;
-			Image *segTmpImg;
+
+			int count;
+			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
+			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
+			Image *tmpImg = UGrayscaleToRgb(tmpGs);
+			data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
+			UFreeImageGray(tmpBn);
+			UFreeImageGray(tmpGs);
+			UFreeImage(tmpImg);
+			data->segBoxArray = GetBreadthBoxArray(data->firstBox, &count);
+			data->boxCount = count;
+			
+			
+			Image *segTmpImg;// = //DrawAllBoxes(data->img_rgb, data->;
 			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
 				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl], 2);
 			else
@@ -941,7 +935,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				UFreeImageBinary(segBnImg);
 			}
 			UFreeImage(data->img_rgb);
-			data->img_rgb =  segTmpImg;
+			data->img_rgb = segTmpImg;
 			data->boxDetectIndex++;
 
 			if(data->tmp)
@@ -955,12 +949,8 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(
-				data->img_rgb, data->tmp);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-				"PreviewImage")),
-				data->pixbuf);
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtk_builder_get_object(data->builder, "PreviewImage")), data->pixbuf);
 
 			apply_zoom(data, 1);
 		}
@@ -979,10 +969,13 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			UFreeImageBinary(tmpBn);
 
 			gchar txt[20];
-			sprintf(txt, "%f", (double)(180 * angle) / M_PI);
-			gtk_entry_set_text(GTK_ENTRY(
-				gtk_builder_get_object(data->builder,
-					"DetectAngleVal")), txt);
+			sprintf(txt, "%.3f", (double)(180 * angle) / M_PI);
+
+			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(data->builder, "OrientationDialog"));
+			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Angle: %s°", txt);
+
+			gtk_dialog_run(GTK_DIALOG(dialog));
+			gtk_widget_hide(dialog);
 		}
 	}
 }
@@ -1132,11 +1125,9 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
-				data->tmp);
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
+				gtk_builder_get_object(data->builder, "PreviewImage")),
 				data->pixbuf);
 
 			apply_zoom(data, 1);
@@ -1222,6 +1213,16 @@ void apply_zoom(SGlobalData *data, int change_field)
 		gtk_entry_set_text(GTK_ENTRY(
 			gtk_builder_get_object(data->builder,
 				"ZoomField")), str);
+	}
+}
+void on_click_close_orientation(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *window = GTK_WIDGET(gtk_builder_get_object(
+			data->builder, "OrientationDialog"));
+		gtk_widget_hide(window);
 	}
 }
 /*

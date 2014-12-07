@@ -1,0 +1,51 @@
+# gtkspell-2.0.12: Translation to Portuguese.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gtkspell package.
+# Hugo Patrício <hugo.a.patricio@gmail.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell-2.0.12\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2009-01-27 03:05+0100\n"
+"Last-Translator: Hugo Patrício <hugo.a.patricio@gmail.com>\n"
+"Language-Team: Portuguese <translation-team-pt@lists.sourceforge.net>\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: PORTUGAL\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(sem sugestões)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Mais..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "Adicionar \"%s\" ao Dicionário"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Ignorar Tudo"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr ""
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr ""
+
+#~ msgid "Spelling Suggestions"
+#~ msgstr "Sugestões de Ortografia"

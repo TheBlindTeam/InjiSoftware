@@ -114,3 +114,6 @@ void learnRc(SGlobalData *data, int nbIter, char* fname);
 void on_click_process(GtkWidget *widget, gpointer user_data);
 
 void on_click_close_orientation(GtkWidget *widget, gpointer user_data);
+
+void on_click_export_button(GtkWidget *widget, gpointer user_data);
+void on_click_export_cancel(GtkWidget *widget, gpointer user_data);

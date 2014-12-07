@@ -1,0 +1,54 @@
+# Slovenian translation for gtkspell.
+# Copyright (C) 2005 - 2011 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gtkspell package.
+# Matej Urbančič <matej.urban@gmail.com>, 2005 - 2010.
+# Klemen Košir <klemen.kosir@gmx.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell 2.0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2011-02-20 16:12+0100\n"
+"Last-Translator: Klemen Košir <klemen.kosir@gmx.com>\n"
+"Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
+"Language: sl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
+"%100==4 ? 3 : 0);\n"
+"X-Poedit-Language: Slovenian\n"
+"X-Poedit-Country: SLOVENIA\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(ni predlogov)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Več ..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "Dodaj \"%s\" v slovar"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Prezri vse"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "Jeziki"
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "napaka oblike oznake jezika: %s"
+
+#~ msgid "Spelling Suggestions"
+#~ msgstr "Predlogi črkovanja"

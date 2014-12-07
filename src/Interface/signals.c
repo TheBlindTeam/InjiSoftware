@@ -166,6 +166,21 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_about_button_clicked), data);
 
 	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"SaveFileButton")),
+		"clicked",
+		G_CALLBACK(on_click_export_button), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder, "File.Export")),
+		"activate",
+		G_CALLBACK(on_click_export_button), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"ExportCancelBtn")),
+		"clicked",
+		G_CALLBACK(on_click_export_cancel), data);
+
+	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOK")),
 		"clicked",
 		G_CALLBACK(file_chooser_select_file_from_button), data);
@@ -1516,6 +1531,8 @@ void get_random_training_set(char* line)
 
 void learnRc(SGlobalData *data, int nbIter, char* fname)
 {
+	GtkWidget *entryLR = GTK_WIDGET(gtk_builder_get_object(
+		data->builder, "LearnLR"));
 	char line[256];
 	get_random_training_set(line);
 	if(data->learningNet->exSet)
@@ -1530,6 +1547,7 @@ void learnRc(SGlobalData *data, int nbIter, char* fname)
 	{
 	for (int i = 0; i < data->learningNet->exSet->size; i ++)
 	{
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(entryLR), data->learningNet->lRate);
 		if (rand() % 20 == 0)
 		{
 		int tmpSize = 0;
@@ -1567,8 +1585,13 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 				gtk_builder_get_object(data->builder, "LearnNbSessions")));
 		int nbIter = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
 				gtk_builder_get_object(data->builder, "LearnNbIter")));
+		double learningRate = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
+				gtk_builder_get_object(data->builder, "LearnLR")));
+
+		data->learningNet->lRate = learningRate;
+
 		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
-				data->builder, "LearnFileName"));
+			data->builder, "LearnFileName"));
 		char *fname = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
 		if(nbSession > 0)
 			for(int i = 0; i < nbSession; i++)
@@ -1596,6 +1619,31 @@ void on_click_new_network_learn(GtkWidget *widget, gpointer user_data)
 			data->builder, "LearnButtonLearn")), TRUE);
 	}
 }
+
+
+void on_click_export_button(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "ExportDialog"));
+		gtk_dialog_run(GTK_DIALOG(dialog));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void on_click_export_cancel(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "ExportDialog"));
+		gtk_widget_hide(dialog);
+	}
+}
+
 
 void get_main_network(char* line)
 {

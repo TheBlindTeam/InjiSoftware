@@ -1,0 +1,47 @@
+# Hungarian translation for gtkspell
+# Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
+# This file is distributed under the same license as the gtkspell package.
+#
+# Gabor Kelemen <kelemeng@gnome.hu>, 2006, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell 2.0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2010-02-01 15:16+0100\n"
+"Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
+"Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
+"Language: hu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(nincs javaslat)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Több…"
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "„%s” felvétele a szótárba"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Mindent mellőz"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "Nyelvek"
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "enchant hiba a következő nyelvhez: %s"

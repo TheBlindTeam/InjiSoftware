@@ -997,6 +997,12 @@ Adrien NEVEU</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="adjustment8">
+    <property name="upper">1000</property>
+    <property name="value">0.01</property>
+    <property name="step_increment">0.01</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkDialog" id="LearningWindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Learning Window</property>
@@ -1101,7 +1107,7 @@ Adrien NEVEU</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="halign">end</property>
-                <property name="label" translatable="yes">Filename:</property>
+                <property name="label" translatable="yes">Learning Rate:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -1120,19 +1126,6 @@ Adrien NEVEU</property>
               <packing>
                 <property name="left_attach">0</property>
                 <property name="top_attach">4</property>
-                <property name="width">1</property>
-                <property name="height">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="LearnFileName">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="text" translatable="yes">Networks/Net1.inji</property>
-              </object>
-              <packing>
-                <property name="left_attach">2</property>
-                <property name="top_attach">5</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -1228,6 +1221,55 @@ Adrien NEVEU</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label15">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Filename:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkEntry" id="LearnFileName">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">Networks/Net1.inji</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">6</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="LearnLR">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="text" translatable="yes">100</property>
+                <property name="input_purpose">digits</property>
+                <property name="adjustment">adjustment8</property>
+                <property name="climb_rate">0.01</property>
+                <property name="digits">8</property>
+                <property name="numeric">True</property>
+                <property name="value">0.01</property>
+              </object>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="top_attach">5</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <placeholder/>

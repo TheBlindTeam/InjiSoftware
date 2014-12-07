@@ -1,0 +1,143 @@
+version 3.0.6
+	* Latvian translation update (Rūdolfs Mazurs)
+	* German translation update (Roland Illig)
+	* Vietnamese translation update (Trần Ngọc Quân)
+	* Ukrainian translation update (Yuri Chornoivan)
+version 3.0.5
+	* Dutch translation update (Benno Schulenberg)
+
+version 3.0.4:
+	* Hebrew translation updated (Isratine Citizen)
+	* Chinese (Simplified) translation update (Anthony Fok)
+	* Chinese (Honk Kong) translation update (Anthony Fok)
+	* Chinese (Traditional) translation update (Anthony Fok)
+
+version 3.0.3:
+	* Turkish translation updated (Volkan Gezer)
+
+version 3.0.1:
+	* Afrikaans translation updated (Sandro Mani)
+	* Greek translation updated (Sandro Mani)
+	* Spanish translation updated (Sandro Mani)
+	* Irish translation updated (Sandro Mani)
+	* Armenian translation updated (Sandro Mani)
+	* Mongolian translation updated (Sandro Mani)
+	* Norwegian bokmaal translation updated (Sandro Mani)
+	* Dutch translation updated (Sandro Mani)
+	* Portuguese translation updated (Sandro Mani)
+	* Rumantsch translation updated (Sandro Mani)
+	* Romanian translation updated (Sandro Mani)
+	* Kinyarwanda translation updated (Sandro Mani)
+	* Slovak translation updated (Sandro Mani)
+	* Turkish translation updated (Sandro Mani)
+	* Ukrainian translation updated (Sandro Mani)
+	* Walloon translation updated (Sandro Mani)
+	* Chinese (Hong Kong) translation updated (Sandro Mani)
+	* Chinese (traditional) translation updated (Sandro Mani)
+	* Akan translation added (kasahorow)
+	* Fula translation added (Ibrahima SARR)
+	* Faroese translation added (Gunleif)
+	* Ganda translation added (OLWENY San James)
+	* Northern Sotho translation added (Pheledi)
+	* Songhai translation added (Mohomodou)
+	* Sotho translation added (Abe Mathibela)
+	* Zulu translation added (abel)
+
+version 3.0.0:
+	* Asturian translation added (Marquinos)
+	* Basque translation updated (Mikel Olasagasti Uranga)
+	* Belarusian translation updated (Ihar Hrachyshka)
+	* Brazilian Portuguese translation updated (Renan Mathias Fernandes)
+	* Chinese (traditional) translation updated (Aron Xu)
+	* Croatian translation added (Tomislav Krznar)
+	* French translation updated (Frédéric Marchal)
+	* Galician translation updated (Leandro Regueiro)
+	* Hebrew translation added (Isratine Citizen)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Icelandic translation added (Sveinn í Felli)
+	* Japanese translation updated (Daichi Kawahata, Takeshi Hamasaki)
+	* Latvian translation updated (Rihards Prieditis)
+	* Lithuanian translation updated (Algimantas Margevičius)
+	* Polish translation updated (Tomasz Dominikowski)
+	* Russian translation updated (Yuri Kozlov)
+	* Serbian translation updated(Aleksandar Jelenak)
+	* Slovenian translation updated (Klemen Košir)
+	* Vietnamese translation updated (Clytie Siddall)
+
+version 2.0.16:
+	* Afrikaans translation added (Dwayne Bailey)
+	* Albanian translation added (Besnik Bleta)
+	* Chinese translation updated (Aron Xu)
+	* Czech translation updated (Petr Kovar)
+	* Danish translation updated (Joe Hansen)
+	* Esperanto translation updated (Edmund GRIMLEY EVANS)
+	* Finnish translation updated (Jorma Karvonen)
+	* German translation updated (Roland Illig)
+	* Indonesian translation updated (Andhika Padmawan)
+	* Italian translation updated (Marco Colombo)
+	* Latvian translation added (Rihards Prieditis)
+	* Malay translation added (Muhammad Najmi Ahmad Zabidi)
+	* Portuguese translation added (Hugo Patrício)
+	* Swedish translation updated (Daniel Nylander)
+	* Thai translation added (Seksan Poltree)
+	* Vietnamese translation updated (Clytie Siddall)
+
+version 2.0.15:
+	* Danish translation added (Joe Hansen)
+
+version 2.0.14:
+	* Indonesian translation added (Andhika Padmawan)
+
+version 2.0.13:
+	* Galician translation added (Diego Pérez Montes)
+	* Lithuanian translation added (Gintautas Miliauskas)
+	* Czech translation added (Petr Kovar)
+	* Finnish translation added (Petri T. Koistinen)
+	* Hungarian translation added (Gabor Kelemen)
+	* Armenian translation added (Vardan Gevorgyan)
+	* Kirghiz translation added (Ilyas Bakirov)
+	* Norwegian translation added (Roy Hvaara)
+	* Slovenian translation added (Matej Urbančič)
+	* Swedish translation added (Daniel Nylander)
+	* Ukrainian translation added (Maxim V. Dziumanenko)
+	* Chinese translation added (Abel Cheung)
+
+version 2.0.12:
+	* Turkish translation added (Eren Türkay)
+
+version 2.0.11:
+	* Japanese translation added (Daichi Kawahata)
+	* Kinyarwanda translation added (Steve Murphy, et al)
+	* Russian translation added (Basil Shubin)
+	* Chinese (traditional) translation added (Abel Cheung)
+
+version 2.0.10:
+	* Dutch translation added (Jan Claeys)
+
+version 2.0.9:
+	* Chinese (simplified) translation added (Meng Jie)
+	* Greek translation added (Simos Xenitellis)
+	* Italian translation added (Marco Colombo)
+	* Portuguese (Brazilian) translation updated (Renan Mathias Fernandes)
+	* Rumantsch (Rhaeto-Romance) translation added (Florian Verdet)
+	* Spanish translation added (Víctor Alonso)
+	* Vietnamese translation added (Clytie Siddall)
+
+version 2.0.8:
+	* Basque translation added (Mikel Olasagasti)
+
+version 2.0.7:
+	* Mongolian translation added (Sanlig Badral)
+	* Polish translation added (Emilian Nowak)
+	* Slovak translation added (Andrej Kacian)
+
+version 2.0.6:
+	* Belarusian translation added (Ales Nyakhaychyk)
+	* Esperanto translation added (Edmund GRIMLEY EVANS)
+	* French translation added (Michel Robitaille)
+	* German translation added (Roland Illig)
+	* Irish translation added (Kevin Patrick)
+	* Portuguese (Brazilian) translation added (Adriano Del Vigna de Almeida)
+	* Romanian translation added (Laurentiu Buzdugan)
+	* Serbian translation added (Aleksandar Jelenak)
+	* Walloon translation added (Pablo Saratxaga)

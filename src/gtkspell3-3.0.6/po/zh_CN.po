@@ -1,0 +1,50 @@
+# gtkspell 的简体中文翻译
+# Copyright (C) 2004, 2009, 2013 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gtkspell package.
+# Meng Jie <zuxyhere@eastday.com>, 2004.
+# Aron Xu <happyaron.xu@gmail.com>, 2009.
+# Anthony Fok <foka@debian.org>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell 2.0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:58+0200\n"
+"PO-Revision-Date: 2013-08-17 15:00+0800\n"
+"Last-Translator: Anthony Fok <foka@debian.org>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(没有建议)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "更多..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "将“%s”添加至词典"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "全部忽略"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "语言"
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "拼写检查库 Enchant 处理语言 %s 时发生错误"
+
+#~ msgid "Spelling Suggestions"
+#~ msgstr "拼写建议"

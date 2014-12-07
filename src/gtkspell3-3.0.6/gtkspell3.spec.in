@@ -1,0 +1,184 @@
+%global enable_gtk2 @SPEC_ENABLE_GTK2@
+%global enable_gtk3 @SPEC_ENABLE_GTK3@
+%global enable_gtkdoc @SPEC_ENABLE_GTK_DOC@
+%global enable_vala @SPEC_ENABLE_VALA@
+
+Name: gtkspell3
+Version: 3.@GTK_SPELL_VERSION_MINOR@.@GTK_SPELL_VERSION_MICRO@
+Release: 1%{?dist}
+License: GPLv2+
+Group: System Environment/Libraries
+Summary: On-the-fly spell checking for GtkTextView widgets
+URL: http://gtkspell.sourceforge.net/
+Source: %{name}-%{version}.tar.xz
+
+Requires: iso-codes
+
+BuildRequires: enchant-devel
+BuildRequires: gobject-introspection-devel
+BuildRequires: intltool
+BuildRequires: libtool
+BuildRequires: iso-codes-devel
+%{?enable_gtk2:BuildRequires: gtk2-devel}
+%{?enable_gtk3:BuildRequires: gtk3-devel}
+%{?enable_vala:BuildRequires: vala-devel vala-tools}
+%if 0%{enable_gtkdoc} == 1
+BuildRequires: gtk-doc glib2-doc
+%{?enable_gtk2:BuildRequires: gtk2-devel-docs}
+%{?enable_gtk3:BuildRequires: gtk3-devel-docs}
+%endif
+
+%package common
+Group: System Environment/Libraries
+Summary: Common files for GtkSpell
+
+%description common
+Common files for GtkSpell
+
+%description
+GtkSpell provides word-processor-style highlighting and replacement of 
+misspelled words in a GtkTextView widget as you type. Right-clicking a
+misspelled word pops up a menu of suggested replacements.
+
+%package devel-common
+Group: Development/Libraries
+Summary: Development files for GtkSpell
+Requires: gtk3-devel
+Requires: pkgconfig
+
+%description devel-common
+The gtkspell3-devel package provides header and documentation files for developing
+applications which use GtkSpell.
+
+
+%if 0%{enable_gtk3} == 1
+%package gtk3
+Requires: %{name}-common = %{version}-%{release}
+Group: System Environment/Libraries
+Summary: GtkSpell for GTK+3
+
+%description gtk3
+GtkSpell library for use with GTK+3
+
+%package gtk3-devel
+Group: Development/Libraries
+Summary: Development files for GtkSpell for GTK+3
+Requires: %{name}-devel-common = %{version}-%{release}
+Requires: %{name}-gtk3 = %{version}-%{release}
+Requires: gtk3-devel
+Requires: pkgconfig
+
+%description gtk3-devel
+The gtkspell3-gtk3-devel package provides the library files for developing GTK+3
+applications which use GtkSpell.
+
+%if 0%{enable_vala} == 1
+%package gtk3-vala
+Group: Decelopment/Libraries
+Summary: Vala bindings for GtkSpell for GTK+3
+Requires: %{name}-gtk3-devel
+
+%description gtk3-vala
+The gtkspell3-gtk3-vala package provides vala bindings for developing GTK+3
+applications which use GtkSpell.
+%endif
+%endif
+
+
+%if 0%{enable_gtk2} == 1
+%package gtk2
+Requires: %{name}-common = %{version}-%{release}
+Group: System Environment/Libraries
+Summary: GtkSpell for GTK+2
+
+%description gtk2
+GtkSpell library for use with GTK+2
+
+%package gtk2-devel
+Group: Development/Libraries
+Summary: Development files for GtkSpell for GTK+2
+Requires: %{name}-devel-common = %{version}-%{release}
+Requires: %{name}-gtk2 = %{version}-%{release}
+Requires: gtk2-devel
+Requires: pkgconfig
+
+%description gtk2-devel
+The gtkspell3-gtk2-devel package provides the library files for developing GTK+2
+applications which use GtkSpell.
+
+%if 0%{enable_vala} == 1
+%package gtk2-vala
+Group: Decelopment/Libraries
+Summary: Vala bindings for GtkSpell for GTK+2
+Requires: %{name}-gtk2-devel
+
+%description gtk2-vala
+The gtkspell3-gtk2-vala package provides vala bindings for developing GTK+2
+applications which use GtkSpell.
+%endif
+%endif
+
+%prep
+%setup -q
+
+%build
+%configure --disable-static \
+	%{?enable_gtkdoc:--enable-gtk-doc} \
+	%{?enable_gtk2:--enable-gtk2=yes}%{!?enable_gtk2:--enable-gtk2=no} \
+	%{?enable_gtk3:--enable-gtk3=yes}%{!?enable_gtk3:--enable-gtk3=no} \
+	%{?enable_vala:--enable-vala=yes}%{!?enable_vala:--enable-vala=no}
+
+make %{?_smp_mflags}
+
+%install
+make DESTDIR=$RPM_BUILD_ROOT install
+find $RPM_BUILD_ROOT -name "*.la" -exec rm {} \;
+
+%find_lang %{name}
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+%files common -f %{name}.lang
+%doc AUTHORS ChangeLog COPYING README
+
+%files devel-common
+%{?enable_gtkdoc:%{_datadir}/gtk-doc/html/gtkspell3}
+%{_includedir}/gtkspell-3.0
+
+%if 0%{enable_gtk3} == 1
+%files gtk3
+%{_libdir}/libgtkspell3-3.so.0*
+%{_libdir}/girepository-1.0/GtkSpell-3.0.typelib
+
+%files gtk3-devel
+%{_libdir}/libgtkspell3-3.so
+%{_libdir}/pkgconfig/gtkspell3-3.0.pc
+%{_datadir}/gir-1.0/GtkSpell-3.0.gir
+
+%if 0%{enable_vala} == 1
+%files gtk3-vala
+%{_datadir}/vala/vapi/gtkspell3-3.0.*
+%endif
+%endif
+
+%if 0%{enable_gtk2} == 1
+%files gtk2
+%{_libdir}/libgtkspell3-2.so.0*
+%{_libdir}/girepository-1.0/GtkSpell-2.0.typelib
+
+%files gtk2-devel
+%{_libdir}/libgtkspell3-2.so
+%{_libdir}/pkgconfig/gtkspell3-2.0.pc
+%{_datadir}/gir-1.0/GtkSpell-2.0.gir
+
+%if 0%{enable_vala} == 1
+%files gtk2-vala
+%{_datadir}/vala/vapi/gtkspell3-2.0.*
+%endif
+%endif
+
+%changelog
+* Thu Sep 06 2012 Sandro Mani <manisandro@gmail.com> - 3.@GTK_SPELL_VERSION_MINOR@.@GTK_SPELL_VERSION_MICRO@-1
+- Initial package.

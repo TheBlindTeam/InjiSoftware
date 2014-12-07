@@ -1,0 +1,50 @@
+# Basque translation of gtkspell.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gtkspell package.
+# Mikel Olasagasti Uranga <hey_neken@mundurat.net>, 2004, 2009.
+# , fuzzy
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell 2.0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2009-12-09 23:57+0100\n"
+"Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
+"Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i> (ez dago iradokizunik) </i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Gehiago..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "Gehitu \"%s\" hiztegiari"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Ignoratu guztiak"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "Hizkuntzak"
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "enchant-en errorea hizkuntza honentzat: %s"
+
+#~ msgid "Spelling Suggestions"
+#~ msgstr "Idazkera iradokizunak"

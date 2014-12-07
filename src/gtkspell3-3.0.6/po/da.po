@@ -1,0 +1,50 @@
+# Danish translation of gtkspell.
+# Copyright (C) 2009 gtkspell & Joe Hansen.
+# This file is distributed under the same license as the gtkspell package.
+# Joe Hansen <joedalton2@yahoo.dk>, 2008, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell-2.0.16-pre1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2009-10-08 00:00+0000\n"
+"Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
+"Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
+"Language: da\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(ingen forslag)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Flere..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "Tilføj »%s« til ordbogen"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Ignorer alle"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "Sprog"
+
+# http://www.abisource.com/projects/enchant/
+# program, men burde det så ikke være med stort.
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "Enchantfejl for sprog: %s"
+
+#~ msgid "Spelling Suggestions"
+#~ msgstr "Staveforslag"

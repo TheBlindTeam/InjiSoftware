@@ -1,0 +1,49 @@
+# translation of gtkspell-2.0.16 to Lithuanian
+# Copyright (C) 2008 Gintautas Miliauskas
+# This file is distributed under the same license as the gtkspell package.
+#
+# Gintautas Miliauskas <gintas@akl.lt>, 2008.
+# Algimantas Margevičius <margevicius.algimantas@gmail.com>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gtkspell-2.0.16\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-04-24 20:57+0200\n"
+"PO-Revision-Date: 2012-01-19 09:56+0200\n"
+"Last-Translator: Algimantas Margevičius <margevicius.algimantas@gmail.com>\n"
+"Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+# "%100<10 || n%100>=20) ? 1 : 2)\n"
+#: ../gtkspell/gtkspell.c:427
+msgid "<i>(no suggestions)</i>"
+msgstr "<i>(pasiūlymų nėra)</i>"
+
+#: ../gtkspell/gtkspell.c:443
+msgid "More..."
+msgstr "Daugiau..."
+
+#. + Add to Dictionary
+#: ../gtkspell/gtkspell.c:464
+#, c-format
+msgid "Add \"%s\" to Dictionary"
+msgstr "Pridėti „%s“ į žodyną"
+
+#: ../gtkspell/gtkspell.c:479 ../gtkspell/gtkspell.c:481
+msgid "Ignore All"
+msgstr "Nepaisyti visų"
+
+#. on top: language selection
+#: ../gtkspell/gtkspell.c:601
+msgid "Languages"
+msgstr "Kalbos"
+
+#: ../gtkspell/gtkspell.c:701
+#, c-format
+msgid "enchant error for language: %s"
+msgstr "iššaukti klaidą kalbai: %s"

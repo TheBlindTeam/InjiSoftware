@@ -1,0 +1,32 @@
+<ANCHOR id="gtkspell3-gtkspell" href="gtkspell3/gtkspell3-gtkspell.html">
+<ANCHOR id="gtkspell3-gtkspell.functions" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.functions">
+<ANCHOR id="gtkspell3-gtkspell.properties" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.properties">
+<ANCHOR id="gtkspell3-gtkspell.signals" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.signals">
+<ANCHOR id="GtkSpellChecker" href="gtkspell3/gtkspell3-gtkspell.html#GtkSpellChecker">
+<ANCHOR id="gtkspell3-gtkspell.other" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.other">
+<ANCHOR id="gtkspell3-gtkspell.object-hierarchy" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.object-hierarchy">
+<ANCHOR id="gtkspell3-gtkspell.includes" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.includes">
+<ANCHOR id="gtkspell3-gtkspell.description" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.description">
+<ANCHOR id="gtkspell3-gtkspell.functions_details" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.functions_details">
+<ANCHOR id="gtk-spell-checker-new" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-new">
+<ANCHOR id="gtk-spell-checker-attach" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-attach">
+<ANCHOR id="gtk-spell-checker-detach" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-detach">
+<ANCHOR id="gtk-spell-checker-set-language" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-set-language">
+<ANCHOR id="gtk-spell-checker-get-language" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-get-language">
+<ANCHOR id="gtk-spell-checker-get-language-list" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-get-language-list">
+<ANCHOR id="gtk-spell-checker-decode-language-code" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-decode-language-code">
+<ANCHOR id="gtk-spell-checker-recheck-all" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-recheck-all">
+<ANCHOR id="gtk-spell-checker-get-from-text-view" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-get-from-text-view">
+<ANCHOR id="gtk-spell-checker-get-suggestions-menu" href="gtkspell3/gtkspell3-gtkspell.html#gtk-spell-checker-get-suggestions-menu">
+<ANCHOR id="gtkspell3-gtkspell.other_details" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.other_details">
+<ANCHOR id="GtkSpellChecker-struct" href="gtkspell3/gtkspell3-gtkspell.html#GtkSpellChecker-struct">
+<ANCHOR id="GtkSpellError" href="gtkspell3/gtkspell3-gtkspell.html#GtkSpellError">
+<ANCHOR id="gtkspell3-gtkspell.property-details" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.property-details">
+<ANCHOR id="GtkSpellChecker--decode-language-codes" href="gtkspell3/gtkspell3-gtkspell.html#GtkSpellChecker--decode-language-codes">
+<ANCHOR id="gtkspell3-gtkspell.signal-details" href="gtkspell3/gtkspell3-gtkspell.html#gtkspell3-gtkspell.signal-details">
+<ANCHOR id="GtkSpellChecker-language-changed" href="gtkspell3/gtkspell3-gtkspell.html#GtkSpellChecker-language-changed">
+<ANCHOR id="annotation-glossterm-allow-none" href="gtkspell3/annotation-glossary.html#annotation-glossterm-allow-none">
+<ANCHOR id="annotation-glossterm-element-type" href="gtkspell3/annotation-glossary.html#annotation-glossterm-element-type">
+<ANCHOR id="annotation-glossterm-out" href="gtkspell3/annotation-glossary.html#annotation-glossterm-out">
+<ANCHOR id="annotation-glossterm-transfer full" href="gtkspell3/annotation-glossary.html#annotation-glossterm-transfer full">
+<ANCHOR id="annotation-glossterm-transfer none" href="gtkspell3/annotation-glossary.html#annotation-glossterm-transfer none">

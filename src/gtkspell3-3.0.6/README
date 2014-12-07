@@ -1,0 +1,90 @@
+/* gtkspell - a spell-checking addon for GTK's TextView widget
+ * Copyright (c) 2002 Evan Martin
+ * Copyright (c) 2012-2013 Sandro Mani
+ */
+
+Introduction
+------------
+GtkSpell is a library which provides MSWord/MacOSX-style highlighting of
+misspelled words in a GtkTextView widget. Right-clicking a misspelled word pops
+up a menu of suggested replacements.
+
+GtkSpell depends on
+ * GTK+3
+ * Enchant
+ * GObject Introspection
+ * GTK-Doc (optional)
+ * GTK+2 (optional)
+
+For more information, see http://sourceforge.net/projects/gtkspell/ .
+
+
+Use of the C API
+----------------
+The easiest way to learn is to look at the provided example programs.
+It's pretty simple.
+
+Use gtk_spell_checker_new() and gtk_spell_checker_attach() to attach a new
+GtkSpellChecker to a GtkTextView.
+
+For convenience, gtk_spell_checker_new() is created as GInitiallyUnowned
+and gtk_spell_checker_attach() will sink the floating reference.
+gtk_spell_checker_attach() also connects the 'destroy' signal of the
+passed-in GObject to g_object_unref() the GtkSpellChecker, so in the most
+common use-case, you need not worry about cleaning it up, see
+examples/simple.c.
+
+However, if you want to detach and later reattach the GtkSpellChecker to a
+(possibly different) GtkTextView, you must get a pointer to it with
+gtk_spell_checker_get_from_text_view(), call g_object_ref() on the
+resulting pointer, call gtk_spell_checker_detach() on it, call
+gtk_spell_checker_attach() with the new GtkTextView, and finally call
+g_object_unref() to release the reference that you took at the beginning.
+
+Alternatively, you can sink the GtkSpellChecker immediately upon construction
+with g_object_ref_sink(), in which case you will retain the ownership of the
+GtkSpellChecker throughout the lifetime of the program, and you must remember
+to call g_object_unref() when you don't need it any more, see
+examples/advanced.c.
+
+You don't need to keep a pointer to an attached GtkSpellChecker object around,
+but you can retrieve it from a GtkTextView with
+gtk_spell_checker_get_from_text_view() when necessary.
+
+Once you have a pointer to a GtkSpellChecker, you can change the language it
+uses with gtk_spell_checker_set_language().  Use gtk_spell_checker_detach()
+to remove the GtkSpellChecker from its attached GtkTextView. Note that the
+GtkSpellChecker will get destroyed when gtk_spell_checker_detach() is called
+unless a reference is taken before via g_object_ref(). Finally,
+gtk_spell_checker_recheck_all() is provided to re-spellcheck the entire buffer,
+but it shouldn't be necessary.
+
+An API reference can be found in the documentation. It the documentation was
+not installed, gtkspell.h serves as an API reference.
+
+Available bindings
+------------------
+The package also includes python-bindings via GObject typelibs as well as vala
+bindings, if they were compiled.
+
+Original Author
+---------------
+Evan Martin <martine@danga.com> - http://neugierig.org/
+
+Previous Maintainers
+--------------------
+Nathan Fredrickson <nathan@silverorange.com>
+Eduardo Pérez Ureta <eperez@users.sourceforge.net> - http://edpeur.blogspot.com/
+
+Current Maintainers
+------------------
+Sandro Mani <manisandro@gmail.com>
+Daniel Atallah
+
+Thanks
+------
+Ari Pollak <ari@debian.org> - Debian packages.
+Alex <hansolo@rochester.rr.com> - Redhat packages.
+Evan Nemerson - Vala bindings.
+
+vim: tw=72

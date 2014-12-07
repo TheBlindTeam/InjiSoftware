@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+]>
+<chapter id="chapter-tutorial">
+<title>GtkSpell Tutorial</title>
+
+<sect1 id="tutorial-basic">
+<title>Basic usage</title>
+
+<para>GtkSpell is pretty simple, including it in your program can be as simple
+as calling <function>gtk_spell_checker_new</function>,
+<function>gtk_spell_checker_set_language</function> and
+<function>gtk_spell_checker_attach</function> to attach a
+<classname>GtkSpellChecker</classname> to a <classname>GtkTextView</classname>,
+like this:
+<programlisting><![CDATA[
+GtkTextView* view = gtk_text_view_new ();
+GtkSpellChecker* spell = gtk_spell_checker_new ();
+gtk_spell_checker_set_language (spell, "en_US", NULL);
+gtk_spell_checker_attach (GTK_TEXT_VIEW (view));
+]]></programlisting>
+The <classname>GtkSpellChecker</classname> then watches modifications to the
+<classname>GtkTextView</classname> and tries to highlight the misspellings. The
+<classname>GtkSpellChecker</classname> is automatically destroyed when the
+<classname>GtkTextView</classname> to which it is attached is destroyed.
+</para>
+
+<note>
+<para>The details of setting up the <classname>GtkTextView</classname> (setting
+the word wrap mode, packing it into a <classname>GtkScrolledWindow</classname>)
+are left for the GTK documentation to describe.
+</para>
+</note>
+</sect1>
+
+<sect1 id="tutorial-lang">
+<title>Error checking</title>
+<para><function>gtk_spell_checker_set_language</function> returns
+<literal>FALSE</literal> if there was an error. If a
+<parameter>GError **</parameter> was provided as the last argument, the error
+message can be displayed to the user:</para>
+
+<programlisting><![CDATA[
+GError *err = NULL; /* this initialization is important. */
+/* ... */
+GtkSpellChecker* spell = gtk_spell_checker_new ();
+if (!gtk_spell_checker_set_language (spell, "en_US", &err))
+  {
+    GtkWidget *errdlg;
+    errdlg = gtk_message_dialog_new (main_application_window,
+                                     GTK_DIALOG_DESTROY_WITH_PARENT,
+                                     GTK_MESSAGE_ERROR,
+                                     GTK_BUTTONS_CLOSE,
+                                     "Error initializing spell checking: %s",
+                                     err->message);
+                                     gtk_dialog_run (GTK_DIALOG (errdlg));
+  gtk_widget_destroy (errdlg);
+  g_error_free (err); /* don't forget to free GErrors when you're done! */
+  }
+]]></programlisting>
+</sect1>
+
+<sect1 id="tutorial-advanced">
+<title>Advanced usage</title>
+<para>
+For convenience, <function>gtk_spell_checker_new()</function> is created as
+<classname>GInitiallyUnowned</classname> and
+<function>gtk_spell_checker_attach()</function> will sink the floating
+reference. <function>gtk_spell_checker_attach()</function> also connects the
+<literal>destroy</literal> signal of the passed-in
+<classname>GObject</classname> to <function>g_object_unref()</function> the
+<classname>GtkSpellChecker</classname>, so in the most common use-case, you
+need not worry about cleaning it up.
+
+However, if you want to detach and later reattach the
+<classname>GtkSpellChecker</classname> to a (possibly different)
+<classname>GtkTextView</classname>, you must get a pointer to it with
+<function>gtk_spell_checker_get_from_text_view()</function>, call
+<function>g_object_ref()</function> on the resulting pointer, call
+<function>gtk_spell_checker_detach()</function> on it, call
+<function>gtk_spell_checker_attach()</function> with the new
+<classname>GtkTextView</classname>, and finally call
+<function>g_object_unref()</function> to release the reference that you took at
+the beginning, like this:
+<programlisting><![CDATA[
+GtkTextView* view = gtk_text_view_new ();
+GtkSpellChecker* spell = gtk_spell_checker_new ();
+gtk_spell_checker_set_language (spell, "en_US", NULL);
+gtk_spell_checker_attach (GTK_TEXT_VIEW (view));
+/* ... */
+// Detach
+g_object_ref (spell);
+gtk_spell_checker_detach (spell);
+/* ... */
+// Reattach
+gtk_spell_checker_attach (spell, GTK_TEXT_VIEW (view));
+g_object_unref (spell);
+]]></programlisting>
+
+Alternatively, you can sink the <classname>GtkSpellChecker</classname>
+immediately upon construction with <function>g_object_ref_sink()</function>,
+in which case you will retain the ownership of the
+<classname>GtkSpellChecker</classname> throughout the lifetime of the program,
+and you must remember to call <function>g_object_unref()</function> when you
+don't need it any more, like this:
+<programlisting><![CDATA[
+GtkTextView* view = gtk_text_view_new ();
+GtkSpellChecker* spell = gtk_spell_checker_new ();
+g_object_ref_sink (spell);
+gtk_spell_checker_set_language (spell, "en_US", NULL);
+gtk_spell_checker_attach (GTK_TEXT_VIEW (view));
+/* ... */
+// Detach
+gtk_spell_checker_detach (spell);
+/* ... */
+// Reattach
+gtk_spell_checker_attach (spell, GTK_TEXT_VIEW (view));
+/* ... */
+// End of life time
+g_object_unref (spell);
+]]></programlisting>
+</para>
+</sect1>
+
+<sect1 id="tutorial-building">
+<title>Building a program using GtkSpell</title>
+
+<note>
+<para>The instructions below are written for the GTK+3 variant. For the GTK+2
+variant, if it was compiled, it is sufficient to replace
+<literal>gtkspell-3.0</literal> with <literal>gtkspell-2.0</literal> and
+<literal>gtk+-3.0</literal> with <literal>gtk+-2.0</literal>.
+</para>
+</note>
+
+<sect2 id="tutorial-building-basic">
+<title>Simple Programs</title>
+<para>The program must be compiled with the GtkSpell C flags and built with the
+GtkSpell libs.  Depending on how your program is compiled, you must include the
+module <literal>gtkspell-3.0</literal> along with <literal>gtk+-3.0</literal>
+in your calls to <command>pkg-config</command>.</para>
+</sect2>
+
+<sect2 id="tutorial-building-autoconf">
+<title>Building Using Autoconf</title>
+<para>In <filename>configure.ac</filename>, modify the call to
+<function>PKG_CHECK_MODULES</function> to include
+<literal>gtkspell-3.0</literal>, like this:</para>
+<programlisting><![CDATA[
+PKG_CHECK_MODULES(MYPROGRAM, gtk+-3.0 gtkspell-3.0)
+]]></programlisting>
+
+<para>To pass the necessary flags to the compiler, you should add
+<literal>@MYPROGRAM_CFLAGS@</literal> and <literal>@MYPROGRAM_LIBS@</literal>
+to the respective <filename>Makefile.am</filename>, i.e.
+<programlisting><![CDATA[
+AM_CPPFLAGS = @MYPROGRAM_CFLAGS@
+mylibrary_la_LIBADD = @MYPROGRAM_LIBS@
+]]></programlisting>
+For the substitutions to work, you need to add to
+<filename>configure.ac</filename> the lines
+<programlisting><![CDATA[
+AC_SUBST(MYPROGRAM_CFLAGS)
+AC_SUBST(MYPROGRAM_LIBS)
+]]></programlisting>
+</para>
+</sect2>
+
+</sect1>
+
+
+<sect1 id="tutorial-bindings">
+<title>Bindings for other languages</title>
+The package also optionally offers bindings for the following languages
+<itemizedlist>
+  <listitem>
+    <para>
+      <guilabel>Python</guilabel> &mdash; via GObject-introspection typelibs.
+      To use them, it is sufficient to import the corresponding module as follows
+      <programlisting><![CDATA[
+      from gi.repository import GtkSpell
+      ]]></programlisting>
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <guilabel>Vala</guilabel> &mdash; via GObject-introspection generated VAPIs.
+      To compile a GTK+3 Vala application which uses GtkSpell, you need to add
+      <literal>--pkg gtkspell3-3.0</literal> to the <literal>valac</literal>
+      compiler flags, i.e.
+      <programlisting><![CDATA[
+      valac myprog.vala --pkg gtkspell3-3.0 --pkg gtk+-3.0
+      ]]></programlisting>
+      For GTK+2 applications, you would write
+      <programlisting><![CDATA[
+      valac myprog.vala --pkg gtkspell3-2.0 --pkg gtk+-2.0
+      ]]></programlisting>
+    </para>
+  </listitem>
+</itemizedlist>
+</sect1>
+
+</chapter>

@@ -93,6 +93,7 @@ int readNetwork(FILE *file, Network *n)
 		n->neurons[i] = malloc(sizeof(Neuron)*(n->layersSize[i]));
 		for (int j = 0; j < n->layersSize[i]; j++)
 		{
+			printf("Saving neuron %d\n", j);
 			error = fscanf(file, "\t\tNE%d:\n", &j);
 			if (error != EOF)
 				error = readNeuron(file, &(n->neurons[i][j]));
@@ -121,6 +122,7 @@ int readNeuron(FILE *file, Neuron *n)
 	n->connectList = malloc(sizeof(Connection)*(n->nbConnections));
 	for(int i = 0; i < n->nbConnections; i++)
 	{
+		printf("Saving connexion %d\n", i);
 		error = fscanf(file, "\t\t\tCO%d:\n", &i);
 		error = readConnection(file, &(n->connectList[i]));
 	}
@@ -140,6 +142,8 @@ int readConnection(FILE *file, Connection *c)
 		return error;
 	if (error != EOF)
 	{
+		printf("Saving weight\n");
+		setlocale(LC_NUMERIC, "C");
 		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
 		printf("saved %f\n", c->weight);
 	}
@@ -156,6 +160,7 @@ Network* SRead(char *fileName)
 	FILE *file = fopen(fileName, "r");
 	if (file)
 	{
+		n = malloc(sizeof(Network));
 		error = readNetwork(file, n);
 		fclose(file);
 	}

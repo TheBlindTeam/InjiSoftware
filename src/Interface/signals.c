@@ -1463,9 +1463,11 @@ void get_random_training_set(char* line)
 				nbLines++;
 		rewind(fList);
 		int rd = rand_limit(nbLines-1);
-		while(fgets(line, sizeof(line), fList) && rd > 0)
+		printf("d:%d\n", rd);
+		while(fgets(line, 255, fList) && rd > 0)
 			rd--;
 		fclose(fList);
+		line[strlen(line)-1] = 0;
 	}
 }
 

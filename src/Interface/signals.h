@@ -110,4 +110,5 @@ void get_random_training_set(char *line);
 
 void get_main_network(char* line);
 void process_print(SGlobalData *data);
+void learnRc(SGlobalData *data, int nbIter, char* fname);
 void on_click_process(GtkWidget *widget, gpointer user_data);

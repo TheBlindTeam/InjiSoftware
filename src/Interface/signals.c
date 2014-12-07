@@ -1476,6 +1476,21 @@ void get_random_training_set(char* line)
 	}
 }
 
+void learnRc(SGlobalData *data, int nbIter, char* fname)
+{
+	char line[256];
+	get_random_training_set(line);
+	if(data->learningNet->exSet)
+		NFreeExempleSet(data->learningNet->exSet);
+	data->learningNet->exSet = NULL;
+	data->learningNet->exSet = NGetCharExempleSet(line);
+	if(!data->learningNet->exSet)
+		return;
+	for(int j = 0; j < nbIter; j++)
+		data->learningNet->learn(data->learningNet);
+	SWrite(*data->learningNet->nWork, fname);
+}
+
 void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 {
 	if (widget && user_data)
@@ -1491,20 +1506,12 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 		GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
 				data->builder, "LearnFileName"));
 		char *fname = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
-		for(int i = 0; i < nbSession; i++)
-		{
-			char line[256];
-			get_random_training_set(line);
-			if(data->learningNet->exSet)
-				NFreeExempleSet(data->learningNet->exSet);
-			data->learningNet->exSet = NULL;
-			data->learningNet->exSet = NGetCharExempleSet(line);
-			if(!data->learningNet->exSet)
-				return;
-			for(int j = 0; j < nbIter; j++)
-				data->learningNet->learn(data->learningNet);
-			SWrite(*data->learningNet->nWork, fname);
-		}
+		if(nbSession > 0)
+			for(int i = 0; i < nbSession; i++)
+				learnRc(data, nbIter, fname);
+		else
+			while(1)
+				learnRc(data, nbIter, fname);
 	}
 }
 
@@ -1535,6 +1542,17 @@ void get_main_network(char* line)
 			line[strlen(line)-1] = 0;
 		fclose(fList);
 	}
+}
+
+void process_print(SGlobalData *data)
+{
+	data=data;
+	/*GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+		"TextView"));
+
+	gtk_text_buffer_get_start_iter(buffer, &start);
+
+	gtk_text_view_set_buffer(view, buffer);*/
 }
 
 void on_click_process(GtkWidget *widget, gpointer user_data)

@@ -88,20 +88,10 @@ void connectSignals(SGlobalData *data)
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"TrainingBtn")),
-		"clicked",
-		G_CALLBACK(on_click_open_training), data);
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
 			"View.Training")),
 		"activate",
 		G_CALLBACK(on_click_open_training), data);
 
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
-			"LearningBtn")),
-		"clicked",
-		G_CALLBACK(on_click_open_learning), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"View.Learning")),
@@ -119,11 +109,6 @@ void connectSignals(SGlobalData *data)
 		"activate",
 		G_CALLBACK(on_click_transform_noiseeraser), data);
 
-	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder,
-			"DilatationBtn")),
-		"clicked",
-		G_CALLBACK(on_click_transform_dilatation), data);
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
 			"Edit.Dilatation")),
@@ -374,9 +359,6 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 				gtk_entry_set_text(GTK_ENTRY(
 					gtk_builder_get_object(data->builder,
 						"PreviewPath")), filename);
-
-				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
-					data->builder, "TrainingBtn")), TRUE);
 
 				data->previewScale = 1;
 				gtk_entry_set_text(GTK_ENTRY(

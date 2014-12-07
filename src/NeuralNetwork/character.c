@@ -1,10 +1,10 @@
 #include "character.h"
 
-const int charInputSize = 32;
+const int charInputSize = 16;
 const int outputSize = 162;//A Changer
-const double learningRate = 0.03;
-const double momentum = 0.1;
-const double overfitCoef = 0.08;
+const double learningRate = 0.01;
+const double momentum = 0.9;
+const double overfitCoef = 0.002;
 
 int compareCharOutput(const void *a, const void *b)
 {
@@ -54,7 +54,7 @@ NetworkSet* NInitCharacterNetworkSet(char *path)
 	if (!path)
 	{
 		r->nWork = NINIT[5](charInputSize * charInputSize, outputSize);
-		NInitThresHoldSimpleMLP(r->nWork, LINEAR, LINEAR, LINEAR, TAN_SIGMOID);
+		NInitThresHoldSimpleMLP(r->nWork, LINEAR, TAN_SIGMOID, LINEAR, TAN_SIGMOID);
 	}
 	else
 		r->nWork = SRead(path);

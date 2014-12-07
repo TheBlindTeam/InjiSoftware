@@ -2,6 +2,7 @@
 
 #include <libgen.h>
 #include <string.h>
+#include <unistd.h>
 
 void Gtk_Initialize(int argc, char *argv[], Image *img)
 {
@@ -13,9 +14,22 @@ void Gtk_Initialize(int argc, char *argv[], Image *img)
 
 	gtk_init(&argc, &argv);
 
-	uiFilename = g_build_filename(
-		strcat((argc > 0) ? dirname(argv[0]) : "",
-		"/Interface/OCR.glade"), NULL);
+	char cwd[1024];
+	if(getcwd(cwd, sizeof(cwd)) != NULL)
+	{
+		if(!strcmp(basename(cwd), "src"))
+			uiFilename = g_build_filename(
+				strcat((argc > 0) ? dirname(argv[0]) : "",
+				"/Interface/OCR.glade"), NULL);
+		else
+			uiFilename = g_build_filename(
+				strcat((argc > 0) ? dirname(argv[0]) : "",
+				"/src/Interface/OCR.glade"), NULL);
+	}
+	else
+		uiFilename = g_build_filename(
+			strcat((argc > 0) ? dirname(argv[0]) : "",
+			"src/Interface/OCR.glade"), NULL);
 
 	data->img_rgb = img;
 	data->builder = gtk_builder_new();

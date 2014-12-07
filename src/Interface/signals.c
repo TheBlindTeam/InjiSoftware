@@ -466,7 +466,6 @@ void on_draw_network(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 		data->networkSet->momentum = val[1];
 		data->networkSet->maxError = val[2];
 		data->networkSet->overfitCoef = val[3];
-		SWrite(network, "test.inji");
 
 		int iterCalls = 0;
 		while(networkSet->learn(networkSet) && iterCalls < maxIter)
@@ -903,24 +902,30 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 		SGlobalData *data = (SGlobalData*) user_data;
 		if (data->img_rgb != NULL)
 		{
-			if (data->segBoxArray == NULL)
+			if (data->segBoxArray)
 			{
-				int count;
-				ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
-				ImageGS *tmpGs = MedianFilter(tmpBn, 3);
-				Image *tmpImg = UGrayscaleToRgb(tmpGs);
-				data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
-				UFreeImageGray(tmpBn);
-				UFreeImageGray(tmpGs);
-				UFreeImage(tmpImg);
-				data->segBoxArray = GetBreadthBoxArray(
-					data->firstBox, &count);
-				data->boxCount = count;
-				return;
+				if(data->firstBox)
+					FreeBox(data->firstBox);
+				data->firstBox = NULL;
+
+				for(int i = 0; i < data->boxCount; i++)
+					FreeBox(data->segBoxArray[i]);
+				data->segBoxArray = NULL;
 			}
-			if (data->boxDetectIndex == data->boxCount)
-				return;
-			Image *segTmpImg;
+
+			int count;
+			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
+			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
+			Image *tmpImg = UGrayscaleToRgb(tmpGs);
+			data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
+			UFreeImageGray(tmpBn);
+			UFreeImageGray(tmpGs);
+			UFreeImage(tmpImg);
+			data->segBoxArray = GetBreadthBoxArray(data->firstBox, &count);
+			data->boxCount = count;
+			
+			
+			Image *segTmpImg;// = //DrawAllBoxes(data->img_rgb, data->;
 			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
 				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl], 2);
 			else
@@ -930,7 +935,7 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				UFreeImageBinary(segBnImg);
 			}
 			UFreeImage(data->img_rgb);
-			data->img_rgb =  segTmpImg;
+			data->img_rgb = segTmpImg;
 			data->boxDetectIndex++;
 
 			if(data->tmp)
@@ -1120,11 +1125,9 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
-				data->tmp);
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-					"PreviewImage")),
+				gtk_builder_get_object(data->builder, "PreviewImage")),
 				data->pixbuf);
 
 			apply_zoom(data, 1);

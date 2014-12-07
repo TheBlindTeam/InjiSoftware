@@ -44,7 +44,7 @@ void connectSignals(SGlobalData *data)
 	
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder,
-			"BSegmentation")),
+			"SegmentationBtnTop")),
 		"clicked",
 		G_CALLBACK(on_click_segmentation), data);
 	g_signal_connect(
@@ -369,12 +369,11 @@ void file_chooser_select_file_from_button(GtkWidget *widget,
 					data->firstBox = NULL;
 					data->boxDetectIndex = 0;
 					data->boxCount = 0;
-					gtk_button_set_label(GTK_BUTTON(
-						gtk_builder_get_object(
-							data->builder,
-							"BSegmentation")),
-						"Segmentation");
 				}
+
+				gtk_entry_set_text(GTK_ENTRY(
+					gtk_builder_get_object(data->builder,
+						"PreviewPath")), filename);
 
 				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
 					data->builder, "TrainingBtn")), TRUE);
@@ -934,9 +933,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				UFreeImage(tmpImg);
 				data->segBoxArray = GetBreadthBoxArray(
 					data->firstBox, &count);
-				gtk_button_set_label(GTK_BUTTON(
-					gtk_builder_get_object(data->builder,
-						"BSegmentation")), "Detect");
 				data->boxCount = count;
 				return;
 			}
@@ -966,12 +962,8 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(
-				data->img_rgb, data->tmp);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder,
-				"PreviewImage")),
-				data->pixbuf);
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtk_builder_get_object(data->builder, "PreviewImage")), data->pixbuf);
 
 			apply_zoom(data, 1);
 		}

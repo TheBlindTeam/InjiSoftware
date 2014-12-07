@@ -443,6 +443,20 @@ Adrien NEVEU</property>
               </packing>
             </child>
             <child>
+              <object class="GtkToolButton" id="SegmentationBtnTop">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="tooltip_text" translatable="yes">Segmentation</property>
+                <property name="label" translatable="yes">Segmentation</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-find</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkSeparatorToolItem" id="toolbutton2">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -519,8 +533,8 @@ Adrien NEVEU</property>
                 <property name="can_focus">False</property>
                 <property name="margin_top">2</property>
                 <child>
-                  <object class="GtkButton" id="BSegmentation">
-                    <property name="label" translatable="yes">Segmentation</property>
+                  <object class="GtkButton" id="DilatationBtn">
+                    <property name="label" translatable="yes">Dilatation</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -533,23 +547,10 @@ Adrien NEVEU</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparator" id="separator8">
+                  <object class="GtkButton" id="TrainingBtn">
+                    <property name="label" translatable="yes">Training Window</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="margin_top">7</property>
-                    <property name="margin_bottom">7</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="DilatationBtn">
-                    <property name="label" translatable="yes">Dilatation</property>
-                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                   </object>
@@ -569,22 +570,7 @@ Adrien NEVEU</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">3</property>
-                    <property name="width">1</property>
-                    <property name="height">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkButton" id="TrainingBtn">
-                    <property name="label" translatable="yes">Training Window</property>
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">1</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -598,7 +584,7 @@ Adrien NEVEU</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">3</property>
                     <property name="width">1</property>
                     <property name="height">1</property>
                   </packing>
@@ -635,10 +621,11 @@ Adrien NEVEU</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkScrolledWindow" id="PreviewScrollWindow">
+                          <object class="GtkScrolledWindow" id="scrolledwindow5">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="shadow_type">in</property>
+                            <property name="kinetic_scrolling">False</property>
                             <child>
                               <object class="GtkViewport" id="viewport1">
                                 <property name="visible">True</property>

@@ -1686,7 +1686,11 @@ void process_print(SGlobalData *data, Box* b)
 		print_text(data, (gunichar*)" ");
 	if (b->lvl == CHARACTER)
 		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
-			print_text(data, &b->output[0].c);
+		{
+			gchar* tmp = "";
+			sprintf(tmp, "%c", b->output[0].c);
+			print_text(data, (gunichar*)tmp);
+		}
 }
 
 void on_click_process(GtkWidget *widget, gpointer user_data)

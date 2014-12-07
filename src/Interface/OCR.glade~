@@ -1743,7 +1743,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="adjustment">adjustment3</property>
                     <property name="climb_rate">0.050000000000000003</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -2157,7 +2157,7 @@ Adrien NEVEU</property>
                     <property name="text" translatable="yes">0.00</property>
                     <property name="adjustment">adjustment5</property>
                     <property name="climb_rate">0.050000000000000003</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>

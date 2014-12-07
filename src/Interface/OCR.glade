@@ -40,6 +40,36 @@ Adrien NEVEU</property>
       </object>
     </child>
   </object>
+  <object class="GtkMessageDialog" id="ExportDialog">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="message_type">other</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox3">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area3">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkFileChooserDialog" id="ImageChooser">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Choose a file to open</property>
@@ -1743,7 +1773,7 @@ Adrien NEVEU</property>
                     <property name="can_focus">True</property>
                     <property name="adjustment">adjustment3</property>
                     <property name="climb_rate">0.050000000000000003</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
@@ -2157,7 +2187,7 @@ Adrien NEVEU</property>
                     <property name="text" translatable="yes">0.00</property>
                     <property name="adjustment">adjustment5</property>
                     <property name="climb_rate">0.050000000000000003</property>
-                    <property name="digits">2</property>
+                    <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>

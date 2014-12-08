@@ -43,13 +43,16 @@ Image *UConvolution(Image *ref, double **convolution, int matrixSize)
 					{
                                                 R +=
                                                     ref->pixList[x + k][y + l].r
-                                                    * convolution[k + half][l + half];
+                                                    * convolution[k + half]
+                                                    [l + half];
 						G +=
                                                     ref->pixList[x + k][y + l].g
-                                                    * convolution[k + half][l + half];
+                                                    * convolution[k + half]
+                                                    [l + half];
 						B +=
                                                     ref->pixList[x + k][y + l].b
-                                                    * convolution[k + half][l + half];
+                                                    * convolution[k + half]
+                                                    [l + half];
 					}
 				}
 			Pixel tmp;

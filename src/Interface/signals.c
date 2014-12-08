@@ -179,6 +179,11 @@ void connectSignals(SGlobalData *data)
 			"ExportCancelBtn")),
 		"clicked",
 		G_CALLBACK(on_click_export_cancel), data);
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"ExportExportBtn")),
+		"clicked",
+		G_CALLBACK(on_click_export_export), data);
 
 	g_signal_connect(
 		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOK")),
@@ -283,6 +288,12 @@ void connectSignals(SGlobalData *data)
 			"CloseBtnAngle")),
 		"clicked",
 		G_CALLBACK(on_click_close_orientation), data);
+
+	g_signal_connect(
+		G_OBJECT(gtk_builder_get_object(data->builder,
+			"CloseBtnSaveOK")),
+		"clicked",
+		G_CALLBACK(on_click_close_save_ok), data);
 }
 
 void on_window_destroy(GtkWidget *widget, gpointer user_data)
@@ -1659,6 +1670,43 @@ void on_click_export_cancel(GtkWidget *widget, gpointer user_data)
 		GtkWidget *dialog = GTK_WIDGET(
 			gtk_builder_get_object(data->builder, "ExportDialog"));
 		gtk_widget_hide(dialog);
+	}
+}
+
+void on_click_close_save_ok(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "SaveDialogOK"));
+		gtk_widget_hide(dialog);
+	}
+}
+
+void on_click_export_export(GtkWidget *widget, gpointer user_data)
+{
+	if (widget && user_data)
+	{
+		SGlobalData *data = (SGlobalData*) user_data;
+		GtkWidget *dialog = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "ExportDialog"));
+		gtk_widget_hide(dialog);
+
+		char *filename = gtk_file_chooser_get_filename(
+			GTK_FILE_CHOOSER(gtk_builder_get_object(data->builder,
+				"ExportDialog")));
+		GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+			"TextView"));
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+		GtkTextIter start, end;
+		gtk_text_buffer_get_bounds(buffer, &start, &end);
+		gunichar* text = (gunichar*)gtk_text_iter_get_text(&start, &end);
+		ExportTXT(filename, text);
+		GtkWidget *dialogok = GTK_WIDGET(
+			gtk_builder_get_object(data->builder, "SaveDialogOK"));
+		gtk_dialog_run(GTK_DIALOG(dialogok));
+		gtk_widget_hide(dialogok);
 	}
 }
 

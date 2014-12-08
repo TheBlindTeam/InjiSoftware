@@ -939,7 +939,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				data->segBoxArray = NULL;
 			}
 
-			int count;
 			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
@@ -947,22 +946,10 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			UFreeImageGray(tmpBn);
 			UFreeImageGray(tmpGs);
 			UFreeImage(tmpImg);
-			data->segBoxArray = GetBreadthBoxArray(data->firstBox, &count);
-			data->boxCount = count;
 			
-			
-			Image *segTmpImg;// = //DrawAllBoxes(data->img_rgb, data->;
-			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
-				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl], 2);
-			else
-			{
-				ImageBN *segBnImg = URgbToBinary(data->img_rgb);
-				segTmpImg = DrawBlackPixels(data->img_rgb, segBnImg, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
-				UFreeImageBinary(segBnImg);
-			}
+			Image *segTmpImg = DrawAllBoxes(data->img_rgb, data->firstBox, 1);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = segTmpImg;
-			data->boxDetectIndex++;
 
 			if(data->tmp)
 			{
@@ -1805,34 +1792,3 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		apply_zoom(data, 0);
 	}
 }
-
-/*
-Process
-ImageBN *bn = PreTreatment(img->data);
-Image *img = UBinaryToRgb(bn);
-UFreeImage(img->data)
-img->data = img;
-Box *b = Recognition(nWorkSetDuFIchierNetworkSetMain, bn);
-img = DrawAllBoxes(img, b, 1);
-UFreImage(img->data);
-img->data = img;
-Afficher img->data
-Dans la TextBox, Faire un parcours en profondeur de b
-et de ses subBoxes
-
-FOO
-	if (b->lvl == BLOCK)
-		PRINT("\t");
-	for (int i = 0; i < b->nbSubBoxes; i ++)
-		Foo(b->subBoxes[i]);
-	if (b->lvl == BLOCK)
-		PRINT("\n\n");
-	if (b->lvl == LINE)
-		PRINT("\n");
-	if (b->lvl == WORD)
-		PRINT(" ");
-	if (b->lvl == CHARACTER)
-		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
-			PRINT("b->output[0].c")
-FIN FOO
-*/

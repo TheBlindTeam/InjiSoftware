@@ -1728,6 +1728,7 @@ void print_text(SGlobalData *data, gunichar *txt)
 			"TextView"));
 		GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
 		GtkTextIter end;
+//	printf("TEST %d\n", txt[0]);
 		gtk_text_buffer_get_end_iter(buffer, &end);
 		gtk_text_buffer_insert(buffer, &end, (gchar*)txt, -1);
 		gtk_text_view_set_buffer(view, buffer);
@@ -1760,10 +1761,11 @@ void process_print(SGlobalData *data, Box* b)
 	if (b->lvl == WORD)
 		print_text(data, (gunichar*)" ");
 	if (b->lvl == CHARACTER)
-		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
+		if (b->nbOutput >= 1)
 		{
 			gunichar txt[2];
 			txt[0] = b->output[0].c;
+			printf("BOUT %d\n", txt[0]);
 			txt[1] = 0;
 			print_text(data, txt);
 		}

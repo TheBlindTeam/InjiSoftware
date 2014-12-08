@@ -181,8 +181,10 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
 				{
 					min = pow(tmpB, 4) + pow(tmpA, 4);
 					*r = i + 1;
-					SpacesExpectedValue(spaces, i + 1, i, &expA);
-					SpacesExpectedValue(spaces, nbSpaces - i - 1,
+					SpacesExpectedValue(spaces, i + 1, i,
+                                                &expA);
+					SpacesExpectedValue(spaces,
+                                                nbSpaces - i - 1,
 						i + 1, &expB);
 				}
 	*minVar = pow(1 - (expA / expB), 2);
@@ -286,7 +288,8 @@ void Split(ImageBN *img, Box *b, Orientation orient, int minBlank, int state)
 			int set = ClassifySpace(spaces, size, &minBlank, &var);
 			free(spaces);
 			if (set && minBlank > 0 && var > 0.02)
-				Split(img, b->subBoxes[i], VERTICAL, minBlank, 2);
+				Split(img, b->subBoxes[i], VERTICAL, minBlank,
+                                        2);
 			else
 				Split(img, b->subBoxes[i], VERTICAL, 0, 3);
 		}

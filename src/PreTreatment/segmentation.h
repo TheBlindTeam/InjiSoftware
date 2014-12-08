@@ -76,13 +76,15 @@ void AddInSubBoxes(Box *b, Box *toBeAdded);
 //Frees the box b.
 void FreeBox(Box *b);
 
-/*Changes the iterators used in the split and cross functions according to the orientation of the crossing.*/
+/*Changes the iterators used in the split and cross functions
+  according to the orientation of the crossing.*/
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
  //idem for the second coefficient
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 
 //Returns if a whole line is blank
-int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int SpaceColor);
+int isBlank(ImageBN *img, Box *b, Orientation orient, int start,
+        int SpaceColor);
 /**/
 
 int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size);
@@ -93,7 +95,8 @@ int SpacesVariance(int *spaces, int nbSpaces, int add, double *r);
 
 int ClassifySpace(int *spaces, int nbSpaces, int *r, double *min);
 
-int Split(ImageBN *img, Box *b, Box *parent, Orientation orient, int minSpace, int spaceColor);
+int Split(ImageBN *img, Box *b, Box *parent, Orientation orient, int minSpace,
+        int spaceColor);
 
 /*Removes the margins froms the image*/
 void CutMargin(ImageBN *img, Box *b, int V, int H, int spaceColor);

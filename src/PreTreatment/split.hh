@@ -45,7 +45,8 @@ void FreeBoxList(BoxList list);
 //Frees the box b.
 void FreeBox(Box *b);
 
-/*Changes the iterators used in the split and cross functions according to the orientation of the crossing.*/
+/*Changes the iterators used in the split and cross functions according to the
+ orientation of the crossing.*/
 void GetIterPrim(Orientation orient, int *primWidth, int *primHeight);
  //idem for the second coefficient
 void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
@@ -53,7 +54,8 @@ void GetIterSec(Orientation orient, int *secondWidth, int*secondHeight);
 //Returns if a whole line is blank
 int isBlank(ImageBN *img, Box *b, Orientation orient, int start);
 
-/*Returns an array with indexes corresponding to all the possible sizes of spaces in the image (from 0 to the size of the image).
+/*Returns an array with indexes corresponding to all the possible sizes of
+ spaces in the image (from 0 to the size of the image).
 The value at each index is the number of spaces of size = index*/
 int *GetSpaceArray(ImageBN *img, Box *b, Orientation orient, int *size);
 

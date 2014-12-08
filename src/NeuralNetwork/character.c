@@ -1,6 +1,6 @@
 #include "character.h"
 
-const int charInputSize = 3;
+const int charInputSize = 16;
 const int outputSize = 162;//A Changer
 const double learningRate = 0.001;
 const double momentum = 0.8;

@@ -4,7 +4,7 @@ ImageBN *PreTreatment(Image *ref)
 {
 	Image *tmp = NULL;
 	ImageBN *tmpBn = URgbToBinary(ref);
-	double angle = FindInclinationAngle(tmpBn);
+	double angle = 0;//FindInclinationAngle(tmpBn);
 	UFreeImageBinary(tmpBn);
 	if ((int)angle)
 	{

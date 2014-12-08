@@ -253,7 +253,8 @@ void addInExempleSet(ExempleSet *exSet, double *input, double *target)
 {
 	if (exSet->size == exSet->capacity)
 	{
-		exSet->exemple = realloc(exSet->exemple, 2 * exSet->capacity * sizeof(Exemple));
+		exSet->exemple = realloc(exSet->exemple, 2 * exSet->capacity
+                        * sizeof(Exemple));
 		exSet->capacity *= 2;
 	}
 	Exemple *ex = malloc(sizeof(Exemple));

@@ -74,7 +74,8 @@ int NBackPropLearn(NetworkSet *nWorkSet)
 			tmp->error *= FUNCTIONS[tmp->shockFoo].df(tmp->shock);
 			for (int l = 0; l < tmp->nbConnections; l ++)
 			{
-				tmp->error += pow(tmp->connectList[l].weight, 2) *
+				tmp->error += pow(tmp->connectList[l].weight, 2)
+                                        *
 					nWorkSet->overfitCoef;
 			}
 		}

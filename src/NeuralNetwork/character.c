@@ -71,7 +71,8 @@ NetworkSet* NInitCharacterNetworkSet(char *path)
 	if (!path)
 	{
 		r->nWork = NINIT[5](charInputSize * charInputSize, outputSize);
-		NInitThresHoldSimpleMLP(r->nWork, LINEAR, TAN_SIGMOID, LINEAR, TAN_SIGMOID);
+		NInitThresHoldSimpleMLP(r->nWork, LINEAR, TAN_SIGMOID, LINEAR,
+                        TAN_SIGMOID);
 	}
 	else
 		r->nWork = SRead(path);
@@ -97,13 +98,15 @@ ExempleSet *NGetCharExempleSet(char *path)
 		{
 			gunichar currentC = ConvertToOrderedChar(getc(fp));
 			c = getc(fp);
-			input[i] = malloc(sizeof(double) * charInputSize * charInputSize);
+			input[i] = malloc(sizeof(double) * charInputSize *
+                                charInputSize);
 			for (int j = 0; j < charInputSize * charInputSize; j ++)
 				input[i][j] = (double)getc(fp);
 			target[i] = ConvertCharToTargetArray(currentC);
 			while((c = getc(fp)) != '\n');
 		}
-		ExempleSet *r = NGetExempleSet(input, charInputSize * charInputSize, target, outputSize, nbLines);
+		ExempleSet *r = NGetExempleSet(input, charInputSize *
+                        charInputSize, target, outputSize, nbLines);
 		for (int i = 0; i < nbLines; i ++)
 		{
 			free(input[i]);
@@ -167,7 +170,8 @@ ImageBN *ToSquareImage(ImageBN *img, Box *b)
 		for (int j = b->rectangle.y1; j <= b->rectangle.y2; j++)
 		{
 			r->data[i + (r->width - size_x) / 2 - b->rectangle.x1]
-				[j + (r->height - size_y) / 2 - b->rectangle.y1] = img->data[i][j];
+				[j + (r->height - size_y) / 2 - b->rectangle.y1]
+                                = img->data[i][j];
 		}
 	return r;
 }
@@ -190,16 +194,22 @@ ImageBN *ResizeImageBNToChar(ImageBN *img)
 			for (int j = 0; j < img->height; j ++)
 				if (img->data[i][j])
 				{
-					int x = round((double)(r->width - 1) * (double)i / (double)(img->width - 1));
-					int y = round((double)(r->height - 1) * (double)j / (double)(img->height - 1));
+					int x = round((double)(r->width - 1) *
+                                                (double)i /
+                                                (double)(img->width - 1));
+					int y = round((double)(r->height - 1) *
+                                                (double)j /
+                                                (double)(img->height - 1));
 					r->data[x][y] = 1;
 				}
 		for (int i = 0; i < r->width; i ++)
 		{
 			for (int j = 0; j < r->height; j ++)
 			{
-				int x = round((double)(img->width - 1) * (double)i / (double)(r->width - 1));
-				int y = round((double)(img->height - 1) * (double)j / (double)(r->height - 1));
+				int x = round((double)(img->width - 1) *
+                                        (double)i / (double)(r->width - 1));
+				int y = round((double)(img->height - 1) *
+                                        (double)j / (double)(r->height - 1));
 				if(img->data[x][y])
 					r->data[i][j] = img->data[x][y];
 			}

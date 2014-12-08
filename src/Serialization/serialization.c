@@ -148,6 +148,7 @@ int readConnection(FILE *file, Connection *c)
 		unsigned long long *tmp2;
 		tmp2 = &tmp;
 		c->weight = *((double *)tmp2);
+		c->prevChange = 0.0;
 	}
 	else
 		return error;
@@ -173,5 +174,7 @@ Network* SRead(char *fileName)
 	}
 	if (error == EOF)
 		printf("Erreur lors de l'écriture du fichier");
+	n->sibling = NULL;
+	
 	return n;
 }

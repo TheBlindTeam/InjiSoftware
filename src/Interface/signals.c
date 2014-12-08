@@ -1560,32 +1560,8 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	}
 	}
 	SWrite(data->learningNet->nWork, fname);
-	Network *tmp = SRead(fname);
 	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
-	double r2 = NComputeError(tmp, data->learningNet->exSet, 0, NULL, 0);
-	printf("Average error : %lf r2 %lf learningrate %lf\n", r, r2,data->learningNet->lRate);
-	data->learningNet->nWork = tmp;
-	assert(data->learningNet->nWork->nbLayers == tmp->nbLayers);
-	assert(data->learningNet->nWork->bias == tmp->bias);
-	for (int i = 0; i < data->learningNet->nWork->nbLayers; i ++)
-	{
-		assert(data->learningNet->nWork->layersSize[i] == tmp->layersSize[i]);
-		for (int j = 0; j < data->learningNet->nWork->layersSize[i]; j ++)
-		{
-			assert (data->learningNet->nWork->neurons[i][j].shockFoo == tmp->neurons[i][j].shockFoo);
-			assert (data->learningNet->nWork->neurons[i][j].nbConnections == tmp->neurons[i][j].nbConnections);
-			for (int k = 0; k < data->learningNet->nWork->neurons[i][j].nbConnections; k ++)
-			{
-				unsigned long long *tmp1 = (unsigned long long *)&data->learningNet->nWork->neurons[i][j].connectList[k].weight;
-				unsigned long long *tmp2 = (unsigned long long *)&tmp->neurons[i][j].connectList[k].weight;
-				assert (*tmp1 == *tmp2);
-			assert (data->learningNet->nWork->neurons[i][j].connectList[k].layer == tmp->neurons[i][j].connectList[k].layer);
-			assert (data->learningNet->nWork->neurons[i][j].connectList[k].index == tmp->neurons[i][j].connectList[k].index);
-			}
-				/*{printf("nbConnections %d weight1 %a weight 2 %a\n",k, data->learningNet->nWork->neurons[i][j].connectList[k].weight,
-				tmp->neurons[i][j].connectList[k].weight);getchar();}*/
-		}
-	}
+	printf("Average error : %lf learningrate %lf\n", r,data->learningNet->lRate);
 	return r;
 }
 

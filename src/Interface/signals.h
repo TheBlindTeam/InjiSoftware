@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-
+#include <assert.h>
 
 #include <math.h>
 #include <sys/types.h>

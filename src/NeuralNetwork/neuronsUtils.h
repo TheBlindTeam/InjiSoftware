@@ -23,9 +23,9 @@ typedef struct
 
 typedef struct Network
 {
-	int nbLayers;
-	int *layersSize;
-	int bias;
+	int nbLayers;//
+	int *layersSize;//
+	int bias;//
 	double error;
 	Neuron **neurons;
 	struct Network *sibling;

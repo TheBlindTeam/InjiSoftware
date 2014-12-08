@@ -7,10 +7,11 @@
 
 int writeConnection(Connection ct, FILE *file)
 {
+	unsigned long long *tmp = (unsigned long long *)&ct.weight;
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
 	setlocale(LC_NUMERIC, "C");
-	fprintf(file, "\t\t\t\tWEI: %lf\n", ct.weight);
+	fprintf(file, "\t\t\t\tWEI: %llx\n", *tmp);
 	return 1;
 }
 
@@ -85,7 +86,7 @@ int readNetwork(FILE *file, Network *n)
 		error = fscanf(file, "\tBIA: %d\n", &(n->bias));
 	else
 		return error;
-	n->neurons = malloc(sizeof(Neuron*));
+	n->neurons = malloc(sizeof(Neuron*) * n->nbLayers);
 	for (int i = 0; i < n->nbLayers; i++)
 	{
 		error = fscanf(file, "\tLA%d:\n", &i);
@@ -140,8 +141,12 @@ int readConnection(FILE *file, Connection *c)
 		return error;
 	if (error != EOF)
 	{
+		unsigned long long tmp;
 		setlocale(LC_NUMERIC, "C");
-		error = fscanf(file, "\t\t\t\tWEI: %lf\n", &(c->weight));
+		error = fscanf(file, "\t\t\t\tWEI: %llx", &tmp);
+		unsigned long long *tmp2;
+		tmp2 = &tmp;
+		c->weight = *((double *)tmp2);
 	}
 	else
 		return error;

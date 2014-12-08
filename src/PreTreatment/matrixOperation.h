@@ -22,7 +22,7 @@ int ClampDouble(double a, int min, int max);
 Vector2 ApplyVectorRot(Vector2 origin, double radian);
 
 // Get min and max values from several vectors
-void ExtremumVectorValues(Vector2 *tab, int arraySize, 
+void ExtremumVectorValues(Vector2 *tab, int arraySize,
 	Vector2 *min, Vector2 *max);
 
 // Apply A Convolution Matrix On Every Pixel

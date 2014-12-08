@@ -27,9 +27,12 @@ double FindInclinationAngle(ImageBN *ref)
 			{
 				for (int theta = 0; theta < thetaMax; theta++)
 				{
-					double radian = (M_PI * (double)(theta - thetaMax / 2))
+					double radian =
+                                            (M_PI *
+                                             (double)(theta - thetaMax / 2))
 						/ (double)thetaMax;
-					int r = round(x * cos(radian) + y * sin(radian));
+					int r = round(x * cos(radian) + y *
+                                                sin(radian));
 
 					r+= rMax / 2;
 					// Increase the accumulator
@@ -44,7 +47,8 @@ double FindInclinationAngle(ImageBN *ref)
 		free(accu[i]);
 	free(accu);
 
-	double answer = M_PI * (double)(thetaMax - maxAngleAccu - 1) / (double)thetaMax;
+	double answer = M_PI * (double)(thetaMax - maxAngleAccu - 1) /
+            (double)thetaMax;
 	if (answer > M_PI / 2)
 		answer -= M_PI;
 	return answer;

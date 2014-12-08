@@ -4,7 +4,8 @@
 #include <stdio.h>
 
 const Pixel BoxColor[] = {{127, 0, 255, 255}, {255, 255, 0, 255},
-	{255, 0, 255, 255}, {0, 255, 255, 255}, {255, 0, 0, 255}, {0, 255, 0, 255},
+	{255, 0, 255, 255}, {0, 255, 255, 255}, {255, 0, 0, 255},
+        {0, 255, 0, 255},
 	{0, 0, 255, 255}};
 
 BoxList AddInList(BoxList list, Box *b)
@@ -135,7 +136,8 @@ int isBlank(ImageBN *img, Box *b, Orientation orient, int start, int spaceColor)
 	max = b->rectangle.x2 * x2 + b->rectangle.y2 * y2;
 
 	for (int i = min; i <= max && r; i ++)
-		r = img->data[start * x1 + i * x2][start * y1 + i * y2] == spaceColor
+		r = img->data[start * x1 + i * x2][start * y1 + i * y2] ==
+                    spaceColor
 			? 1 : 0;
 	return r;
 }
@@ -236,7 +238,7 @@ int SpacesVariance(int *spaces, int nbSpaces, int add, double *r)
 		return 0;
 	for (int i = 0; i < nbSpaces; i ++)
 	{
-		sum += spaces[i] * pow(1 - ((i + 1 + add) < expectedValue ? 
+		sum += spaces[i] * pow(1 - ((i + 1 + add) < expectedValue ?
 			(double)(i + 1 + add) / (double)expectedValue :
 			(double)expectedValue / (double)(i + 1 + add)), 2);
 		count += spaces[i];
@@ -269,8 +271,10 @@ int ClassifySpace(int *spaces, int nbSpaces, int *r, double *minVar)
 				{
 					min = pow(tmpB, 4) + pow(tmpA, 4);
 					*r = i + 1;
-					SpacesExpectedValue(spaces, i + 1, i, &expA);
-					SpacesExpectedValue(spaces, nbSpaces - i - 1,
+					SpacesExpectedValue(spaces, i + 1, i,
+                                                &expA);
+					SpacesExpectedValue(spaces,
+                                                nbSpaces - i - 1,
 						i + 1, &expB);
 				}
 	*minVar = expA / expB;
@@ -304,10 +308,11 @@ int Split(ImageBN *img, Box *b, Box *parent, Orientation orient,
 			tmp->rectangle.x1 = x1 * prev + x2 * b->rectangle.x1;
 			tmp->rectangle.y1 = y1 * prev + y2 * b->rectangle.y1;
 			tmp->rectangle.x2 = x1 *
-				(!(start && !isCurBlank && count >= minSpace) ? i :
-					(i ? i - 1 : 0)) + x2 * b->rectangle.x2;
+				(!(start && !isCurBlank && count >= minSpace) ?
+                                 i : (i ? i - 1 : 0)) + x2 * b->rectangle.x2;
 			tmp->rectangle.y2 = y1 *
-				(!(start && !isCurBlank && count >= minSpace) ? i :
+				(!(start && !isCurBlank && count >= minSpace) ?
+                                 i :
 					(i ? i - 1 : 0)) + y2 * b->rectangle.y2;
 			prev = i;
 			AddInSubBoxes(parent, tmp);
@@ -424,8 +429,11 @@ void GetBlocksFromImage(ImageBN *img, ImageBN *mask ,ImageBN *dilated, Box *b)
 			if (!GetLinesFromImage(img, mask, b->subBoxes[i]))
 			{
 				b->subBoxes[i]->lvl = NOTEXT;
-				for (int j = 0; j < b->subBoxes[i]->nbSubBoxes; j++)
+				for (int j = 0; j < b->subBoxes[i]->nbSubBoxes;
+                                        j++)
+                                {
 					FreeBox(b->subBoxes[i]->subBoxes[j]);
+                                }
 				b->subBoxes[i]->nbSubBoxes = 0;
 				b->subBoxes[i] = NULL;
 			}
@@ -442,7 +450,8 @@ Box *GetBoxFromSplit(Image *img, Image *mask)
 	ImageBN *bnMask = NegativeBinaryImage(tmpMask);
 	UFreeImageBinary(tmp);
 	UFreeImageBinary(tmpMask);
-	ImageBN *dilated = DilatationOnBinary(bnMask, (img->width + img->height) / 200);
+	ImageBN *dilated = DilatationOnBinary(bnMask, (img->width + img->height)
+                / 200);
 	Box *r = InitBox();
 	r->rectangle.x1 = 0;
 	r->rectangle.y1 = 0;
@@ -499,7 +508,7 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 		int varY = b->subBoxes[i]->rectangle.y1 - b->rectangle.y1;
 		for (int j = 0; j < subWidth; j++)
 			for (int k = 0; k < subHeight; k++)
-				rect[j + varX][k + varY] = 0;	
+				rect[j + varX][k + varY] = 0;
 	}
 	for (int i = 0; i < width; i ++)
 		for (int j = 0; j < height; j ++)
@@ -521,20 +530,24 @@ void DrawAllBoxesAux(Image *img, Box *b, int thickness)
 		{
 			if (b->rectangle.y1 + j >= 0 &&
 					b->rectangle.y1 + j < img->height)
-				img->pixList[i][b->rectangle.y1 + j] = BoxColor[b->lvl];
+				img->pixList[i][b->rectangle.y1 + j] =
+                                    BoxColor[b->lvl];
 			if (b->rectangle.y2 + j >= 0 &&
 					b->rectangle.y2 + j < img->height)
-				img->pixList[i][b->rectangle.y2 + j] = BoxColor[b->lvl];
+				img->pixList[i][b->rectangle.y2 + j]
+                                    = BoxColor[b->lvl];
 		}
 	for (int i = b->rectangle.y1; i <= b->rectangle.y2; i ++)
 		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
 			if (b->rectangle.x1 + j >= 0 &&
 					b->rectangle.x1 + j < img->width)
-				img->pixList[b->rectangle.x1 + j][i] = BoxColor[b->lvl];
+				img->pixList[b->rectangle.x1 + j][i]
+                                    = BoxColor[b->lvl];
 			if (b->rectangle.x2 + j >= 0 &&
 					b->rectangle.x2 + j < img->width)
-				img->pixList[b->rectangle.x2 + j][i] = BoxColor[b->lvl];
+				img->pixList[b->rectangle.x2 + j][i]
+                                    = BoxColor[b->lvl];
 		}
 }
 
@@ -552,25 +565,37 @@ Image *DrawAllBoxesOfALvl(Image *img, Box **b, int size,
 	for (int k = 0; k < size; k ++)
 		if (b[k]->lvl == lvl)
 		{
-			for (int i = b[k]->rectangle.x1; i <= b[k]->rectangle.x2; i ++)
-				for (int j = -thickness / 2; j <= thickness / 2; j++)
+			for (int i = b[k]->rectangle.x1;
+                                i <= b[k]->rectangle.x2; i ++)
+				for (int j = -thickness / 2;
+                                        j <= thickness / 2; j++)
 				{
 					if (b[k]->rectangle.y1 + j >= 0 &&
-							b[k]->rectangle.y1 + j < img->height)
-						r->pixList[i][b[k]->rectangle.y1 + j] = p;
+							b[k]->rectangle.y1 + j
+                                                        < img->height)
+						r->pixList[i][b[k]->rectangle.y1
+                                                    + j] = p;
 					if (b[k]->rectangle.y2 + j >= 0 &&
-							b[k]->rectangle.y2 + j < img->height)
-						r->pixList[i][b[k]->rectangle.y2 + j] = p;
+							b[k]->rectangle.y2 + j <
+                                                        img->height)
+						r->pixList[i][b[k]->rectangle.y2
+                                                    + j] = p;
 				}
-			for (int i = b[k]->rectangle.y1; i <= b[k]->rectangle.y2; i ++)
-				for (int j = -thickness / 2; j <= thickness / 2; j++)
+			for (int i = b[k]->rectangle.y1;
+                                i <= b[k]->rectangle.y2; i ++)
+				for (int j = -thickness / 2; j <= thickness / 2;
+                                        j++)
 				{
 					if (b[k]->rectangle.x1 + j >= 0 &&
-							b[k]->rectangle.x1 + j < img->width)
-						r->pixList[b[k]->rectangle.x1 + j][i] = p;
+							b[k]->rectangle.x1 + j <
+                                                        img->width)
+						r->pixList[b[k]->
+                                                    rectangle.x1 + j][i] = p;
 					if (b[k]->rectangle.x2 + j >= 0 &&
-							b[k]->rectangle.x2 + j < img->width)
-						r->pixList[b[k]->rectangle.x2 + j][i] = p;
+							b[k]->rectangle.x2 + j <
+                                                        img->width)
+						r->pixList[b[k]->
+                                                    rectangle.x2 + j][i] = p;
 				}
 		}
 	return r;
@@ -583,9 +608,11 @@ Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 	{
 		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
-			if (b->rectangle.y1 + j >= 0 && b->rectangle.y1 + j < img->height)
+			if (b->rectangle.y1 + j >= 0 && b->rectangle.y1 + j <
+                                img->height)
 				r->pixList[i][b->rectangle.y1 + j] = p;
-			if (b->rectangle.y2 + j >= 0 && b->rectangle.y2 + j < img->height)
+			if (b->rectangle.y2 + j >= 0 && b->rectangle.y2 + j <
+                                img->height)
 				r->pixList[i][b->rectangle.y2 + j] = p;
 		}
 	}
@@ -593,9 +620,11 @@ Image *DrawBox(Image *img, Box *b, Pixel p, int thickness)
 	{
 		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
-			if (b->rectangle.x1 + j >= 0 && b->rectangle.x1 + j < img->width)
+			if (b->rectangle.x1 + j >= 0 && b->rectangle.x1 + j <
+                                img->width)
 				r->pixList[b->rectangle.x1 + j][i] = p;
-			if (b->rectangle.x2 + j >= 0 && b->rectangle.x2 + j < img->width)
+			if (b->rectangle.x2 + j >= 0 && b->rectangle.x2 + j <
+                                img->width)
 				r->pixList[b->rectangle.x2 + j][i] = p;
 		}
 	}

@@ -821,6 +821,47 @@ Adrien NEVEU</property>
       </object>
     </child>
   </object>
+  <object class="GtkMessageDialog" id="SaveDialogOK">
+    <property name="can_focus">False</property>
+    <property name="type_hint">dialog</property>
+    <property name="text" translatable="yes">Success!</property>
+    <property name="secondary_text" translatable="yes">The file has been correctly exported.</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox3">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area3">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkButton" id="CloseBtnSaveOK">
+                <property name="label" translatable="yes">Close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkDialog" id="TrainingWindow">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Training Sets Generator</property>
@@ -998,7 +1039,7 @@ Adrien NEVEU</property>
     <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="adjustment8">
-    <property name="upper">1000</property>
+    <property name="upper">100000</property>
     <property name="value">0.01</property>
     <property name="step_increment">0.01</property>
     <property name="page_increment">10</property>
@@ -1257,7 +1298,7 @@ Adrien NEVEU</property>
                 <property name="input_purpose">digits</property>
                 <property name="adjustment">adjustment8</property>
                 <property name="climb_rate">0.01</property>
-                <property name="digits">8</property>
+                <property name="digits">15</property>
                 <property name="numeric">True</property>
                 <property name="value">0.01</property>
               </object>

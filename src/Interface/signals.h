@@ -18,6 +18,7 @@
 #include "../PreTreatment/hough.h"
 #include "../Serialization/serialization.h"
 #include "../Skeleton/skeleton.h"
+#include "../Export/export.h"
 #include "globalData.h"
 
 #define ZOOM_COEF 0.1
@@ -119,3 +120,5 @@ void on_click_close_orientation(GtkWidget *widget, gpointer user_data);
 
 void on_click_export_button(GtkWidget *widget, gpointer user_data);
 void on_click_export_cancel(GtkWidget *widget, gpointer user_data);
+void on_click_export_export(GtkWidget *widget, gpointer user_data);
+void on_click_close_save_ok(GtkWidget *widget, gpointer user_data);

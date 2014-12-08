@@ -939,7 +939,6 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				data->segBoxArray = NULL;
 			}
 
-			int count;
 			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
@@ -947,22 +946,10 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			UFreeImageGray(tmpBn);
 			UFreeImageGray(tmpGs);
 			UFreeImage(tmpImg);
-			data->segBoxArray = GetBreadthBoxArray(data->firstBox, &count);
-			data->boxCount = count;
 			
-			
-			Image *segTmpImg;// = //DrawAllBoxes(data->img_rgb, data->;
-			if (data->segBoxArray[data->boxDetectIndex]->lvl != CHARACTER)
-				segTmpImg = DrawBox(data->img_rgb, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl], 2);
-			else
-			{
-				ImageBN *segBnImg = URgbToBinary(data->img_rgb);
-				segTmpImg = DrawBlackPixels(data->img_rgb, segBnImg, data->segBoxArray[data->boxDetectIndex], BoxColor[data->segBoxArray[data->boxDetectIndex]->lvl]);
-				UFreeImageBinary(segBnImg);
-			}
+			Image *segTmpImg = DrawAllBoxes(data->img_rgb, data->firstBox, 1);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = segTmpImg;
-			data->boxDetectIndex++;
 
 			if(data->tmp)
 			{
@@ -1491,7 +1478,6 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 			if (stat(filename, &statbuf) == 0 &&
 				S_ISREG(statbuf.st_mode))
 			{
-
 				if(data->learningNet)
 					NFreeNetworkSet(data->learningNet);
 				data->learningNet = NULL;
@@ -1711,19 +1697,36 @@ void get_main_network(char* line)
 
 void print_text(SGlobalData *data, gunichar *txt)
 {
-
-	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
-		"TextView"));
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
-	GtkTextIter end;
-	gtk_text_buffer_get_end_iter(buffer, &end);
-	gtk_text_buffer_insert(buffer, &end, (char*)txt, -1);
-	gtk_text_view_set_buffer(view, buffer);
+	const gchar** tmp = NULL;
+/*	printf("DEBUT:%s %d a:%d\n", (gunichar*)txt, txt[0],
+		g_utf8_validate((char*)txt, -1, tmp));*/
+	if(g_utf8_validate((char*)txt, -1, tmp))
+	{
+		GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+			"TextView"));
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+		GtkTextIter end;
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		gtk_text_buffer_insert(buffer, &end, (gchar*)txt, -1);
+		gtk_text_view_set_buffer(view, buffer);
+	}
+	else
+	{
+		if(txt[0] < 188 || txt[0] > 255)
+			return;
+		char *str[] = {"Œ", "œ", "Ÿ", "¿", "À", "Á", "Â", "Ã", "Ä",
+			"Å", "Æ", "Ç", "È", "É", "Ê", "Ë", "Ì", "Í", "Î", "Ï",
+			"Ð", "Ñ", "Ò", "Ó", "Ô", "Õ", "Ö", "×", "Ø", "Ù", "Ú",
+			"Û", "Ü", "Ý", "Þ", "ß", "à", "á", "â", "ã", "ä", "å",
+			"æ", "ç", "è", "é", "ê", "ë", "ì", "í", "î", "ï", "ð",
+			"ñ", "ò", "ó", "ô", "õ", "ö", "÷", "ø", "ù", "ú", "û",
+			"ü", "ý", "þ", "ÿ"};
+		print_text(data, (gunichar*)str[txt[0]-188]);
+	}
 }
 
 void process_print(SGlobalData *data, Box* b)
 {
-	printf("start\n");
 	if (b->lvl == BLOCK)
 		print_text(data, (gunichar*)"\t");
 	for (int i = 0; i < b->nbSubBoxes; i ++)
@@ -1735,12 +1738,13 @@ void process_print(SGlobalData *data, Box* b)
 	if (b->lvl == WORD)
 		print_text(data, (gunichar*)" ");
 	if (b->lvl == CHARACTER)
-	{
-		gchar* tmp = "";
-		sprintf(tmp, "%c", b->output[0].c);
-		print_text(data, (gunichar*)tmp);
-	}
-	printf("next\n");
+		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
+		{
+			gunichar txt[2];
+			txt[0] = b->output[0].c;
+			txt[1] = 0;
+			print_text(data, txt);
+		}
 	for (int i = 0; i < b->nbSubBoxes; i ++)
 		process_print(data, b->subBoxes[i]);
 }
@@ -1750,24 +1754,12 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		printf("1\n");
 		ImageBN *bn = PreTreatment(data->img_rgb);
-		printf("2\n");
 		Image *img = UBinaryToRgb(bn);
-		printf("3\n");
 		UFreeImage(data->img_rgb);
-		printf("4\n");
 		data->img_rgb = img;
-
-		printf("5\n");
-		char netchar[256];
-		get_main_network(netchar);
-		printf("6\n");
-		NetworkSet *n = NInitCharacterNetworkSet(netchar);
-		printf("7\n");
-		Box *b = Recognition(n, bn);
-		printf("8\n");
-		img = DrawAllBoxes(img, b, 1);
+		Box *b = Recognition(NInitCharacterNetworkSet(NULL), bn);
+		img = DrawAllBoxes(data->img_rgb, b, 1);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;
 		data->img_rgb = img;
@@ -1776,34 +1768,3 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		apply_zoom(data, 0);
 	}
 }
-
-/*
-Process
-ImageBN *bn = PreTreatment(img->data);
-Image *img = UBinaryToRgb(bn);
-UFreeImage(img->data)
-img->data = img;
-Box *b = Recognition(nWorkSetDuFIchierNetworkSetMain, bn);
-img = DrawAllBoxes(img, b, 1);
-UFreImage(img->data);
-img->data = img;
-Afficher img->data
-Dans la TextBox, Faire un parcours en profondeur de b
-et de ses subBoxes
-
-FOO
-	if (b->lvl == BLOCK)
-		PRINT("\t");
-	for (int i = 0; i < b->nbSubBoxes; i ++)
-		Foo(b->subBoxes[i]);
-	if (b->lvl == BLOCK)
-		PRINT("\n\n");
-	if (b->lvl == LINE)
-		PRINT("\n");
-	if (b->lvl == WORD)
-		PRINT(" ");
-	if (b->lvl == CHARACTER)
-		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
-			PRINT("b->output[0].c")
-FIN FOO
-*/

@@ -21,13 +21,10 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 	CharOutput *r;
 	double *output;
 	*size = 0;
-	printf("Recognize1\n");
 	NRun(nWorkSet->nWork, input, &output);
-	printf("Recognize2\n");
 	for (int i = 0; i < outputSize; i ++)
 		if (output[i] >= 0.8)
 			(*size)++;
-	printf("Recognize3\n");
 	if (*size)
 	{
 		r = malloc(sizeof(CharOutput) * (*size));
@@ -54,9 +51,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 			}
 		*size = 1;
 	}
-	printf("Recognize4\n");
 	free(output);
-	printf("Recognize5\n");
 	return r;
 }
 

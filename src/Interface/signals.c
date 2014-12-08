@@ -8,8 +8,9 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(on_window_destroy), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "NetworkVisualizerBtnTop")),
-		"clicked",
+		G_OBJECT(gtk_builder_get_object(data->builder,
+                        "NetworkVisualizerBtnTop")),
+                "clicked",
 		G_CALLBACK(on_load_neuron_network_visualizer), data);
 	
 	g_signal_connect(
@@ -261,7 +262,8 @@ void connectSignals(SGlobalData *data)
 		G_CALLBACK(file_chooser_selection_changed_learning), data);
 
 	g_signal_connect(
-		G_OBJECT(gtk_builder_get_object(data->builder, "FCButtonOKLearn")),
+		G_OBJECT(gtk_builder_get_object(data->builder,
+                        "FCButtonOKLearn")),
 		"clicked",
 		G_CALLBACK(file_chooser_select_file_from_button_learn), data);
 	
@@ -942,12 +944,14 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 			ImageGS *tmpBn = URgbToGrayscale(data->img_rgb);
 			ImageGS *tmpGs = MedianFilter(tmpBn, 3);
 			Image *tmpImg = UGrayscaleToRgb(tmpGs);
-			data->firstBox = GetBoxFromSplit(data->img_rgb, data->img_rgb);
+			data->firstBox = GetBoxFromSplit(data->img_rgb,
+                                data->img_rgb);
 			UFreeImageGray(tmpBn);
 			UFreeImageGray(tmpGs);
 			UFreeImage(tmpImg);
 			
-			Image *segTmpImg = DrawAllBoxes(data->img_rgb, data->firstBox, 1);
+			Image *segTmpImg = DrawAllBoxes(data->img_rgb,
+                                data->firstBox, 1);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = segTmpImg;
 
@@ -962,8 +966,12 @@ void on_click_segmentation(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
-			gtk_image_set_from_pixbuf(GTK_IMAGE(gtk_builder_get_object(data->builder, "PreviewImage")), data->pixbuf);
+			data->pixbuf = UGetPixbufFromImage(data->img_rgb,
+                                data->tmp);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(
+                                    gtk_builder_get_object(data->builder,
+                                    "PreviewImage"))
+                                ,data->pixbuf);
 
 			apply_zoom(data, 1);
 		}
@@ -984,8 +992,11 @@ void on_click_detect_orientation(GtkWidget *widget, gpointer user_data)
 			gchar txt[20];
 			sprintf(txt, "%.3f", (double)(180 * angle) / M_PI);
 
-			GtkWidget *dialog = GTK_WIDGET(gtk_builder_get_object(data->builder, "OrientationDialog"));
-			gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(dialog), "Angle: %s°", txt);
+			GtkWidget *dialog = GTK_WIDGET(
+                                gtk_builder_get_object(data->builder,
+                                    "OrientationDialog"));
+			gtk_message_dialog_format_secondary_text(
+                                GTK_MESSAGE_DIALOG(dialog), "Angle: %s°", txt);
 
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_hide(dialog);
@@ -1040,7 +1051,8 @@ void on_click_transform_dilatation(GtkWidget *widget, gpointer user_data)
 			ImageBN *tmpBn = URgbToBinary(data->img_rgb);
 			ImageBN *tmpNegBN = NegativeBinaryImage(tmpBn);
 			ImageBN *tmpGs = DilatationOnBinary(tmpNegBN,
-				(data->img_rgb->width + data->img_rgb->height)/200);
+				(data->img_rgb->width + data->img_rgb->height)
+                                /200);
 			ImageBN *tmpNegBN2 = NegativeBinaryImage(tmpGs);
 			Image *tmpImg = UBinaryToRgb(tmpNegBN2);
 			UFreeImageBinary(tmpBn);
@@ -1138,9 +1150,11 @@ void on_click_transform_binary(GtkWidget *widget, gpointer user_data)
 				g_object_unref(data->pixbuf);
 			data->pixbuf = NULL;
 			data->tmp = malloc(sizeof(guchar*));
-			data->pixbuf = UGetPixbufFromImage(data->img_rgb, data->tmp);
+			data->pixbuf = UGetPixbufFromImage(
+                                data->img_rgb, data->tmp);
 			gtk_image_set_from_pixbuf(GTK_IMAGE(
-				gtk_builder_get_object(data->builder, "PreviewImage")),
+				gtk_builder_get_object(data->builder,
+                                    "PreviewImage")),
 				data->pixbuf);
 
 			apply_zoom(data, 1);
@@ -1210,7 +1224,8 @@ void apply_zoom(SGlobalData *data, int change_field)
 
 	GdkPixbuf *pixbuf = gdk_pixbuf_scale_simple(data->pixbuf,
 		data->img_rgb->width * data->previewScale,
-		data->img_rgb->height * data->previewScale, GDK_INTERP_BILINEAR);
+		data->img_rgb->height * data->previewScale,
+                GDK_INTERP_BILINEAR);
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(
 		gtk_builder_get_object(data->builder, "PreviewImage")),
@@ -1282,14 +1297,18 @@ void on_click_open_training(GtkWidget *widget, gpointer user_data)
 		UFreeImageGray(tmpBn);
 		UFreeImageGray(tmpGs);
 		UFreeImage(tmpImg);
-		data->segBoxArray = GetBreadthBoxArray(data->firstBox, &data->boxCount);
-		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb, data->segBoxArray, data->boxCount, BLUE, 1, CHARACTER);
+		data->segBoxArray = GetBreadthBoxArray(data->firstBox,
+                        &data->boxCount);
+		Image *tmp = DrawAllBoxesOfALvl(data->img_rgb,
+                        data->segBoxArray, data->boxCount, BLUE, 1, CHARACTER);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = tmp;
-		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0, data->boxCount);
+		data->boxDetectIndex = get_next_char_index(data->segBoxArray, 0,
+                        data->boxCount);
 		if (data->boxDetectIndex != -1)
 		{
-			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn,
+                                data->segBoxArray[data->boxDetectIndex], RED);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmp;
 		}
@@ -1359,21 +1378,28 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 
 			GtkWidget *entry = GTK_WIDGET(gtk_builder_get_object(
 				data->builder, "FileNameEntry"));
-			char* filename = (char*)gtk_entry_get_text(GTK_ENTRY(entry));
+			char* filename = (char*)gtk_entry_get_text(
+                                GTK_ENTRY(entry));
 			data->fseg = fopen(filename, "a");
 			if(!data->fseg)
 			{
-				printf("Error while opening the training set file\n");
+				printf("Error while opening
+                                        the training set file\n");
 				return;
 			}
-			//data->segBoxArray[data->boxDetectIndex]->input = get_next_char_txtview(data);
 			gunichar text = get_next_char_txtview(data);
 			fprintf(data->fseg, "%c ", text);
 			for(int i = 0; i < charInputSize * charInputSize; i++)
-				fprintf(data->fseg, "%d", (int)data->segBoxArray[data->boxDetectIndex]->input[i]);
+                        {
+				fprintf(data->fseg, "%d",
+                                        (int)data->segBoxArray
+                                        [data->boxDetectIndex]->input[i]);
+                        }
 			fprintf(data->fseg, "\n");
 			remove_first_char(data);
-			data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
+			data->boxDetectIndex = get_next_char_index(
+                                data->segBoxArray, data->boxDetectIndex + 1,
+                                data->boxCount);
 			fclose(data->fseg);
 
 			FILE *listF = fopen("trainingSet.list", "a+");
@@ -1395,7 +1421,8 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 		if (data->boxDetectIndex != -1)
 		{
 			Image *tmp;
-			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn,
+                                data->segBoxArray[data->boxDetectIndex], RED);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmp;
 		}
@@ -1410,11 +1437,13 @@ void on_click_learning_next(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
-		data->boxDetectIndex = get_next_char_index(data->segBoxArray, data->boxDetectIndex + 1, data->boxCount);
+		data->boxDetectIndex = get_next_char_index(data->segBoxArray,
+                        data->boxDetectIndex + 1, data->boxCount);
 		if (data->boxDetectIndex != -1)
 		{
 			Image *tmp;
-			tmp = DrawBlackPixels(data->img_rgb, data->img_bn, data->segBoxArray[data->boxDetectIndex], RED);
+			tmp = DrawBlackPixels(data->img_rgb, data->img_bn,
+                                data->segBoxArray[data->boxDetectIndex], RED);
 			UFreeImage(data->img_rgb);
 			data->img_rgb = tmp;
 		}
@@ -1441,13 +1470,15 @@ void on_learn_load_button_clicked(GtkWidget *widget, gpointer user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
 		GtkWidget *dialog = GTK_WIDGET(
-			gtk_builder_get_object(data->builder, "LearningNetworkChooser"));
+			gtk_builder_get_object(data->builder,
+                            "LearningNetworkChooser"));
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_hide(dialog);
 	}
 }
 
-void file_chooser_selection_changed_learning(GtkWidget *widget, gpointer user_data)
+void file_chooser_selection_changed_learning(GtkWidget *widget,
+        gpointer user_data)
 {
 	if (widget && user_data)
 	{
@@ -1481,14 +1512,20 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 				if(data->learningNet)
 					NFreeNetworkSet(data->learningNet);
 				data->learningNet = NULL;
-				data->learningNet = NInitCharacterNetworkSet(filename);
+				data->learningNet = NInitCharacterNetworkSet(
+                                        filename);
 				data->learningNet->exSet = NULL;
 
-				GtkWidget *label = GTK_WIDGET(gtk_builder_get_object(data->builder, "FilenameLearning"));
-				gtk_label_set_text(GTK_LABEL(label), basename(filename));
+				GtkWidget *label = GTK_WIDGET(
+                                        gtk_builder_get_object(data->builder,
+                                            "FilenameLearning"));
+				gtk_label_set_text(GTK_LABEL(label),
+                                        basename(filename));
 
-				gtk_widget_set_sensitive(GTK_WIDGET(gtk_builder_get_object(
-					data->builder, "LearnButtonLearn")), TRUE);
+				gtk_widget_set_sensitive(
+                                        GTK_WIDGET(gtk_builder_get_object(
+					data->builder, "LearnButtonLearn")),
+                                        TRUE);
 
 				gtk_widget_hide(GTK_WIDGET(
 					gtk_builder_get_object(data->builder,
@@ -1539,53 +1576,14 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 		return 1;
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
-	if (rand() % 10 == 0)
-	{
-	for (int i = 0; i < data->learningNet->exSet->size; i ++)
-	{
-		if (rand() % 20 == 0)
-		{
-		int tmpSize = 0;
-		CharOutput *c = Recognize(data->learningNet, data->learningNet->exSet->exemple[i]->input, &tmpSize);
-		for (int j = 0; j < tmpSize; j ++)
-		{
-			int Letter = ConvertToOrderedChar(c[j].c);
-			if (data->learningNet->exSet->exemple[i]->target[Letter] == 1)
-				printf("\033[32;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-			else
-				printf("\033[31;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-		}
-		printf("\n\n");
-		free(c);}
-	}
-	}
 	SWrite(data->learningNet->nWork, fname);
 	Network *tmp = SRead(fname);
-	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
+	double r = NComputeError(data->learningNet->nWork,
+                data->learningNet->exSet, 0, NULL, 0);
 	double r2 = NComputeError(tmp, data->learningNet->exSet, 0, NULL, 0);
-	printf("Average error : %lf r2 %lf learningrate %lf\n", r, r2,data->learningNet->lRate);
+	printf("Average error : %lf r2 %lf learningrate %lf\n", r, r2,
+                data->learningNet->lRate);
 	data->learningNet->nWork = tmp;
-	assert(data->learningNet->nWork->nbLayers == tmp->nbLayers);
-	assert(data->learningNet->nWork->bias == tmp->bias);
-	for (int i = 0; i < data->learningNet->nWork->nbLayers; i ++)
-	{
-		assert(data->learningNet->nWork->layersSize[i] == tmp->layersSize[i]);
-		for (int j = 0; j < data->learningNet->nWork->layersSize[i]; j ++)
-		{
-			assert (data->learningNet->nWork->neurons[i][j].shockFoo == tmp->neurons[i][j].shockFoo);
-			assert (data->learningNet->nWork->neurons[i][j].nbConnections == tmp->neurons[i][j].nbConnections);
-			for (int k = 0; k < data->learningNet->nWork->neurons[i][j].nbConnections; k ++)
-			{
-				unsigned long long *tmp1 = (unsigned long long *)&data->learningNet->nWork->neurons[i][j].connectList[k].weight;
-				unsigned long long *tmp2 = (unsigned long long *)&tmp->neurons[i][j].connectList[k].weight;
-				assert (*tmp1 == *tmp2);
-			assert (data->learningNet->nWork->neurons[i][j].connectList[k].layer == tmp->neurons[i][j].connectList[k].layer);
-			assert (data->learningNet->nWork->neurons[i][j].connectList[k].index == tmp->neurons[i][j].connectList[k].index);
-			}
-				/*{printf("nbConnections %d weight1 %a weight 2 %a\n",k, data->learningNet->nWork->neurons[i][j].connectList[k].weight,
-				tmp->neurons[i][j].connectList[k].weight);getchar();}*/
-		}
-	}
 	return r;
 }
 
@@ -1598,11 +1596,14 @@ void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data)
 			data->builder, "SpinnerLearn"));
 		gtk_spinner_start(GTK_SPINNER(spinner));
 		int nbSession = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
-				gtk_builder_get_object(data->builder, "LearnNbSessions")));
+				gtk_builder_get_object(data->builder,
+                                    "LearnNbSessions")));
 		int nbIter = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
-				gtk_builder_get_object(data->builder, "LearnNbIter")));
+				gtk_builder_get_object(data->builder,
+                                    "LearnNbIter")));
 		double learningRate = gtk_spin_button_get_value(GTK_SPIN_BUTTON(
-				gtk_builder_get_object(data->builder, "LearnLR")));
+				gtk_builder_get_object(data->builder,
+                                    "LearnLR")));
 
 		GtkWidget *entryLR = GTK_WIDGET(gtk_builder_get_object(
 			data->builder, "LearnLR"));

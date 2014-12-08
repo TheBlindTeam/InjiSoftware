@@ -1708,17 +1708,42 @@ void get_main_network(char* line)
 		fclose(fList);
 	}
 }
-
+char* itoa(int val, int base)
+{
+	static char buf[32] = {0};
+	int i = 30;
+	for(; val && i ; --i, val /= base)
+		buf[i] = "0123456789abcdef"[val % base];
+	return &buf[i+1];
+}
 void print_text(SGlobalData *data, gunichar *txt)
 {
-
-	GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
-		"TextView"));
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
-	GtkTextIter end;
-	gtk_text_buffer_get_end_iter(buffer, &end);
-	gtk_text_buffer_insert(buffer, &end, (char*)txt, -1);
-	gtk_text_view_set_buffer(view, buffer);
+	const gchar** tmp = NULL;
+/*	printf("DEBUT:%s %d a:%d\n", (gunichar*)txt, txt[0],
+		g_utf8_validate((char*)txt, -1, tmp));*/
+	if(g_utf8_validate((char*)txt, -1, tmp))
+	{
+		GtkTextView *view = GTK_TEXT_VIEW(gtk_builder_get_object(data->builder,
+			"TextView"));
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer (view);
+		GtkTextIter end;
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		gtk_text_buffer_insert(buffer, &end, (gchar*)txt, -1);
+		gtk_text_view_set_buffer(view, buffer);
+	}
+	else
+	{
+		if(txt[0] < 188 || txt[0] > 255)
+			return;
+		char *str[] = {"Œ", "œ", "Ÿ", "¿", "À", "Á", "Â", "Ã", "Ä",
+			"Å", "Æ", "Ç", "È", "É", "Ê", "Ë", "Ì", "Í", "Î", "Ï",
+			"Ð", "Ñ", "Ò", "Ó", "Ô", "Õ", "Ö", "×", "Ø", "Ù", "Ú",
+			"Û", "Ü", "Ý", "Þ", "ß", "à", "á", "â", "ã", "ä", "å",
+			"æ", "ç", "è", "é", "ê", "ë", "ì", "í", "î", "ï", "ð",
+			"ñ", "ò", "ó", "ô", "õ", "ö", "÷", "ø", "ù", "ú", "û",
+			"ü", "ý", "þ", "ÿ"};
+		print_text(data, (gunichar*)str[txt[0]-188]);
+	}
 }
 
 void process_print(SGlobalData *data, Box* b)
@@ -1736,9 +1761,10 @@ void process_print(SGlobalData *data, Box* b)
 	if (b->lvl == CHARACTER)
 		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
 		{
-			gchar* tmp = "";
-			sprintf(tmp, "%c", b->output[0].c);
-			print_text(data, (gunichar*)tmp);
+			gunichar txt[2];
+			txt[0] = b->output[0].c;
+			txt[1] = 0;
+			print_text(data, txt);
 		}
 }
 
@@ -1751,11 +1777,10 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		Image *img = UBinaryToRgb(bn);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = img;
-
-		char netchar[256];
-		get_main_network(netchar);
-		Box *b = Recognition(NInitCharacterNetworkSet(netchar), bn);
-		img = DrawAllBoxes(img, b, 1);
+//		char netchar[256];
+//		get_main_network(netchar);
+		Box *b = Recognition(NInitCharacterNetworkSet(NULL), bn);
+		img = DrawAllBoxes(data->img_rgb, b, 1);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;
 		data->img_rgb = img;

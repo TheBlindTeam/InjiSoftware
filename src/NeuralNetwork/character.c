@@ -36,6 +36,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 				r[*size].prob = output[i];
 				(*size)++;
 			}
+		qsort(r, *size, sizeof(CharOutput), compareCharOutput);
 	}
 	else
 	{
@@ -51,7 +52,6 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 		*size = 1;
 	}
 	free(output);
-	qsort(r, *size, sizeof(CharOutput), compareCharOutput);
 	return r;
 }
 

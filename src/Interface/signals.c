@@ -1765,7 +1765,6 @@ void process_print(SGlobalData *data, Box* b)
 		{
 			gunichar txt[2];
 			txt[0] = b->output[0].c;
-			printf("BOUT %d\n", txt[0]);
 			txt[1] = 0;
 			print_text(data, txt);
 		}

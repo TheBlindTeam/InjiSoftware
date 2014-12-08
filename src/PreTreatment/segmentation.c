@@ -514,6 +514,8 @@ Image *DrawNotInSubBoxes(Image *img, Box *b, Pixel p)
 
 void DrawAllBoxesAux(Image *img, Box *b, int thickness)
 {
+	for (int i = 0; i < b->nbSubBoxes; i++)
+		DrawAllBoxesAux(img, b->subBoxes[i], thickness);
 	for (int i = b->rectangle.x1; i <= b->rectangle.x2; i ++)
 		for (int j = -thickness / 2; j <= thickness / 2; j++)
 		{
@@ -534,8 +536,6 @@ void DrawAllBoxesAux(Image *img, Box *b, int thickness)
 					b->rectangle.x2 + j < img->width)
 				img->pixList[b->rectangle.x2 + j][i] = BoxColor[b->lvl];
 		}
-	for (int i = 0; i < b->nbSubBoxes; i++)
-		DrawAllBoxesAux(img, b->subBoxes[i], thickness);
 }
 
 Image *DrawAllBoxes(Image *img, Box *b, int thickness)

@@ -1539,26 +1539,6 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 		return 1;
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
-	if (rand() % 10 == 0)
-	{
-	for (int i = 0; i < data->learningNet->exSet->size; i ++)
-	{
-		if (rand() % 20 == 0)
-		{
-		int tmpSize = 0;
-		CharOutput *c = Recognize(data->learningNet, data->learningNet->exSet->exemple[i]->input, &tmpSize);
-		for (int j = 0; j < tmpSize; j ++)
-		{
-			int Letter = ConvertToOrderedChar(c[j].c);
-			if (data->learningNet->exSet->exemple[i]->target[Letter] == 1)
-				printf("\033[32;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-			else
-				printf("\033[31;1m letter %d target %lf prob %lf\033[0m\n", Letter, data->learningNet->exSet->exemple[i]->target[Letter], c[j].prob);
-		}
-		printf("\n\n");
-		free(c);}
-	}
-	}
 	SWrite(data->learningNet->nWork, fname);
 	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
 	printf("Average error : %lf learningrate %lf\n", r,data->learningNet->lRate);

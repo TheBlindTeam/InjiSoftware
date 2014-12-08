@@ -1383,8 +1383,8 @@ void on_click_learning_ok(GtkWidget *widget, gpointer user_data)
 			data->fseg = fopen(filename, "a");
 			if(!data->fseg)
 			{
-				printf("Error while opening
-                                        the training set file\n");
+				printf(
+				"Error while opening the training set file\n");
 				return;
 			}
 			gunichar text = get_next_char_txtview(data);
@@ -1579,7 +1579,7 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	SWrite(data->learningNet->nWork, fname);
 	double r = NComputeError(data->learningNet->nWork,
                 data->learningNet->exSet, 0, NULL, 0);
-	printf("Average error : %lf r2 %lf learningrate %lf\n", r, r2,
+	printf("Average error : %lf learningrate %lf\n", r,
                 data->learningNet->lRate);
 	return r;
 }

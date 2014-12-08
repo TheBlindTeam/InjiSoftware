@@ -77,7 +77,8 @@ int readNetwork(FILE *file, Network *n)
 	{
 		if (error != EOF)
 		{
-			error =fscanf(file, "\t\tLA%d: %d\n", &i, &(n->layersSize[i]));
+			error = fscanf(file, "\t\tLA%d: %d\n", &i,
+                                &(n->layersSize[i]));
 		}
 		else
 			return error;

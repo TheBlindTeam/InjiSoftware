@@ -183,7 +183,8 @@ guchar UGetOtsuThreshold(ImageGS *ref)
         float meanB = sumB / wbackgrd;
         float meanF = (sum - sumB) / wforegrd;
 
-        float betweenVar = wbackgrd * wforegrd * (meanB - meanF) * (meanB - meanF);
+        float betweenVar = wbackgrd * wforegrd * (meanB - meanF)
+		* (meanB - meanF);
 
         if(betweenVar > varMax)
         {

@@ -1577,13 +1577,10 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	for(int j = 0; j < nbIter; j++)
 		data->learningNet->learn(data->learningNet);
 	SWrite(data->learningNet->nWork, fname);
-	Network *tmp = SRead(fname);
 	double r = NComputeError(data->learningNet->nWork,
                 data->learningNet->exSet, 0, NULL, 0);
-	double r2 = NComputeError(tmp, data->learningNet->exSet, 0, NULL, 0);
 	printf("Average error : %lf r2 %lf learningrate %lf\n", r, r2,
                 data->learningNet->lRate);
-	data->learningNet->nWork = tmp;
 	return r;
 }
 

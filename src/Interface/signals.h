@@ -103,8 +103,10 @@ void remove_first_char(SGlobalData *data);
 // Learning
 void on_learn_load_button_clicked(GtkWidget *widget, gpointer user_data);
 void file_chooser_cancel_learning(GtkWidget *widget, gpointer user_data);
-void file_chooser_selection_changed_learning(GtkWidget *widget, gpointer user_data);
-void file_chooser_select_file_from_button_learn(GtkWidget *widget, gpointer user_data);
+void file_chooser_selection_changed_learning(GtkWidget *widget,
+	gpointer user_data);
+void file_chooser_select_file_from_button_learn(GtkWidget *widget,
+	gpointer user_data);
 void on_click_learn_button_learn(GtkWidget *widget, gpointer user_data);
 void on_click_new_network_learn(GtkWidget *widget, gpointer user_data);
 void get_random_training_set(char *line);

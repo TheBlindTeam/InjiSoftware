@@ -1782,7 +1782,11 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		data->img_rgb = img;
 		char netchar[256];
 		get_main_network(netchar);
-		Box *b = Recognition(NInitCharacterNetworkSet(netchar), bn);
+		printf("haha1\n");
+		NetworkSet *r = NInitCharacterNetworkSet("Networks/FinalNetwork.inji");
+		printf("haha2\n");
+		Box *b = Recognition(r, bn);
+		printf("haha\n");
 		img = DrawAllBoxes(data->img_rgb, b, 1);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;

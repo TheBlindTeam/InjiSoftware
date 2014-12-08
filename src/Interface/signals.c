@@ -1491,7 +1491,6 @@ void file_chooser_select_file_from_button_learn(GtkWidget *widget,
 			if (stat(filename, &statbuf) == 0 &&
 				S_ISREG(statbuf.st_mode))
 			{
-
 				if(data->learningNet)
 					NFreeNetworkSet(data->learningNet);
 				data->learningNet = NULL;
@@ -1575,7 +1574,20 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	}
 	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
 	printf("Average error : %lf learningrate %lf\n", r, data->learningNet->lRate);
-	SWrite(*data->learningNet->nWork, fname);
+	SWrite(data->learningNet->nWork, fname);
+	/*Network *tmp = SRead(fname);
+	for (int i = 0; i < data->learningNet->nWork->nbLayers; i ++)
+	{
+		for (int j = 0; j < data->learningNet->nWork->layersSize[i]; j ++)
+		{
+			printf("layer %d Neuron %i\n", i, j);
+			printf("shock 1 %d shock 2 %d\n", data->learningNet->nWork->neurons[i][j].shockFoo,
+											tmp->neurons[i][j].shockFoo);
+			for (int k = 0; k < data->learningNet->nWork->neurons[i][j].nbConnections; k ++)
+				{printf("nbConnections %d weight1 %lf weight 2 %lf\n",k, data->learningNet->nWork->neurons[i][j].connectList[k].weight,
+				tmp->neurons[i][j].connectList[k].weight);getchar();}
+		}
+	}*/
 	return r;
 }
 
@@ -1708,14 +1720,7 @@ void get_main_network(char* line)
 		fclose(fList);
 	}
 }
-char* itoa(int val, int base)
-{
-	static char buf[32] = {0};
-	int i = 30;
-	for(; val && i ; --i, val /= base)
-		buf[i] = "0123456789abcdef"[val % base];
-	return &buf[i+1];
-}
+
 void print_text(SGlobalData *data, gunichar *txt)
 {
 	const gchar** tmp = NULL;
@@ -1766,6 +1771,8 @@ void process_print(SGlobalData *data, Box* b)
 			txt[1] = 0;
 			print_text(data, txt);
 		}
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		process_print(data, b->subBoxes[i]);
 }
 
 void on_click_process(GtkWidget *widget, gpointer user_data)
@@ -1777,8 +1784,6 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		Image *img = UBinaryToRgb(bn);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = img;
-//		char netchar[256];
-//		get_main_network(netchar);
 		Box *b = Recognition(NInitCharacterNetworkSet(NULL), bn);
 		img = DrawAllBoxes(data->img_rgb, b, 1);
 		UFreeImage(data->img_rgb);

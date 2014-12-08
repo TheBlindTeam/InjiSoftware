@@ -10,7 +10,7 @@ int writeConnection(Connection ct, FILE *file)
 	fprintf(file, "\t\t\t\tLAY: %d\n", ct.layer);
 	fprintf(file, "\t\t\t\tIND: %d\n", ct.index);
 	setlocale(LC_NUMERIC, "C");
-	fprintf(file, "\t\t\t\tWEI: %f\n", ct.weight);
+	fprintf(file, "\t\t\t\tWEI: %lf\n", ct.weight);
 	return 1;
 }
 
@@ -26,26 +26,26 @@ int writeNeuron(Neuron neuron, FILE *file)
 	return 1;
 }
 
-int writeNetwork(Network n, FILE *file)
+int writeNetwork(Network *n, FILE *file)
 {
 	fprintf(file, "NET:\n");
-	fprintf(file, "\tNBL: %d\n", n.nbLayers);
-	for (int i = 0; i < n.nbLayers; i++)
-		fprintf(file, "\t\tLA%d: %d\n", i, n.layersSize[i]);
-	fprintf(file, "\tBIA: %d\n", n.bias);
-	for (int i = 0; i < n.nbLayers; i++)
+	fprintf(file, "\tNBL: %d\n", n->nbLayers);
+	for (int i = 0; i < n->nbLayers; i++)
+		fprintf(file, "\t\tLA%d: %d\n", i, n->layersSize[i]);
+	fprintf(file, "\tBIA: %d\n", n->bias);
+	for (int i = 0; i < n->nbLayers; i++)
 	{
 		fprintf(file, "\tLA%d:\n", i);
-		for (int j = 0; j < n.layersSize[i]; j++)
+		for (int j = 0; j < n->layersSize[i]; j++)
 		{
 			fprintf(file, "\t\tNE%d:\n", j);
-			writeNeuron(n.neurons[i][j], file);
+			writeNeuron(n->neurons[i][j], file);
 		}
 	}
 	return 1;
 }
 
-int SWrite(Network n, char* fileName)
+int SWrite(Network *n, char* fileName)
 {
 	if (fopen(fileName, "r"))
 		remove(fileName);
@@ -151,6 +151,7 @@ int readConnection(FILE *file, Connection *c)
 Network* SRead(char *fileName)
 {
 	Network *n = NULL;
+	printf("??\n");
 	int error = 1;
 	FILE *file = fopen(fileName, "r");
 	if (file)

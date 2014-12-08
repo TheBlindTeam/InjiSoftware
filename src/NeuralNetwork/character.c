@@ -1,6 +1,6 @@
 #include "character.h"
 
-const int charInputSize = 16;
+const int charInputSize = 3;
 const int outputSize = 162;//A Changer
 const double learningRate = 0.001;
 const double momentum = 0.8;
@@ -21,10 +21,13 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 	CharOutput *r;
 	double *output;
 	*size = 0;
+	printf("Recognize1\n");
 	NRun(nWorkSet->nWork, input, &output);
+	printf("Recognize2\n");
 	for (int i = 0; i < outputSize; i ++)
 		if (output[i] >= 0.8)
 			(*size)++;
+	printf("Recognize3\n");
 	if (*size)
 	{
 		r = malloc(sizeof(CharOutput) * (*size));
@@ -36,6 +39,7 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 				r[*size].prob = output[i];
 				(*size)++;
 			}
+		qsort(r, *size, sizeof(CharOutput), compareCharOutput);
 	}
 	else
 	{
@@ -50,8 +54,9 @@ CharOutput *Recognize(NetworkSet *nWorkSet, double *input, int *size)
 			}
 		*size = 1;
 	}
+	printf("Recognize4\n");
 	free(output);
-	qsort(r, *size, sizeof(CharOutput), compareCharOutput);
+	printf("Recognize5\n");
 	return r;
 }
 

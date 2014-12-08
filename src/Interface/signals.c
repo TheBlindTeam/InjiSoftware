@@ -1564,7 +1564,20 @@ double learnRc(SGlobalData *data, int nbIter, char* fname)
 	}
 	double r = NComputeError(data->learningNet->nWork, data->learningNet->exSet, 0, NULL, 0);
 	printf("Average error : %lf learningrate %lf\n", r, data->learningNet->lRate);
-	SWrite(*data->learningNet->nWork, fname);
+	SWrite(data->learningNet->nWork, fname);
+	/*Network *tmp = SRead(fname);
+	for (int i = 0; i < data->learningNet->nWork->nbLayers; i ++)
+	{
+		for (int j = 0; j < data->learningNet->nWork->layersSize[i]; j ++)
+		{
+			printf("layer %d Neuron %i\n", i, j);
+			printf("shock 1 %d shock 2 %d\n", data->learningNet->nWork->neurons[i][j].shockFoo,
+											tmp->neurons[i][j].shockFoo);
+			for (int k = 0; k < data->learningNet->nWork->neurons[i][j].nbConnections; k ++)
+				{printf("nbConnections %d weight1 %lf weight 2 %lf\n",k, data->learningNet->nWork->neurons[i][j].connectList[k].weight,
+				tmp->neurons[i][j].connectList[k].weight);getchar();}
+		}
+	}*/
 	return r;
 }
 
@@ -1675,6 +1688,7 @@ void print_text(SGlobalData *data, gunichar *txt)
 
 void process_print(SGlobalData *data, Box* b)
 {
+	printf("start\n");
 	if (b->lvl == BLOCK)
 		print_text(data, (gunichar*)"\t");
 	for (int i = 0; i < b->nbSubBoxes; i ++)
@@ -1686,12 +1700,14 @@ void process_print(SGlobalData *data, Box* b)
 	if (b->lvl == WORD)
 		print_text(data, (gunichar*)" ");
 	if (b->lvl == CHARACTER)
-		if (b->nbOutput >= 1 && b->output[0].prob >= 0.8)
-		{
-			gchar* tmp = "";
-			sprintf(tmp, "%c", b->output[0].c);
-			print_text(data, (gunichar*)tmp);
-		}
+	{
+		gchar* tmp = "";
+		sprintf(tmp, "%c", b->output[0].c);
+		print_text(data, (gunichar*)tmp);
+	}
+	printf("next\n");
+	for (int i = 0; i < b->nbSubBoxes; i ++)
+		process_print(data, b->subBoxes[i]);
 }
 
 void on_click_process(GtkWidget *widget, gpointer user_data)
@@ -1699,14 +1715,23 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 	if (widget && user_data)
 	{
 		SGlobalData *data = (SGlobalData*) user_data;
+		printf("1\n");
 		ImageBN *bn = PreTreatment(data->img_rgb);
+		printf("2\n");
 		Image *img = UBinaryToRgb(bn);
+		printf("3\n");
 		UFreeImage(data->img_rgb);
+		printf("4\n");
 		data->img_rgb = img;
 
+		printf("5\n");
 		char netchar[256];
 		get_main_network(netchar);
-		Box *b = Recognition(NInitCharacterNetworkSet(netchar), bn);
+		printf("6\n");
+		NetworkSet *n = NInitCharacterNetworkSet(netchar);
+		printf("7\n");
+		Box *b = Recognition(n, bn);
+		printf("8\n");
 		img = DrawAllBoxes(img, b, 1);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;

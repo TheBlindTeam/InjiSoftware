@@ -1780,7 +1780,9 @@ void on_click_process(GtkWidget *widget, gpointer user_data)
 		Image *img = UBinaryToRgb(bn);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = img;
-		Box *b = Recognition(NInitCharacterNetworkSet(NULL), bn);
+		char netchar[256];
+		get_main_network(netchar);
+		Box *b = Recognition(NInitCharacterNetworkSet(netchar), bn);
 		img = DrawAllBoxes(data->img_rgb, b, 1);
 		UFreeImage(data->img_rgb);
 		data->img_rgb = NULL;
